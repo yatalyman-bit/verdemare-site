@@ -4,6 +4,7 @@ description: "One hour in the water with a surf photographer, just for you. Pric
 title: Sessions
 layout: sessions
 image: S1.jpg
+image_focus: 55   # dove sta il soggetto, da 0 (sinistra) a 100 (destra)
 good_to_know:
   - You pay for time in the water. I can't choose the waves or how many you catch, so the number of photos isn't fixed.
   - If I judge the conditions aren't good, we move the session at no cost (up to twice). If no date works, you get your deposit back.

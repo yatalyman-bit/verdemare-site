@@ -50,6 +50,7 @@ content:
     fields:
       - { name: title, type: string }
       - { name: body, label: Testo introduttivo, type: rich-text }
+      - { name: image_focus, label: "Foto S1: posizione del soggetto (0 sinistra – 100 destra)", type: number }
       - { name: good_to_know, label: Good to know, type: text, list: true }
       - name: faq
         label: FAQ

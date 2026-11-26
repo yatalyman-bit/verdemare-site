@@ -12,7 +12,7 @@ types:
   - title: Solo
     text: One surfer, every wave.
     image: H2.jpg
-    focus_mobile: 50
+    focus_mobile: 55
   - title: Couple
     text: Two surfers, one session.
     image: H3.jpg

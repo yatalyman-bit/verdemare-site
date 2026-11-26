@@ -5,8 +5,18 @@
 {{- if $r -}}
 {{- $pd := split (.rd | default "3x2") "x" -}}{{- $pm := split (.rm | default "4x5") "x" -}}
 {{- $ad := .anchor_d | default "Center" -}}{{- $am := .anchor_m | default "Center" -}}
+{{- $srcd := $r -}}
+{{- with .focus_d -}}
+  {{- $cw := div (mul $r.Height (int (index $pd 0))) (int (index $pd 1)) -}}
+  {{- if lt $cw $r.Width -}}
+    {{- $x0 := sub (div (mul $r.Width .) 100) (div $cw 2) -}}
+    {{- if lt $x0 0 }}{{ $x0 = 0 }}{{ end -}}
+    {{- if gt (add $x0 $cw) $r.Width }}{{ $x0 = sub $r.Width $cw }}{{ end -}}
+    {{- $srcd = ($r.Crop (printf "%dx%d TopRight" (sub $r.Width $x0) $r.Height)).Crop (printf "%dx%d TopLeft" $cw $r.Height) -}}
+  {{- end -}}
+{{- end -}}
 {{- $d := slice -}}{{- $dl := "" -}}
-{{- range .wd | default (slice 480 960 1600) -}}{{- $w := cond (gt . $r.Width) $r.Width . -}}{{- $i := $r.Fill (printf "%dx%d %s webp" $w (div (mul $w (int (index $pd 1))) (int (index $pd 0))) $ad) -}}{{- $d = $d | append (printf "%s %dw" $i.RelPermalink $i.Width) -}}{{- $dl = $i -}}{{- end -}}
+{{- range .wd | default (slice 480 960 1600) -}}{{- $w := cond (gt . $srcd.Width) $srcd.Width . -}}{{- $i := $srcd.Fill (printf "%dx%d %s webp" $w (div (mul $w (int (index $pd 1))) (int (index $pd 0))) $ad) -}}{{- $d = $d | append (printf "%s %dw" $i.RelPermalink $i.Width) -}}{{- $dl = $i -}}{{- end -}}
 {{- $src := $r -}}
 {{- with .focus_m -}}
   {{- $cw := div (mul $r.Height (int (index $pm 0))) (int (index $pm 1)) -}}
