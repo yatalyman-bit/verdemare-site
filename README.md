@@ -19,8 +19,12 @@ Su GitHub: apri la cartella giusta → **Add file → Upload files** → trascin
 
 Per sostituire una foto basta caricarne una con lo stesso nome.
 
-## Hotel
-Ogni hotel in `data/hotels.yaml` ottiene il link `/book/<slug>/`, che apre WhatsApp con il nome dell'hotel già scritto. È il link da mettere nel QR del poster.
-
 ## Font
 Norwester (Jamie Wilson) e Montserrat, licenza SIL OFL 1.1, ospitati sul sito (nessuna richiesta a Google).
+
+## Verdemare Desk (/desk/)
+App per post, contatti, partner e commissioni. I dati stanno nel database Cloudflare D1 (binding `DB`) e si sincronizzano tra telefono e computer; sul dispositivo resta una copia per usarla offline.
+Accesso: solo tramite Cloudflare Access (codice via email). Senza le variabili `ACCESS_TEAM_DOMAIN` e `ACCESS_AUD` Desk resta chiuso.
+
+## Link degli hotel (/book/<id>/)
+L'id è quello della struttura in Desk (sezione Partner). Il link apre WhatsApp con il nome della struttura già scritto e conta le scansioni (solo un numero al giorno, nessun dato personale).

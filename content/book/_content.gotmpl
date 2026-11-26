@@ -1,4 +1,0 @@
-{{/* Crea una pagina /book/<slug>/ per ogni hotel in data/hotels.yaml */}}
-{{ range site.Data.hotels }}
-  {{ $.AddPage (dict "path" .slug "title" .name "params" (dict "hotel" .name) "build" (dict "list" "never")) }}
-{{ end }}

@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Verdemare Desk</title>
+<meta name="theme-color" content="#0d6a70">
+<meta name="description" content="Workflow Instagram e partner per Verdemare: tag, DM, hashtag, caption, contatti, partner e commissioni.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a working desk — sticky top bar with a scrolling tab row, one column of panels; the post generator splits into brief | output on wide screens */
+:root{
+  --bg:#edf1f0; --surface:#ffffff; --sunk:#e3e9e8; --line:#cfd9d8;
+  --ink:#10272b; --muted:#566a6d; --accent:#0d6a70; --accent-ink:#ffffff;
+  --signal:#a86d07; --good:#2f7d4f; --warn:#a86d07; --bad:#b23a2e; --chip:#dbe7e6;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1618; --surface:#12201f; --sunk:#0f1b1c; --line:#24393a;
+  --ink:#e2ecea; --muted:#93a7a8; --accent:#4bb5b3; --accent-ink:#061213;
+  --signal:#e9b448; --good:#5cbf86; --warn:#e9b448; --bad:#ec7a6c; --chip:#1c3132; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1618; --surface:#12201f; --sunk:#0f1b1c; --line:#24393a;
+  --ink:#e2ecea; --muted:#93a7a8; --accent:#4bb5b3; --accent-ink:#061213;
+  --signal:#e9b448; --good:#5cbf86; --warn:#e9b448; --bad:#ec7a6c; --chip:#1c3132; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1180px;margin:0 auto}
+header.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.top{display:flex;align-items:center;gap:12px;padding-block:10px 4px}
+.brand{font-family:var(--f-display);font-weight:700;font-size:20px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:8px;min-width:0}
+.brand small{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top .spacer{flex:1}
+nav{display:flex;gap:4px;overflow-x:auto;padding-block:4px 8px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{flex:0 0 auto;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;font-weight:500;font-size:14px}
+nav a:hover{color:var(--ink);background:var(--sunk)}
+nav a[aria-current="page"]{color:var(--accent-ink);background:var(--accent)}
+main{padding-block:20px 60px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:26px} h2{font-size:19px} h3{font-size:16px}
+.lede{color:var(--muted);max-width:68ch;margin:6px 0 0}
+.stack{display:flex;flex-direction:column;gap:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start}
+@media (max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.panel>h2,.panel>h3{margin-bottom:10px}
+.label{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:500}
+input,select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:70px}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1 1 150px;min-width:0}
+.check{flex-direction:row;align-items:center;gap:8px;color:var(--ink)}
+.check input{width:auto}
+button{font:inherit;font-size:14px;font-weight:600;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 13px;cursor:pointer}
+button:hover{background:var(--sunk)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.primary:hover{filter:brightness(1.08)}
+button.small{padding:4px 9px;font-size:12.5px}
+button.danger{color:var(--bad);border-color:var(--bad)}
+button:disabled{opacity:.5;cursor:default}
+.mono{font-family:var(--f-mono);font-size:13px}
+.muted{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--ink);white-space:nowrap}
+.chip.accent{background:var(--accent);color:var(--accent-ink)}
+.chip.warn{background:transparent;border:1px solid var(--warn);color:var(--warn)}
+.chip.bad{background:transparent;border:1px solid var(--bad);color:var(--bad)}
+.chip.good{background:transparent;border:1px solid var(--good);color:var(--good)}
+.tgt{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 0;border-top:1px solid var(--line)}
+.tgt:first-of-type{border-top:0}
+.tgt .why{grid-column:1/-1;font-size:13px;color:var(--muted)}
+.tgt b{font-weight:600}
+.score{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.slot{border-left:3px solid var(--accent);padding-left:12px}
+.slot.dm{border-left-color:var(--signal)}
+.slot.ex{border-left-color:var(--good)}
+textarea.out,pre.out{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:10px;margin:6px 0 0;font-family:var(--f-mono);font-size:13.5px;width:100%}
+textarea.out{min-height:150px}
+.notice{border:1px solid var(--warn);background:transparent;border-radius:8px;padding:10px 12px;font-size:13.5px}
+.notice.info{border-color:var(--line);background:var(--sunk)}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td select{min-width:130px}
+.empty{color:var(--muted);font-size:14px;padding:12px 0}
+.toast{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:8px;font-size:14px;z-index:20;max-width:calc(100vw - 32px)}
+details summary{cursor:pointer;font-weight:600}
+.split{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.kpi .v{font-family:var(--f-display);font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.funnel{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
+.funnel div{background:var(--sunk);border-radius:8px;padding:8px 10px}
+.funnel b{display:block;font-family:var(--f-display);font-size:22px;font-variant-numeric:tabular-nums}
+.cand{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
+.cand:first-child{border-top:0}
+.cand.on .cand-main b{color:var(--accent)}
+.cand .why{font-size:13px;color:var(--muted);margin-top:2px}
+.cand-num{display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.cand-num input{width:112px;text-align:right;font-family:var(--f-mono);padding:5px 8px}
+.nlab{font-size:12px;color:var(--muted)} .nage{font-size:11.5px;color:var(--muted)}
+.cand-sel{grid-column:1/-1}
+@media (min-width:620px){.cand{grid-template-columns:minmax(0,1fr) auto 190px}.cand-sel{grid-column:auto}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+a{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.sync{font-size:12px;padding:3px 8px;border-radius:99px;background:#e7efe9;color:#2f6b45;margin-right:8px}.sync[data-state=off]{background:#fbeee0;color:#8a4b12}.sync[data-state=busy]{background:#eef1f4;color:#555}
+</style>
+</head>
+<body>
+<header class="bar"><div class="wrap">
+  <div class="top"><div class="brand">Verdemare Desk <small id="who"></small></div><span class="spacer"></span><span class="sync" id="sync" hidden></span><button class="small" id="install" hidden>Installa app</button></div>
+  <nav id="nav" aria-label="Sezioni">
+    <a href="#nuovo">Nuovo post</a>
+    <a href="#coda">Coda</a>
+    <a href="#contatti">Contatti</a>
+    <a href="#partner">Partner</a>
+    <a href="#database">Account</a>
+    <a href="#hashtag">Hashtag</a>
+    <a href="#persone">Persone</a>
+    <a href="#risultati">Risultati</a>
+    <a href="#impostazioni">Impostazioni</a>
+  </nav>
+</div></header>
+
+<main class="wrap" id="app"><div class="empty">Caricamento…</div></main>
+
+<script id="seed" type="application/json">{"version": 2, "targets": [{"id": "carve", "name": "Carve", "handle": "@carvemag", "type": "magazine", "tier": "europa", "niches": ["barrel", "bigwave", "lifestyle", "longboard", "alt"], "lang": "en", "url": "https://www.carvemag.com/contributor-guidelines", "email": "", "submission": "Accetta freelance: manda poche foto low-res, se interessano chiedono i RAW via WeTransfer. Niente crop pesanti. Foto fresche: non aspettare mesi.", "notes": "Magazine britannico di Orca Publications (Newquay). Dichiara di aver avuto due copertine da fotografi alla prima submission. Concorso foto annuale.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "surfgirl", "name": "SurfGirl", "handle": "@surfgirlmag", "type": "magazine", "tier": "europa", "niches": ["femminile", "lifestyle", "longboard"], "lang": "en", "url": "https://surfgirlmag.com", "email": "", "submission": "Stessa redazione di Carve (Orca): accetta freelance, prima low-res, poi chiedono i RAW.", "notes": "Magazine internazionale di surf femminile dal 2002. Concorsi foto periodici.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "wavelength", "name": "Wavelength", "handle": "@wavelengthmag", "type": "magazine", "tier": "europa", "niches": ["barrel", "bigwave", "lifestyle"], "lang": "en", "url": "https://wavelengthmag.com", "email": "", "submission": "Contatta l'editor o il picture editor. Due uscite in stampa all'anno.", "notes": "Il surf magazine più longevo d'Europa (dal 1981), no-profit dal 2024. Stessa proprietà di Longboarder. Handle Instagram incerto: verifica.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "longboarder", "name": "Longboarder Magazine", "handle": "", "type": "magazine", "tier": "internazionale", "niches": ["longboard", "alt", "lifestyle", "femminile"], "lang": "en", "url": "https://longboardermagazine.com", "email": "", "submission": "Edizione annuale stampata in primavera: proponi verso fine inverno.", "notes": "Cultura del longboard: noseriding, single fin, stile. Stesso editore di Wavelength. Cerca l'handle su Instagram.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "tsj", "name": "The Surfer's Journal", "handle": "@surfersjournal", "type": "magazine", "tier": "internazionale", "niches": ["lifestyle", "longboard", "barrel", "bigwave", "alt"], "lang": "en", "url": "https://surfersjournal.submittable.com", "email": "", "submission": "Solo via Submittable. Niente invii contemporanei ad altri magazine, preferiscono materiale inedito. Rispondono solo se interessati.", "notes": "Riferimento editoriale di altissimo livello. Interessati alla cultura surf portoghese.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "emocean", "name": "Emocean", "handle": "", "type": "magazine", "tier": "internazionale", "niches": ["femminile", "lifestyle", "longboard"], "lang": "en", "url": "https://emocean.surf", "email": "info@emocean.surf", "submission": "Aperti alle submission via email. Due numeri all'anno, ognuno legato a un'emozione.", "notes": "Magazine indipendente fatto da donne: surf femminile, sguardo più artistico che performance.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "nsm", "name": "Nordic Surfers Magazine", "handle": "", "type": "magazine", "tier": "europa", "niches": ["lifestyle", "longboard", "alt"], "lang": "en", "url": "https://nordicsurfersmag.se", "email": "", "submission": "", "notes": "Magazine svedese in stampa. Ha coperto Gliding Barnacles 2025. Ama le storie fotografiche. Cerca l'handle.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "surfsession", "name": "Surf Session", "handle": "@surfsessionmag", "type": "magazine", "tier": "europa", "niches": ["barrel", "bigwave", "femminile"], "lang": "fr", "url": "https://www.surfsession.com", "email": "", "submission": "", "notes": "Primo magazine di surf francese (dal 1986), editore Republic Medias ad Anglet. Ha anche Surfeuses, sul surf femminile.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "osr", "name": "Océan Surf Report", "handle": "", "type": "repost", "tier": "europa", "niches": ["barrel", "bigwave", "lifestyle", "longboard"], "lang": "fr", "url": "https://www.surf-report.com", "email": "contact@surf-report.com", "submission": "Chiedono esplicitamente di mandare foto, video e reportage a contact@surf-report.com.", "notes": "Grande sito francese di surf, news e gallerie fotografiche.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "surfer", "name": "SURFER", "handle": "@surfer_magazine", "type": "magazine", "tier": "internazionale", "niches": ["barrel", "bigwave"], "lang": "en", "url": "https://www.surfer.com", "email": "", "submission": "", "notes": "Rilanciato nel 2024. Nel 2026 ha lanciato un concorso foto con SwellCo. Solo per foto eccezionali.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "inertia", "name": "The Inertia", "handle": "@theinertia", "type": "repost", "tier": "internazionale", "niches": ["lifestyle", "bigwave", "barrel", "alt"], "lang": "en", "url": "https://www.theinertia.com/contact", "email": "info@theinertia.com", "submission": "Programma per contributor (Apply sul sito): puoi pubblicare gallerie tue con testo in prima persona.", "notes": "Media internazionale di surf e outdoor.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "surfeurope", "name": "Surf Europe", "handle": "@surfeurope", "type": "magazine", "tier": "europa", "niches": ["barrel", "bigwave"], "lang": "en", "url": "https://surfeuromag.com", "email": "", "submission": "", "notes": "Storico magazine europeo. Non risultano numeri recenti: verifica se è ancora attivo.", "matchWords": [], "status": "pausa", "handleVerified": false, "verified": "2026-11-06"}, {"id": "onfire", "name": "ONFIRE Surf Mag", "handle": "@onfiresurfmag", "type": "magazine", "tier": "locale", "niches": ["barrel", "locale", "bigwave", "femminile"], "lang": "pt", "url": "", "email": "", "submission": "", "notes": "Magazine portoghese di surf. Verifica handle e contatto redazione.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "surfportugal", "name": "Surf Portugal", "handle": "", "type": "magazine", "tier": "locale", "niches": ["barrel", "locale", "bigwave"], "lang": "pt", "url": "", "email": "", "submission": "", "notes": "Primo magazine di surf portoghese (1987). Stato attuale incerto: verifica se esce ancora.", "matchWords": [], "status": "pausa", "handleVerified": false, "verified": "2026-11-06"}, {"id": "azul", "name": "Azul Ericeira Mag", "handle": "", "type": "repost", "tier": "locale", "niches": ["locale", "lifestyle", "barrel"], "lang": "pt", "url": "https://www.ericeiramag.pt", "email": "", "submission": "", "notes": "Magazine locale di Ericeira: surf, shaper e scena locale.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "oceanographic", "name": "Oceanographic", "handle": "", "type": "magazine", "tier": "internazionale", "niches": ["bigwave", "lifestyle"], "lang": "en", "url": "https://oceanographicmagazine.com/work-with-us/", "email": "", "submission": "Le foto pubblicate devono restare esclusive per due mesi dopo l'uscita.", "notes": "Magazine sull'oceano, non solo surf. Buono per big wave e onde come paesaggio.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "glidingbarnacles", "name": "Gliding Barnacles", "handle": "", "type": "evento", "tier": "locale", "niches": ["longboard", "alt", "lifestyle", "locale"], "lang": "pt", "url": "https://www.tickettailor.com/events/glidingbarnacles/2105668", "email": "", "submission": "", "notes": "Festival di surf, arte e musica a Figueira da Foz (edizione 2026: 23-27 settembre). Contattali in primavera per il 2027.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "semente", "name": "Semente Surfboards", "handle": "", "type": "brand", "tier": "locale", "niches": ["barrel", "locale", "alt", "longboard"], "lang": "pt", "url": "", "email": "", "submission": "", "notes": "Il marchio di tavole più storico del Portogallo (Ericeira, dal 1982).", "matchWords": ["Semente"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "fatum", "name": "Fatum Surfboards", "handle": "", "type": "brand", "tier": "locale", "niches": ["barrel", "locale", "alt"], "lang": "en", "url": "https://fatumsurfboards.com", "email": "", "submission": "", "notes": "Shaper di Peniche (Gero Tragatschnig), tavole custom. Candidato ideale per il primo lavoro brand.", "matchWords": ["Fatum"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "mica", "name": "Mica Surfboards", "handle": "", "type": "brand", "tier": "locale", "niches": ["barrel", "alt", "locale"], "lang": "pt", "url": "https://micasurfboards.com", "email": "", "submission": "", "notes": "Shaper custom di Ericeira.", "matchWords": ["Mica"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "matta", "name": "Matta Surfboards", "handle": "", "type": "brand", "tier": "locale", "niches": ["barrel", "locale"], "lang": "pt", "url": "", "email": "", "submission": "", "notes": "Shaper Nuno Matta. Fonti discordanti sulla sede (Peniche o Costa da Caparica): verifica.", "matchWords": ["Matta"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "ferox", "name": "Ferox Surfboards", "handle": "", "type": "brand", "tier": "locale", "niches": ["alt", "bigwave", "longboard"], "lang": "pt", "url": "", "email": "", "submission": "", "notes": "Shaper dell'Algarve: tavole in sughero, single fin e gun per Nazaré.", "matchWords": ["Ferox"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "psf", "name": "Portugal Surf Factory", "handle": "", "type": "brand", "tier": "locale", "niches": ["barrel", "alt"], "lang": "en", "url": "", "email": "", "submission": "", "notes": "Ex ORG Surfboards, fabbrica di tavole portoghese.", "matchWords": ["Portugal Surf Factory", "PSF", "ORG"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "janga", "name": "Janga Wetsuits", "handle": "@jangawetsuits", "type": "brand", "tier": "locale", "niches": ["barrel", "locale", "lifestyle"], "lang": "pt", "url": "", "email": "", "submission": "", "notes": "Mute portoghesi. Legame con Peniche non confermato: verifica.", "matchWords": ["Janga"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "ripcurl", "name": "Rip Curl Europe", "handle": "@ripcurl_europe", "type": "brand", "tier": "europa", "niches": ["barrel", "bigwave", "femminile"], "lang": "en", "url": "", "email": "", "submission": "", "notes": "Flagship store a Peniche, sponsor della tappa WSL a Supertubos. Tagga solo se si vede la loro muta o tavola.", "matchWords": ["Rip Curl", "RipCurl"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "vans", "name": "Vans Surf", "handle": "", "type": "brand", "tier": "internazionale", "niches": ["longboard", "lifestyle", "alt"], "lang": "en", "url": "", "email": "", "submission": "", "notes": "Sostiene Gliding Barnacles: interessati al surf classico in Portogallo. Cerca l'handle del ramo surf.", "matchWords": ["Vans"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "ess", "name": "Ericeira Surf & Skate", "handle": "", "type": "brand", "tier": "locale", "niches": ["lifestyle", "locale"], "lang": "pt", "url": "https://ericeirasurfskate.pt", "email": "", "submission": "", "notes": "Catena con circa 20 negozi in Portogallo e una propria linea di abbigliamento.", "matchWords": ["Ericeira Surf", "ES&S"], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}, {"id": "swellco", "name": "SwellCo", "handle": "", "type": "piattaforma", "tier": "internazionale", "niches": ["cliente", "barrel", "lifestyle"], "lang": "en", "url": "", "email": "", "submission": "", "notes": "Piattaforma che collega fotografi e surfisti per condividere e vendere foto. Utile anche per le open session.", "matchWords": [], "status": "attivo", "handleVerified": false, "verified": "2026-11-06"}], "hashtags": [{"id": "h-surfing", "tag": "#surfing", "size": "grande", "niches": ["tutte"], "posts": null, "checked": null, "avoid": false}, {"id": "h-surf", "tag": "#surf", "size": "grande", "niches": ["tutte"], "posts": null, "checked": null, "avoid": false}, {"id": "h-surfphotography", "tag": "#surfphotography", "size": "grande", "niches": ["tutte"], "posts": null, "checked": null, "avoid": false}, {"id": "h-surfergirl", "tag": "#surfergirl", "size": "grande", "niches": ["femminile"], "posts": null, "checked": null, "avoid": false}, {"id": "h-barrel", "tag": "#barrel", "size": "medio", "niches": ["barrel", "bigwave"], "posts": null, "checked": null, "avoid": false}, {"id": "h-tuberiding", "tag": "#tuberiding", "size": "nicchia", "niches": ["barrel"], "posts": null, "checked": null, "avoid": false}, {"id": "h-getbarreled", "tag": "#getbarreled", "size": "nicchia", "niches": ["barrel"], "posts": null, "checked": null, "avoid": false}, {"id": "h-inwaterphotography", "tag": "#inwaterphotography", "size": "nicchia", "niches": ["barrel", "longboard", "cliente", "alt"], "posts": null, "checked": null, "avoid": false}, {"id": "h-watershots", "tag": "#watershots", "size": "nicchia", "niches": ["barrel", "lifestyle"], "posts": null, "checked": null, "avoid": false}, {"id": "h-longboardsurfing", "tag": "#longboardsurfing", "size": "medio", "niches": ["longboard"], "posts": null, "checked": null, "avoid": false}, {"id": "h-noseriding", "tag": "#noseriding", "size": "nicchia", "niches": ["longboard"], "posts": null, "checked": null, "avoid": false}, {"id": "h-hangten", "tag": "#hangten", "size": "nicchia", "niches": ["longboard"], "posts": null, "checked": null, "avoid": false}, {"id": "h-singlefin", "tag": "#singlefin", "size": "nicchia", "niches": ["longboard", "alt"], "posts": null, "checked": null, "avoid": false}, {"id": "h-logging", "tag": "#logging", "size": "nicchia", "niches": ["longboard"], "posts": null, "checked": null, "avoid": false}, {"id": "h-longboarding", "tag": "#longboarding", "size": "medio", "niches": ["longboard"], "posts": null, "checked": null, "avoid": true, "note": "Pieno di skateboard: non usarlo per il surf."}, {"id": "h-bigwavesurfing", "tag": "#bigwavesurfing", "size": "medio", "niches": ["bigwave"], "posts": null, "checked": null, "avoid": false}, {"id": "h-towsurfing", "tag": "#towsurfing", "size": "nicchia", "niches": ["bigwave"], "posts": null, "checked": null, "avoid": false}, {"id": "h-praiadonorte", "tag": "#praiadonorte", "size": "nicchia", "niches": ["bigwave"], "posts": null, "checked": null, "avoid": false, "spots": ["nazaré", "nazare", "praia do norte"]}, {"id": "h-womenwhosurf", "tag": "#womenwhosurf", "size": "medio", "niches": ["femminile"], "posts": null, "checked": null, "avoid": false}, {"id": "h-girlswhosurf", "tag": "#girlswhosurf", "size": "medio", "niches": ["femminile"], "posts": null, "checked": null, "avoid": false}, {"id": "h-surfculture", "tag": "#surfculture", "size": "medio", "niches": ["lifestyle", "alt", "longboard"], "posts": null, "checked": null, "avoid": false}, {"id": "h-surflife", "tag": "#surflife", "size": "grande", "niches": ["lifestyle", "cliente"], "posts": null, "checked": null, "avoid": false}, {"id": "h-surftrip", "tag": "#surftrip", "size": "medio", "niches": ["cliente", "lifestyle"], "posts": null, "checked": null, "avoid": false}, {"id": "h-oceanlife", "tag": "#oceanlife", "size": "medio", "niches": ["lifestyle", "bigwave"], "posts": null, "checked": null, "avoid": false}, {"id": "h-twinfin", "tag": "#twinfin", "size": "nicchia", "niches": ["alt"], "posts": null, "checked": null, "avoid": false}, {"id": "h-midlength", "tag": "#midlength", "size": "nicchia", "niches": ["alt"], "posts": null, "checked": null, "avoid": false}, {"id": "h-fishsurfboard", "tag": "#fishsurfboard", "size": "nicchia", "niches": ["alt"], "posts": null, "checked": null, "avoid": false}, {"id": "h-alternativesurfcraft", "tag": "#alternativesurfcraft", "size": "nicchia", "niches": ["alt"], "posts": null, "checked": null, "avoid": false}, {"id": "h-surfsession", "tag": "#surfsession", "size": "medio", "niches": ["cliente"], "posts": null, "checked": null, "avoid": false}, {"id": "h-surfcoaching", "tag": "#surfcoaching", "size": "nicchia", "niches": ["cliente"], "posts": null, "checked": null, "avoid": false}, {"id": "h-surfportugal", "tag": "#surfportugal", "size": "locale", "niches": ["tutte"], "posts": null, "checked": null, "avoid": false}, {"id": "h-portugalsurf", "tag": "#portugalsurf", "size": "locale", "niches": ["tutte"], "posts": null, "checked": null, "avoid": false}, {"id": "h-peniche", "tag": "#peniche", "size": "locale", "niches": ["tutte"], "posts": null, "checked": null, "avoid": false, "spots": ["peniche", "supertubos", "baleal", "lagide", "consolação", "consolacao", "molho leste"]}, {"id": "h-supertubos", "tag": "#supertubos", "size": "locale", "niches": ["barrel", "bigwave", "locale"], "posts": null, "checked": null, "avoid": false, "spots": ["supertubos"]}, {"id": "h-baleal", "tag": "#baleal", "size": "locale", "niches": ["tutte"], "posts": null, "checked": null, "avoid": false, "spots": ["baleal", "lagide"]}, {"id": "h-ericeira", "tag": "#ericeira", "size": "locale", "niches": ["tutte"], "posts": null, "checked": null, "avoid": false, "spots": ["ericeira", "coxos", "ribeira"]}, {"id": "h-coxos", "tag": "#coxos", "size": "locale", "niches": ["barrel", "locale"], "posts": null, "checked": null, "avoid": false, "spots": ["coxos"]}, {"id": "h-nazare", "tag": "#nazare", "size": "locale", "niches": ["bigwave", "locale"], "posts": null, "checked": null, "avoid": false, "spots": ["nazaré", "nazare", "praia do norte"]}, {"id": "h-figueiradafoz", "tag": "#figueiradafoz", "size": "locale", "niches": ["longboard", "locale"], "posts": null, "checked": null, "avoid": false, "spots": ["figueira", "cabedelo"]}], "partners": [{"id": "ride", "name": "RIDE Surf Resort & Spa", "type": "resort", "zone": "Baleal", "why": "22 camere, organizza surf weekend e programmi di surf training", "prio": "alta", "url": "https://www.centerofportugal.com/article/sleeping-in-peniche", "email": "", "phone": "", "person": "", "notes": "Visita in persona con il book e la locandina.", "phase": "dacontattare", "lastContact": "", "code": "RIDE", "pct": 15, "verified": "2026-10-26"}, {"id": "surferslodge", "name": "Surfers Lodge Peniche", "type": "hotel", "zone": "Ferrel", "why": "Hotel 4 stelle di design con piscina, clientela con budget", "prio": "alta", "url": "https://www.myboutiquehotel.com/en/boutique-hotels-baleal/", "email": "", "phone": "", "person": "", "notes": "Chiedi del marketing manager.", "phase": "dacontattare", "lastContact": "", "code": "SURFERS", "pct": 15, "verified": "2026-10-26"}, {"id": "conscisea", "name": "Conscisea Retreats", "type": "retreat", "zone": "Peniche", "why": "Retreat surf, yoga e skate da 1.499 a 2.900 € a settimana", "prio": "alta", "url": "https://conscisea-retreats.secure.retreat.guru/program/7-day-surf-yoga-skate-retreat-in-peniche-portugal-3/", "email": "info@conscisea-retreats.com", "phone": "", "person": "", "notes": "Email con offerta per i gruppi e commissione del 20%.", "phase": "dacontattare", "lastContact": "", "code": "CONSCISE", "pct": 15, "verified": "2026-10-26"}, {"id": "therush", "name": "The Rush", "type": "operatore", "zone": "Peniche", "why": "Piattaforma di surf trip curati, vende coaching e fotografia a chi vuole progredire", "prio": "alta", "url": "https://www.theportugalnews.com/news/2025-03-01/new-startup-aims-to-revolutionise-surf-travel-in-portugal/95798", "email": "", "phone": "", "person": "", "notes": "Candidati come fotografo partner su therush.us.", "phase": "dacontattare", "lastContact": "", "code": "RUSH", "pct": 15, "verified": "2026-10-26"}, {"id": "adekua", "name": "Adékua Peniche", "type": "operatore", "zone": "Peniche", "why": "Surf trip operator con ecolodge da 20 posti, gruppi di clienti francesi", "prio": "alta", "url": "https://www.surf-report.com/surfcamps/peniche-surf-trip-adekua-s319199631.html", "email": "", "phone": "", "person": "", "notes": "Email in francese o inglese.", "phase": "dacontattare", "lastContact": "", "code": "ADEKUA", "pct": 15, "verified": "2026-10-26"}, {"id": "bukubaki", "name": "Bukubaki Eco Surf Resort", "type": "resort", "zone": "Baleal", "why": "Eco glamping con estetica forte, ospiti surfisti", "prio": "media", "url": "https://www.centerofportugal.com/article/sleeping-in-peniche", "email": "", "phone": "", "person": "", "notes": "", "phase": "dacontattare", "lastContact": "", "code": "BUKUBAKI", "pct": 15, "verified": "2026-10-26"}, {"id": "marriott", "name": "Praia d'El Rey Marriott", "type": "resort", "zone": "Óbidos", "why": "Resort golf con clientela ricca, offre già lezioni di surf", "prio": "media", "url": "https://www.linksland.com/portugal-2/surf-amp-turf", "email": "", "phone": "", "person": "", "notes": "Contatta il concierge.", "phase": "dacontattare", "lastContact": "", "code": "PRAIA", "pct": 15, "verified": "2026-10-26"}, {"id": "surfcastle", "name": "Surfcastle", "type": "hotel", "zone": "Baleal", "why": "Boutique hotel con scuola, ospiti in surf trip", "prio": "media", "url": "https://www.airbnb.gy/rooms/13018", "email": "", "phone": "", "person": "", "notes": "", "phase": "dacontattare", "lastContact": "", "code": "SURFCAST", "pct": 15, "verified": "2026-10-26"}, {"id": "mercearia", "name": "Mercearia d'Alegria", "type": "hotel", "zone": "Peniche", "why": "Boutique B&B curato, ospiti in viaggio di coppia", "prio": "media", "url": "https://www.centerofportugal.com/article/sleeping-in-peniche", "email": "", "phone": "", "person": "", "notes": "", "phase": "dacontattare", "lastContact": "", "code": "MERCEARI", "pct": 15, "verified": "2026-10-26"}, {"id": "photoportugal", "name": "Photo Portugal", "type": "marketplace", "zone": "Portogallo", "why": "Marketplace di fotografi per turisti", "prio": "media", "url": "https://es.trustpilot.com/review/photoportugal.com", "email": "", "phone": "", "person": "", "notes": "Crea il profilo.", "phase": "dacontattare", "lastContact": "", "code": "PHOTO", "pct": 15, "verified": "2026-10-26"}, {"id": "saltypelican", "name": "The Salty Pelican", "type": "retreat", "zone": "Peniche", "why": "Retreat surf e yoga, ospiti soprattutto beginner", "prio": "bassa", "url": "https://www.nspsurfboards.com/?p=46740", "email": "", "phone": "", "person": "", "notes": "Aperto da marzo a ottobre: ricontattare a febbraio.", "phase": "dacontattare", "lastContact": "", "code": "SALTY", "pct": 15, "verified": "2026-10-26"}, {"id": "balealspot", "name": "Hotel Baleal Spot", "type": "hotel", "zone": "Baleal", "why": "Hotel surf-friendly, fascia media", "prio": "bassa", "url": "https://uk.hotels.com/es/de1067101-th6/playa-hoteles-peniche-portugal", "email": "", "phone": "", "person": "", "notes": "Lascia la locandina.", "phase": "dacontattare", "lastContact": "", "code": "BALEAL", "pct": 15, "verified": "2026-10-26"}], "profile": {"brand": "Verdemare", "handle": "@verdemare.photo", "base": "Peniche, Portugal"}}</script>
+<script>
+"use strict";
+/* ---------- constants ---------- */
+const NICHES = {barrel:"Barrel / performance", longboard:"Longboard classico", bigwave:"Big wave", femminile:"Surf femminile", lifestyle:"Lifestyle / surf culture", alt:"Tavole alternative", locale:"Scena portoghese", cliente:"Sessione cliente"};
+const RELATED = {cliente:["lifestyle","locale"], alt:["longboard","lifestyle"], longboard:["alt","lifestyle"], femminile:["lifestyle"], bigwave:["barrel"], barrel:["bigwave"], lifestyle:["longboard","femminile"], locale:["barrel"]};
+const TYPES = {magazine:"Magazine", repost:"Pagina / media", brand:"Brand", evento:"Evento", piattaforma:"Piattaforma"};
+const TIERS = {locale:"Portogallo", europa:"Europa", internazionale:"Internazionale"};
+const PT_SPOTS = ["peniche","supertubos","baleal","lagide","consolação","consolacao","molho leste","ericeira","coxos","ribeira d'ilhas","ribeira","nazaré","nazare","praia do norte","figueira","cabedelo","carcavelos","sagres"];
+const OUTCOMES = {inviato:"Inviato", nessuna:"Nessuna risposta", risposto:"Ha risposto", repost:"Repost", hires:"Chiesto alta ris.", lavoro:"Lavoro"};
+const POSITIVE = ["risposto","repost","hires","lavoro"];
+const LANG = {en:"English", pt:"Português", fr:"Français", es:"Español", it:"Italiano"};
+const PTYPES = {hotel:"Hotel boutique", surfhouse:"Surf house", resort:"Surf resort", retreat:"Retreat", operatore:"Surf trip / operatore", coach:"Coach", villa:"Villa / host", marketplace:"Marketplace"};
+const PHASES = {dacontattare:"Da contattare", contattato:"Contattato", incontro:"Incontro", attivo:"Attivo", ricorrente:"Ricorrente", no:"No"};
+const PRIO = {alta:"Alta", media:"Media", bassa:"Bassa"};
+const PACKAGES = {f1:["Foto · 1 persona · 1 h",60], f2:["Foto · 2 persone · 1 h",90], f3:["Foto · 3 persone · 1 h",120], f4:["Foto · 4 persone · 1 h",150], v1:["Video · 1 persona · 1 h",70], v2:["Video · 2 persone · 1 h",100], v3:["Video · 3 persone · 1 h",130], v4:["Video · 4 persone · 1 h",160], altro:["Altro",0]};
+const KEY = "verdemare-desk-v1";
+const COLS = ["targets","hashtags","log","posts","people","partners","bookings"];
+
+/* ---------- storage: everything lives on this device ---------- */
+const SEED = JSON.parse(document.getElementById("seed").textContent);
+let S = {targets:{},hashtags:{},log:{},posts:{},people:{},partners:{},bookings:{},profile:{},meta:{}};
+let storageOk = true;
+function byId(arr){const m={};for(const x of arr)m[x.id]=x;return m}
+/* sync: the copy that counts is on the server (Cloudflare D1); this device keeps a cache for offline use */
+const API="/desk/api/state"; let REV=0, dirty=false, pushing=false, online=false, pushT=null;
+const now=()=>Date.now();
+function readLocal(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const d=JSON.parse(raw); REV=d.__rev||0; dirty=!!d.__dirty; return d } }catch(e){ storageOk=false } return null }
+function apply(d){ for(const c of COLS) S[c]=d[c]||{}; S.profile=d.profile||{}; S.meta=d.meta||{}; S.meta.deleted=S.meta.deleted||{} }
+function snapshot(){ const d={profile:S.profile,meta:S.meta}; for(const c of COLS) d[c]=S[c]; return d }
+function saveLocal(){ try{ localStorage.setItem(KEY, JSON.stringify({...snapshot(),__rev:REV,__dirty:dirty})); storageOk=true; return true }catch(e){ storageOk=false; return false } }
+// newest wins, item by item; deletions are remembered so they win over older copies
+function merge(a,b){
+  const da=(a.meta&&a.meta.deleted)||{}, db=(b.meta&&b.meta.deleted)||{}, del={};
+  for(const k of new Set([...Object.keys(da),...Object.keys(db)])) del[k]=Math.max(da[k]||0,db[k]||0);
+  const out={};
+  for(const c of COLS){ out[c]={}; const A=a[c]||{}, B=b[c]||{};
+    for(const id of new Set([...Object.keys(A),...Object.keys(B)])){
+      const x=A[id], y=B[id]; const w = !x? y : !y? x : ((y._u||0)>(x._u||0)? y : x);
+      if(del[c+"/"+id] && del[c+"/"+id]>=(w._u||0)) continue; out[c][id]=w } }
+  const pa=a.profile||{}, pb=b.profile||{}; out.profile=((pb._u||0)>(pa._u||0))?pb:pa;
+  out.meta={...(a.meta||{}),...(b.meta||{}),deleted:del,seedVersion:Math.max((a.meta&&a.meta.seedVersion)||0,(b.meta&&b.meta.seedVersion)||0)};
+  return out }
+async function pull(){
+  try{
+    const r=await fetch(API,{credentials:"same-origin",headers:{accept:"application/json"}});
+    if(!r.ok) throw new Error(r.status);
+    const j=await r.json(); online=true; S.clicks=j.clicks||{};
+    const server=j.data||{}; const merged=merge(server,snapshot());
+    apply(merged); REV=j.rev||0;
+    if(!j.rev || dirty || JSON.stringify(merged)!==JSON.stringify(merge(server,server))){ dirty=true; saveLocal(); await push() } else saveLocal();
+    if(typeof rerender==="function") rerender();
+  }catch(e){ online=false }
+  syncBadge() }
+async function push(){
+  if(pushing) return; pushing=true;
+  try{ for(let i=0;i<3;i++){
+      const r=await fetch(API,{method:"PUT",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({rev:REV,data:snapshot()})});
+      if(r.status===409){ const j=await r.json(); apply(merge(j.data||{},snapshot())); REV=j.rev; continue }
+      if(!r.ok) throw new Error(r.status);
+      const j=await r.json(); REV=j.rev; dirty=false; online=true; break }
+  }catch(e){ online=false }
+  pushing=false; saveLocal(); syncBadge() }
+function syncBadge(){ const b=document.getElementById("sync"); if(!b) return; b.hidden=false;
+  b.textContent= !online? "Offline · salvato sul telefono" : dirty? "Salvataggio…" : "Salvato online";
+  b.dataset.state= !online?"off": dirty?"busy":"ok" }
+window.addEventListener("online",()=>{ dirty? push() : pull() });
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") pull() });
+function load(){ const d=readLocal(); if(d) apply(d); mergeSeed(); pull() }
+function mergeSeed(){
+  // adds seed items that are new to this device; never overwrites what you changed
+  const have = S.meta.seedVersion||0;
+  if(have>=SEED.version) return;
+  for(const t of SEED.targets) if(!S.targets[t.id]) S.targets[t.id]=t;
+  for(const h of SEED.hashtags) if(!S.hashtags[h.id]) S.hashtags[h.id]=h;
+  for(const p of SEED.partners) if(!S.partners[p.id]) S.partners[p.id]=p;
+  if(!S.profile || !S.profile.handle) S.profile = {...SEED.profile, ...(S.profile||{})};
+  S.meta.seedVersion = SEED.version;
+  save(true);
+}
+function save(quiet){
+  dirty=true; saveLocal(); syncBadge();
+  clearTimeout(pushT); pushT=setTimeout(push,600);
+  return true
+}
+function put(col,id,data){ S[col][id]={...data,_u:now()}; save(); route() }
+function patch(col,id,data){ if(!S[col][id]) return; S[col][id]={...S[col][id],...data,_u:now()}; save(); route() }
+function del(col,id){ delete S[col][id]; (S.meta.deleted=S.meta.deleted||{})[col+"/"+id]=now(); save(); route() }
+const newId = p => p+"-"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+window.addEventListener("storage", e=>{ if(e.key===KEY){ const d=readLocal(); if(d){ apply(d); rerender() } } });
+
+/* ---------- helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today = ()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const daysAgo = d => d ? Math.floor((Date.now()-new Date(d+"T12:00:00").getTime())/864e5) : 9999;
+const list = o => Object.values(o||{});
+const eur = n => (Math.round((n||0)*100)/100).toLocaleString("it-IT",{minimumFractionDigits:0,maximumFractionDigits:2})+" €";
+const month = d => (d||"").slice(0,7);
+function fmtN(n){ if(n==null||n==="") return ""; n=+n; if(!isFinite(n)) return ""; if(n>=1e6) return (n/1e6).toLocaleString("it-IT",{maximumFractionDigits:1})+" Mln"; if(n>=1e3) return (n/1e3).toLocaleString("it-IT",{maximumFractionDigits:n>=1e4?0:1})+"k"; return String(n) }
+function ageNote(d){ if(!d) return "mai controllato"; const a=daysAgo(d); return a===0?"controllato oggi":a<=45?`controllato ${a} gg fa`:`da ricontrollare (${a} gg)` }
+function quiet(col,id,data){ if(!S[col][id]) return; S[col][id]={...S[col][id],...data}; save() }
+const monthName = m => { if(!m) return ""; const [y,mm]=m.split("-"); return new Date(+y,+mm-1,1).toLocaleDateString("it-IT",{month:"long",year:"numeric"}) };
+function toast(msg){const t=document.createElement("div");t.className="toast";t.setAttribute("role","status");t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2400)}
+async function copyEl(el){
+  const text = el.value!==undefined ? el.value : el.textContent;
+  try{ await navigator.clipboard.writeText(text); toast("Copiato") }
+  catch(e){ if(el.select){el.focus();el.select()} try{document.execCommand("copy");toast("Copiato")}catch(_){toast("Seleziona il testo e copialo a mano")} }
+}
+function armDelete(btn, fn){ let armed=false; btn.onclick=()=>{ if(!armed){armed=true;const t=btn.textContent;btn.textContent="Conferma";setTimeout(()=>{armed=false;btn.textContent=t},3000);return} fn() } }
+
+/* ---------- account stats ---------- */
+function statsFor(tid){
+  const ev = list(S.log).filter(l=>l.targetId===tid).sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+  const tags = ev.filter(e=>e.kind==="tag");
+  const lastPos = ev.filter(e=>POSITIVE.includes(e.outcome)).map(e=>e.date).sort().pop()||"";
+  return { ev, tags:tags.length, dms:ev.filter(e=>e.kind==="dm"||e.kind==="email").length,
+    replies:ev.filter(e=>e.outcome==="risposto").length, reposts:ev.filter(e=>e.outcome==="repost").length,
+    hires:ev.filter(e=>e.outcome==="hires").length, jobs:ev.filter(e=>e.outcome==="lavoro").length,
+    lastTag: tags.map(t=>t.date).sort().pop()||"", tagsSincePos: tags.filter(t=>(t.date||"")>lastPos).length };
+}
+function isPaused(t){ return t.status==="pausa" || statsFor(t.id).tagsSincePos>=3 }
+
+/* ---------- ranking ---------- */
+function rank(inp){
+  const local = PT_SPOTS.some(s=>(inp.spot||"").toLowerCase().includes(s));
+  const board = (inp.board||"").toLowerCase();
+  const out=[];
+  for(const t of list(S.targets)){
+    if(isPaused(t)) continue;
+    const ns=t.niches||[]; let sc=0; const why=[];
+    if(ns.includes(inp.niche)){sc+=6; why.push("nicchia "+NICHES[inp.niche])}
+    else if((RELATED[inp.niche]||[]).some(n=>ns.includes(n))){sc+=2; why.push("nicchia vicina")}
+    else continue;
+    if(inp.female && ns.includes("femminile") && inp.niche!=="femminile"){sc+=3; why.push("surfista donna")}
+    const strong = inp.strength==="eccezionale";
+    if(t.tier==="internazionale"){ sc += strong?3:-2; if(strong) why.push("foto eccezionale: si punta in alto") }
+    if(t.tier==="europa"){ sc += 2 }
+    if(t.tier==="locale"){ sc += local?4:0; if(local) why.push("spot portoghese") }
+    if(t.type==="brand"){
+      const words = (t.matchWords&&t.matchWords.length)? t.matchWords : [t.name];
+      if(words.some(w=>w && board && board.includes(w.toLowerCase()))){sc+=6; why.push("si vede la loro tavola o muta")} else sc-=3;
+    }
+    const st=statsFor(t.id);
+    if(st.lastTag && daysAgo(st.lastTag)<14){sc-=4; why.push("taggato "+daysAgo(st.lastTag)+" giorni fa")}
+    if(st.reposts+st.replies>0){sc+=1; why.push("ha già interagito")}
+    out.push({t,sc,why});
+  }
+  return out.sort((a,b)=>b.sc-a.sc);
+}
+function plan(inp){
+  const r = rank(inp);
+  const editorial = r.filter(x=>["magazine","repost","evento","piattaforma"].includes(x.t.type));
+  const brands = r.filter(x=>x.t.type==="brand" && x.sc>=8);
+  let tagFoto=[], dm=[], exclusive=[];
+  if(inp.unpublished){
+    exclusive = editorial.filter(x=>x.t.submission).slice(0,2);
+  } else {
+    const mags = editorial.filter(x=>x.t.type==="magazine");
+    if(mags[0]) tagFoto.push(mags[0]);
+    for(const x of editorial){ if(tagFoto.length>=3) break; if(!tagFoto.includes(x)) tagFoto.push(x) }
+    if(brands[0]) tagFoto.push(brands[0]);
+    dm = editorial.filter(x=>!tagFoto.includes(x) && (x.t.submission||x.t.email)).slice(0,2);
+  }
+  // candidates the viewer chooses from: the picks first, then the next best matches
+  const picks=[...tagFoto,...dm,...exclusive];
+  const cands=[...picks, ...r.filter(x=>!picks.includes(x) && (x.t.type!=="brand" || x.sc>=4))].slice(0, Math.max(10,picks.length));
+  const sel={}; for(const x of tagFoto) sel[x.t.id]="tag"; for(const x of dm) sel[x.t.id]="dm"; for(const x of exclusive) sel[x.t.id]="ex";
+  const hashtags=pickTags(inp);
+  return {tagFoto,dm,exclusive,cands,sel,hashtags,tagCands:hashtagCands(inp,hashtags),tagSel:new Set(hashtags)};
+}
+function hashtagCands(inp,chosen){
+  const spot=(inp.spot||"").toLowerCase(); const local=PT_SPOTS.some(s=>spot.includes(s)); const used=tagUse();
+  const order={locale:0,nicchia:1,medio:2,grande:3};
+  const fit = h => !h.avoid && ( (h.niches||[]).includes(inp.niche) || (RELATED[inp.niche]||[]).some(n=>(h.niches||[]).includes(n))
+    || ((h.niches||[]).includes("tutte") && (h.size!=="locale" || (h.spots? h.spots.some(s=>spot.includes(s)) : local))) );
+  const rest = list(S.hashtags).filter(h=>!chosen.includes(h.tag) && fit(h))
+    .sort((a,b)=>(order[a.size]-order[b.size]) || (used[a.tag]||"").localeCompare(used[b.tag]||""));
+  const byTag = {}; for(const h of list(S.hashtags)) byTag[h.tag]=h;
+  return [...chosen.map(t=>byTag[t]).filter(Boolean), ...rest].slice(0,14);
+}
+function tagWhy(h,inp){
+  const spot=(inp.spot||"").toLowerCase(); const used=tagUse()[h.tag];
+  const w=[];
+  if(h.size==="locale") w.push(h.spots&&h.spots.some(s=>spot.includes(s))?"dello spot":"locale");
+  if((h.niches||[]).includes(inp.niche)) w.push("nicchia");
+  w.push({grande:"molto usato: tanta concorrenza",medio:"uso medio",nicchia:"di nicchia: pubblico mirato",locale:"pubblico vicino"}[h.size]||"");
+  if(used) w.push(`usato l'ultima volta il ${used}`);
+  return w.filter(Boolean).join(" · ");
+}
+
+/* ---------- hashtags ---------- */
+function tagUse(){const u={};for(const p of list(S.posts)){if(p.status!=="pubblicato")continue;for(const h of p.hashtags||[]){const d=p.publishedAt||p.date||"";if(!u[h]||d>u[h])u[h]=d}}return u}
+function pickTags(inp){
+  const used=tagUse(); const spot=(inp.spot||"").toLowerCase(); const pool=list(S.hashtags);
+  const fresh = arr => arr.slice().sort((a,b)=>(used[a.tag]||"").localeCompare(used[b.tag]||""));
+  const mine = n => pool.filter(h=>(h.niches||[]).includes(n));
+  const chosen=[];
+  const take=(arr,k)=>{for(const h of fresh(arr)){if(chosen.length>=5||k<=0)break;if(!chosen.includes(h)&&!h.avoid){chosen.push(h);k--}}};
+  take(pool.filter(h=>h.size==="locale" && h.spots && h.spots.some(s=>spot.includes(s))).sort((a,b)=>a.spots.length-b.spots.length),1);
+  take(mine(inp.niche).filter(h=>h.size==="nicchia"),2);
+  take(mine(inp.niche).filter(h=>h.size==="medio"),1);
+  take(pool.filter(h=>h.size==="grande" && ((h.niches||[]).includes(inp.niche)||(h.niches||[]).includes("tutte"))),1);
+  take(mine(inp.niche),5);
+  take(pool.filter(h=>h.size==="locale" && PT_SPOTS.some(s=>spot.includes(s)) && !h.spots),5);
+  return chosen.map(h=>h.tag);
+}
+
+/* ---------- caption & messages ---------- */
+function peopleIn(inp){return (inp.people||[]).map(id=>S.people[id]).filter(Boolean)}
+function captionTemplate(inp,tagged,tags){
+  const pr=S.profile||{}; const ppl=peopleIn(inp);
+  const surfer = ppl.filter(p=>p.handle).map(p=>p.handle).join(" ");
+  const brand = tagged.filter(t=>t.type==="brand").map(t=>t.handle).filter(Boolean).join(" ");
+  const first = inp.desc ? inp.desc.split(/[.\n]/)[0].trim() : "";
+  const lines=[];
+  lines.push([inp.spot, first].filter(Boolean).join(". ")+(first?".":""));
+  if(inp.conditions) lines.push(inp.conditions);
+  lines.push("");
+  if(surfer) lines.push("Surfer: "+surfer);
+  if(brand) lines.push("Board: "+brand);
+  lines.push("📸 "+(pr.handle||"@verdemare.photo"));
+  lines.push("");
+  lines.push(tags.join(" "));
+  return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim();
+}
+function msgTemplate(t,inp){
+  const pr=S.profile||{}; const h=pr.handle||"@verdemare.photo"; const base=pr.base||"Peniche, Portugal"; const sign=pr.brand||"Verdemare"; const ex=inp.unpublished;
+  const why = t.fit ? t.fit+"\n\n" : "";
+  if(t.lang==="pt") return `Olá equipa ${t.name}!\n\n${why}Sou um fotógrafo de surf italiano e fotografo dentro de água em ${base}. ${inp.spot?`Tenho uma série recente de ${inp.spot}`:"Tenho uma série recente"} que acho que encaixa no vosso conteúdo${ex?", ainda não publicada em lado nenhum":""}.\n\nO meu trabalho: ${h}\n\nPosso enviar uma pequena seleção em baixa resolução, se tiverem interesse.\n\nObrigado,\n${sign}`;
+  if(t.lang==="fr") return `Salut l'équipe ${t.name} !\n\n${why}Je suis un photographe de surf italien, je shoote dans l'eau à ${base}. ${inp.spot?`Je viens de faire une série à ${inp.spot}`:"Je viens de faire une nouvelle série"} qui pourrait coller à ce que vous publiez${ex?". Elle n'a été publiée nulle part : vous êtes les premiers à la voir":""}.\n\nMon travail : ${h}\n\nJe peux vous envoyer une petite sélection en basse définition si ça vous intéresse.\n\nMerci,\n${sign}`;
+  if(t.type==="brand") return `Hey ${t.name} team!\n\n${why}I'm an Italian in-water surf photographer based in ${base}. ${inp.spot?`I recently shot a session at ${inp.spot}`:"I recently shot a session"} where your gear shows up well in the water.\n\nMy work: ${h}\n\nIf you're ever looking for in-water content in Portugal, I'd be happy to talk.\n\nCheers,\n${sign}`;
+  return `Hey ${t.name} team!\n\n${why}I'm an Italian in-water surf photographer based in ${base}. ${inp.spot?`I've just shot a series at ${inp.spot}`:"I've just shot a new series"} that I think fits what you publish${ex?". It hasn't been published anywhere, so you'd be the first to see it":""}.\n\nMy work: ${h}\n\nHappy to send a small low-res selection if you're interested.\n\nCheers,\n${sign}`;
+}
+function partnerMsg(p){
+  const pr=S.profile||{}; const sign=pr.brand||"Verdemare"; const h=pr.handle||"@verdemare.photo"; const pct=p.pct||15;
+  if(["retreat","operatore"].includes(p.type)) return `Subject: In-water surf sessions for your groups, with commission\n\nHi ${p.person||p.name+" team"},\n\nI'm an in-water surf photographer based in Peniche. I shoot private surf sessions from inside the water, for surfers of any level, with photos delivered within 48 hours and optional reels.\n\nYou can offer it to your groups as an add-on: you earn ${pct}% of every session, paid monthly. Three sample shots attached, more on ${h}.\n\nCould we have a quick call this week?\n\n${sign}`;
+  return `Hi, I'm [nome], an in-water surf photographer based in Peniche. I shoot private surf sessions from inside the water, for any level. Your guests book through the QR on this flyer with the code ${p.code||"[codice]"}, and you get ${pct}% of every booking, paid monthly. Nothing to manage on your side. Can I leave it at reception?`;
+}
+
+/* ---------- views ---------- */
+const views = {nuovo:vNuovo, coda:vCoda, contatti:vContatti, partner:vPartner, database:vDatabase, hashtag:vHashtag, persone:vPersone, risultati:vRisultati, impostazioni:vImpostazioni};
+let curView=null;
+function route(){
+  const v = views[(location.hash||"#nuovo").slice(1)] ? (location.hash||"#nuovo").slice(1) : "nuovo";
+  document.querySelectorAll("#nav a").forEach(a=>{ if(a.getAttribute("href")==="#"+v){a.setAttribute("aria-current","page")} else a.removeAttribute("aria-current") });
+  const keepScroll = v===curView ? scrollY : 0;
+  curView=v; $("#app").innerHTML = views[v](); bind(v);
+  if(keepScroll) scrollTo(0,keepScroll);
+  const w=$("#who"); if(w) w.textContent=S.profile?.handle||"";
+}
+function rerender(){ const a=document.activeElement; if(a && $("#app").contains(a) && a.matches("input,textarea")) return; route() }
+function nicheOpts(sel){return Object.entries(NICHES).map(([k,v])=>`<option value="${k}" ${k===sel?"selected":""}>${v}</option>`).join("")}
+function opts(map,sel){return Object.entries(map).map(([k,v])=>`<option value="${k}" ${k===sel?"selected":""}>${esc(Array.isArray(v)?v[0]:v)}</option>`).join("")}
+function backupNudge(){
+  const n = list(S.log).length + list(S.posts).length + list(S.bookings).length + list(S.people).length;
+  if(n<3) return "";
+  const d = S.meta.lastExport; if(d && daysAgo(d)<7) return "";
+  return `<div class="notice">I dati sono salvati solo su questo dispositivo. ${d?`Ultimo backup: ${esc(d)}.`:"Non hai ancora fatto un backup."} <a href="#impostazioni">Esporta un backup</a>.</div>`;
+}
+
+/* NUOVO POST */
+let draft = {niche:"barrel", strength:"normale", spot:"", desc:"", conditions:"", board:"", people:[], female:false, unpublished:false};
+let lastOut = null;
+function vNuovo(){
+  const ppl=list(S.people);
+  return `<div class="stack">
+  <div><h1>Nuovo post</h1><p class="lede">Descrivi la foto o la serie. Ti preparo chi taggare, a chi scrivere, gli hashtag e la caption. Tu pubblichi da Instagram.</p></div>
+  ${backupNudge()}${clientNudge()}
+  <div class="grid2">
+   <form class="panel stack" id="f-brief">
+    <h2>La foto</h2>
+    <label>Descrizione<textarea id="b-desc" placeholder="Es. backside barrel profondo, surfista locale, luce dell'alba, scattata dall'interno del tubo">${esc(draft.desc)}</textarea></label>
+    <div class="row">
+      <label>Nicchia<select id="b-niche">${nicheOpts(draft.niche)}</select></label>
+      <label>Spot<input id="b-spot" value="${esc(draft.spot)}" placeholder="Supertubos"></label>
+    </div>
+    <div class="row">
+      <label>Condizioni<input id="b-cond" value="${esc(draft.conditions)}" placeholder="1,8 m · 13 s · offshore"></label>
+      <label>Tavola / muta visibile<input id="b-board" value="${esc(draft.board)}" placeholder="Semente, Fatum, Rip Curl…"></label>
+    </div>
+    <label>Forza della foto<select id="b-strength">
+      <option value="normale" ${draft.strength==="normale"?"selected":""}>Buona, da feed</option>
+      <option value="eccezionale" ${draft.strength==="eccezionale"?"selected":""}>Eccezionale, da copertina</option></select></label>
+    ${ppl.length?`<fieldset style="border:1px solid var(--line);border-radius:7px;padding:10px;margin:0"><legend class="label">Chi c'è nella foto</legend>
+      <div class="chips">${ppl.map(p=>`<label class="check"><input type="checkbox" class="b-p" value="${p.id}" ${draft.people.includes(p.id)?"checked":""}> ${esc(p.name)}</label>`).join("")}</div></fieldset>`:`<p class="muted" style="margin:0;font-size:13px">Aggiungi i surfisti in <a href="#persone">Persone</a> per taggarli e tenere traccia delle liberatorie.</p>`}
+    <label class="check"><input type="checkbox" id="b-fem" ${draft.female?"checked":""}> Surfista donna</label>
+    <label class="check"><input type="checkbox" id="b-unpub" ${draft.unpublished?"checked":""}> Inedita: non la pubblico, la propongo prima a un magazine</label>
+    <button class="primary" type="submit">Prepara il post</button>
+   </form>
+   <div id="out">${lastOut? outHtml(lastOut) : `<div class="panel"><h2>Il piano del post</h2><p class="muted">Qui compaiono tag, contatti, hashtag e caption dopo che descrivi la foto.</p></div>`}</div>
+  </div></div>`;
+}
+function readDraft(){
+  draft = {niche:$("#b-niche").value, strength:$("#b-strength").value, spot:$("#b-spot").value.trim(), desc:$("#b-desc").value.trim(), conditions:$("#b-cond").value.trim(), board:$("#b-board").value.trim(),
+    people:[...document.querySelectorAll(".b-p:checked")].map(x=>x.value), female:$("#b-fem").checked, unpublished:$("#b-unpub").checked};
+  return draft;
+}
+function candRow(x,o){
+  const t=x.t; const v=o.pl.sel[t.id]||""; const ex=o.inp.unpublished;
+  const canMsg = !!(t.submission||t.email||t.type==="brand");
+  const choices = ex ? [["","Non usare"],["ex","Proposta in esclusiva"]] : [["","Non usare"],["tag","Tag sulla foto"],["dm","DM / email"]];
+  return `<div class="cand ${v?"on":""}">
+   <div class="cand-main"><b>${esc(t.name)}</b> <span class="mono muted">${esc(t.handle||"senza handle")}</span>${t.handle&&!t.handleVerified?' <span class="chip warn">da confermare</span>':""}
+    <div class="chips" style="margin-top:3px"><span class="chip">${TYPES[t.type]||t.type}</span><span class="chip">${TIERS[t.tier]||t.tier}</span>${canMsg?'<span class="chip">accetta proposte</span>':""}</div>
+    <div class="why">${esc(x.why.join(" · "))}${t.submission&&v!=="tag"?`<br>Come proporre: ${esc(t.submission)}`:""}</div></div>
+   <div class="cand-num"><label class="num-in"><span class="sr">Follower di ${esc(t.name)}</span><input type="number" min="0" inputmode="numeric" data-fol="${t.id}" value="${t.followers??""}" placeholder="?"></label>
+    <span class="nlab">${t.followers!=null&&t.followers!==""?"follower":"follower: scrivili tu"}</span><span class="nage">${ageNote(t.followersChecked)}</span></div>
+   <label class="cand-sel"><span class="sr">Uso di ${esc(t.name)}</span><select data-sel="${t.id}">${choices.map(([k,l])=>`<option value="${k}" ${k===v?"selected":""}>${l}</option>`).join("")}</select></label>
+  </div>`;
+}
+function tagRow(h,o){
+  const on=o.pl.tagSel.has(h.tag);
+  return `<div class="cand ${on?"on":""}">
+   <label class="cand-main check" style="align-items:flex-start"><input type="checkbox" data-tg="${esc(h.tag)}" ${on?"checked":""} style="margin-top:4px"><span><b class="mono" style="font-size:14px">${esc(h.tag)}</b> <span class="chip">${esc(h.size)}</span><span class="why" style="display:block">${esc(tagWhy(h,o.inp))}</span></span></label>
+   <div class="cand-num"><label class="num-in"><span class="sr">Post con ${esc(h.tag)}</span><input type="number" min="0" inputmode="numeric" data-hc2="${h.id}" value="${h.posts??""}" placeholder="?"></label>
+    <span class="nlab">${h.posts!=null&&h.posts!==""?"post":"post: scrivili tu"}</span><span class="nage">${ageNote(h.checked)}</span></div>
+  </div>`;
+}
+function selected(o){
+  const by=k=>o.pl.cands.filter(x=>o.pl.sel[x.t.id]===k).map(x=>x.t);
+  return {tag:by("tag"),dm:by("dm"),ex:by("ex"),tags:o.pl.tagCands.filter(h=>o.pl.tagSel.has(h.tag)).map(h=>h.tag)};
+}
+function countsHtml(o){
+  const s=selected(o);
+  if(o.inp.unpublished) return `<span class="chip ${s.ex.length===1?"good":"warn"}">Esclusiva: ${s.ex.length}</span> <span class="muted">Proponila a uno alla volta.</span>`;
+  return `<span class="chip ${s.tag.length>=2&&s.tag.length<=5?"good":"warn"}">Tag: ${s.tag.length}</span> <span class="chip">DM: ${s.dm.length}</span> <span class="chip ${s.tags.length>=3&&s.tags.length<=5?"good":"warn"}">Hashtag: ${s.tags.length}</span> <span class="muted">Consigliati: 3-5 tag, 2 DM al massimo, 5 hashtag.</span>`;
+}
+function msgsHtml(o){
+  const s=selected(o); const to=o.inp.unpublished? s.ex : s.dm;
+  return to.map(t=>`<div style="margin-top:12px"><div class="split"><b>${esc(t.name)} · ${LANG[t.lang]||"English"}</b><button class="small" data-copy="m-${t.id}">Copia</button></div>
+       <textarea class="out" id="m-${t.id}" aria-label="Messaggio per ${esc(t.name)}">${esc(msgTemplate(t,o.inp))}</textarea>
+       ${t.email?`<p class="mono muted" style="margin:4px 0 0">Email: ${esc(t.email)}</p>`:""}</div>`).join("")||'<p class="empty">Nessun destinatario scelto per un messaggio.</p>';
+}
+function outHtml(o){
+  const {inp,pl}=o; const ppl=peopleIn(inp);
+  const noRelease = ppl.filter(p=>p.release!=="si");
+  return `<div class="stack">
+   ${noRelease.length?`<div class="notice">Liberatoria mancante per ${noRelease.map(p=>esc(p.name)).join(", ")}. Va bene per il feed, ma senza liberatoria non puoi vendere la foto a un brand.</div>`:""}
+   <div class="panel stack" style="gap:8px"><div class="split"><h3>${inp.unpublished?"A chi proporla":"Chi taggare e a chi scrivere"}</h3></div>
+     <p class="muted" style="margin:0;font-size:13px">${inp.unpublished?"Non pubblicarla e non taggare nessuno finché non ti rispondono.":"Ho già scelto i migliori: cambia con il menu a destra."} I follower li scrivi tu dal profilo Instagram, e restano salvati con la data.</p>
+     <div id="o-count" class="chips" style="align-items:center">${countsHtml(o)}</div>
+     <div>${pl.cands.map(x=>candRow(x,o)).join("")||'<p class="empty">Nessun account adatto a questa nicchia. Aggiungine in Account.</p>'}</div></div>
+   <div class="panel stack" style="gap:8px"><h3>Hashtag</h3>
+     <p class="muted" style="margin:0;font-size:13px">Il numero di post lo vedi cercando l'hashtag su Instagram. Mescola un hashtag dello spot, due di nicchia, uno medio e uno grande.</p>
+     <div>${pl.tagCands.map(h=>tagRow(h,o)).join("")}</div>
+     <div class="split"><span class="label">Da copiare</span><button class="small" data-copy="o-tags">Copia</button></div>
+     <textarea class="out" id="o-tags" style="min-height:60px" aria-label="Hashtag scelti">${esc(selected(o).tags.join(" "))}</textarea></div>
+   <div class="panel"><h3>Messaggi</h3><p class="muted" style="margin:4px 0 0;font-size:13px">Modifica la prima riga con un dettaglio di quello che pubblicano: è quella che fa rispondere.</p>
+     <div id="o-msgs">${msgsHtml(o)}</div></div>
+   ${inp.unpublished?"":`<div class="panel"><div class="split"><h3>Caption</h3><button class="small" data-copy="o-cap">Copia</button></div>
+     <textarea class="out" id="o-cap" aria-label="Caption">${esc(captionTemplate(inp,selected(o).tag,selected(o).tags))}</textarea>
+     <p class="muted" style="margin:4px 0 0;font-size:12.5px">Si aggiorna quando cambi tag o hashtag: fai le modifiche a mano per ultime.</p></div>`}
+   <div class="row"><button class="primary" id="save-post">Salva in coda</button></div>
+  </div>`;
+}
+function clientNudge(){
+  const pub = list(S.posts).filter(p=>p.status==="pubblicato").sort((a,b)=>(b.publishedAt||"").localeCompare(a.publishedAt||"")).slice(0,6);
+  if(pub.length<4 || pub.some(p=>p.niche==="cliente")) return "";
+  return `<div class="notice">Negli ultimi ${pub.length} post non c'è nessuna sessione cliente. Un post o una storia con un cliente intermedio fa capire a chi ti segue che può prenotarti.</div>`;
+}
+
+/* CODA */
+function vCoda(){
+  const ps=list(S.posts).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  const groups={idea:"Da pubblicare",inedita:"Inedite in attesa",pubblicato:"Pubblicati"};
+  const weekCount = list(S.posts).filter(p=>p.status==="pubblicato" && daysAgo(p.publishedAt)<7).length;
+  return `<div class="stack"><div><h1>Coda</h1><p class="lede">Obiettivo: 2 post a settimana. Ultimi 7 giorni: <b>${weekCount}</b> pubblicati.</p></div>
+  ${clientNudge()}
+  ${Object.entries(groups).map(([st,lab])=>{const g=ps.filter(p=>(p.status||"idea")===st);return `<div class="panel"><h2>${lab} <span class="muted mono">${g.length}</span></h2>
+   ${g.map(p=>`<div class="tgt"><div><b>${esc(p.spot||"Senza spot")}</b> <span class="chip">${NICHES[p.niche]||""}</span> <span class="muted mono">${esc(p.publishedAt||p.date||"")}</span>
+     <div class="why" style="grid-column:auto">${esc(p.desc||"")}</div>
+     <div class="chips" style="margin-top:4px">${(p.tagTargets||[]).map(id=>`<span class="chip">${esc(S.targets[id]?.name||id)}</span>`).join("")}${(p.dmTargets||[]).map(id=>`<span class="chip warn">DM ${esc(S.targets[id]?.name||id)}</span>`).join("")}${(p.exclusiveTargets||[]).map(id=>`<span class="chip good">Esclusiva ${esc(S.targets[id]?.name||id)}</span>`).join("")}</div></div>
+     <div class="row" style="flex:0 0 auto;gap:6px;align-items:start">${st!=="pubblicato"?`<button class="small primary" data-pub="${p.id}">${st==="inedita"?"Proposta inviata":"Pubblicato"}</button>`:""}<button class="small" data-delpost="${p.id}">Elimina</button></div>
+     ${p.caption?`<details class="why"><summary>Caption e hashtag</summary><pre class="out">${esc(p.caption)}</pre></details>`:""}</div>`).join("")||'<p class="empty">Niente qui.</p>'}</div>`}).join("")}
+  </div>`;
+}
+
+/* CONTATTI */
+function vContatti(){
+  const ev=list(S.log).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  const follow = ev.filter(e=>(e.kind==="dm"||e.kind==="email") && e.outcome==="inviato" && daysAgo(e.date)>=7 && !e.followed);
+  const ts=list(S.targets).sort((a,b)=>a.name.localeCompare(b.name));
+  return `<div class="stack"><div><h1>Contatti</h1><p class="lede">Ogni tag, DM ed email verso magazine e brand, con l'esito. Dopo 3 tag senza risposta un account va in pausa da solo.</p></div>
+  <div class="panel slot dm"><h2>Follow-up da fare <span class="muted mono">${follow.length}</span></h2>
+   ${follow.map(e=>`<div class="tgt"><div><b>${esc(S.targets[e.targetId]?.name||"?")}</b> <span class="muted">${esc(e.kind.toUpperCase())} del ${esc(e.date)} · ${daysAgo(e.date)} giorni fa</span><div class="why" style="grid-column:auto">Una riga e una foto nuova. Se non rispondono neanche dopo, segna "Nessuna risposta".</div></div>
+   <div><button class="small" data-fu="${e.id}">Follow-up inviato</button></div></div>`).join("")||'<p class="empty">Nessun follow-up in sospeso.</p>'}</div>
+  <form class="panel stack" id="f-log"><h2>Registra un contatto</h2>
+   <div class="row"><label>Account<select id="l-t">${ts.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join("")}</select></label>
+   <label>Tipo<select id="l-k"><option value="dm">DM</option><option value="email">Email</option><option value="tag">Tag</option></select></label>
+   <label>Data<input type="date" id="l-d" value="${today()}"></label></div>
+   <label>Nota<input id="l-n" placeholder="Es. inviate 5 foto di Supertubos in low-res"></label>
+   <div><button class="primary" type="submit">Registra</button></div></form>
+  <div class="panel"><h2>Storico</h2><div class="table-wrap"><table><thead><tr><th>Data</th><th>Account</th><th>Tipo</th><th>Esito</th><th>Nota</th></tr></thead><tbody>
+   ${ev.map(e=>`<tr><td class="mono">${esc(e.date)}</td><td>${esc(S.targets[e.targetId]?.name||"?")}</td><td>${esc(e.kind)}${e.followed?' <span class="chip">follow-up</span>':""}</td>
+   <td><select data-oc="${e.id}" aria-label="Esito">${opts(OUTCOMES,e.outcome)}</select></td><td class="muted">${esc(e.note||"")}</td></tr>`).join("")||'<tr><td colspan="5" class="empty">Ancora nessun contatto. Segna un post come pubblicato dalla Coda o registra un DM qui sopra.</td></tr>'}
+  </tbody></table></div></div></div>`;
+}
+
+/* PARTNER */
+let editP=null, showMsg=null;
+function partnerFollow(){
+  return list(S.partners).filter(p=>(["contattato","incontro"].includes(p.phase) && daysAgo(p.lastContact)>=5) || (p.phase==="dacontattare" && p.prio==="alta"))
+    .sort((a,b)=>(a.phase==="dacontattare")-(b.phase==="dacontattare") || (a.lastContact||"").localeCompare(b.lastContact||""));
+}
+function vPartner(){
+  const ps=list(S.partners).sort((a,b)=>(Object.keys(PRIO).indexOf(a.prio)-Object.keys(PRIO).indexOf(b.prio)) || a.name.localeCompare(b.name));
+  const m=month(today()); const bk=list(S.bookings);
+  const bkM=bk.filter(b=>month(b.date)===m);
+  const counts={}; for(const k in PHASES) counts[k]=0; for(const p of ps) counts[p.phase]=(counts[p.phase]||0)+1;
+  const fol=partnerFollow();
+  const e=editP? S.partners[editP]||{} : {};
+  const months=[...new Set(bk.map(b=>month(b.date)))].sort().reverse();
+  const comm={}; for(const b of bk){ if(!b.partnerId) continue; const k=month(b.date)+"|"+b.partnerId; (comm[k]=comm[k]||{m:month(b.date),pid:b.partnerId,n:0,pkg:0,c:0,unpaid:0}); const c=comm[k]; c.n++; c.pkg+=b.pkg||0; c.c+=b.commission||0; if(!b.paid) c.unpaid+=b.commission||0 }
+  return `<div class="stack"><div><h1>Partner</h1><p class="lede">Hotel, surf house, retreat e operatori. La commissione si calcola solo sul pacchetto, mai sugli extra. Paga e manda il report entro il 5 del mese.</p></div>
+  ${backupNudge()}
+  <div class="panel"><h2>${monthName(m)}</h2><div class="kpis">
+    <div class="kpi"><div class="label">Sessioni</div><div class="v">${bkM.length}</div></div>
+    <div class="kpi"><div class="label">Incasso</div><div class="v">${eur(bkM.reduce((a,b)=>a+(b.pkg||0)+(b.extra||0),0))}</div></div>
+    <div class="kpi"><div class="label">Di cui extra</div><div class="v">${eur(bkM.reduce((a,b)=>a+(b.extra||0),0))}</div></div>
+    <div class="kpi"><div class="label">Commissioni</div><div class="v">${eur(bkM.reduce((a,b)=>a+(b.commission||0),0))}</div></div>
+    <div class="kpi"><div class="label">Da partner</div><div class="v">${bkM.filter(b=>b.partnerId).length}</div></div>
+  </div></div>
+  <div class="panel"><h2>Funnel</h2><div class="funnel">${Object.entries(PHASES).map(([k,v])=>`<div><span class="label">${v}</span><b>${counts[k]||0}</b></div>`).join("")}</div></div>
+  <div class="panel slot dm"><h2>Da fare <span class="muted mono">${fol.length}</span></h2>
+   ${fol.map(p=>`<div class="tgt"><div><b>${esc(p.name)}</b> <span class="chip">${PHASES[p.phase]}</span> <span class="muted">${p.lastContact?`ultimo contatto ${daysAgo(p.lastContact)} giorni fa`:"mai contattato"}</span><div class="why" style="grid-column:auto">${esc(p.notes||p.why||"")}</div></div>
+   <div><button class="small" data-pc="${p.id}">Contattato oggi</button></div></div>`).join("")||'<p class="empty">Niente in sospeso.</p>'}</div>
+  <form class="panel stack" id="f-bk"><h2>Registra una sessione</h2>
+   <div class="row"><label>Arriva da<select id="k-p"><option value="">Diretto (nessun partner)</option>${ps.filter(p=>p.phase!=="no").map(p=>`<option value="${p.id}">${esc(p.name)} · ${p.pct||0}%</option>`).join("")}</select></label>
+    <label>Data<input type="date" id="k-d" value="${today()}"></label></div>
+   <div class="row"><label>Pacchetto<select id="k-pk">${opts(PACKAGES,"f1")}</select></label>
+    <label>Prezzo pacchetto (€)<input type="number" id="k-a" min="0" step="1" value="60" inputmode="decimal"></label>
+    <label>Extra venduti (€)<input type="number" id="k-x" min="0" step="1" value="0" inputmode="decimal"></label></div>
+   <label>Cliente<input id="k-c" placeholder="Nome o nota, facoltativo"></label>
+   <p class="muted" id="k-hint" style="margin:0;font-size:13px"></p>
+   <div><button class="primary" type="submit">Registra</button></div></form>
+  <div class="panel"><h2>Commissioni</h2><div class="table-wrap"><table><thead><tr><th>Mese</th><th>Partner</th><th class="num">Sessioni</th><th class="num">Pacchetti</th><th class="num">Commissione</th><th></th></tr></thead><tbody>
+   ${Object.values(comm).sort((a,b)=>b.m.localeCompare(a.m)).map(c=>`<tr><td>${monthName(c.m)}</td><td>${esc(S.partners[c.pid]?.name||"?")}<br><span class="mono muted">${esc(S.partners[c.pid]?.code||"")}</span></td><td class="num">${c.n}</td><td class="num">${eur(c.pkg)}</td><td class="num">${eur(c.c)}</td>
+   <td>${c.unpaid>0?`<button class="small" data-paid="${c.m}|${c.pid}">Segna pagata</button>`:'<span class="chip good">pagata</span>'}</td></tr>`).join("")||'<tr><td colspan="6" class="empty">Le commissioni compaiono quando registri una sessione arrivata da un partner.</td></tr>'}
+  </tbody></table></div></div>
+  <div class="panel"><h2>Strutture <span class="muted mono">${ps.length}</span></h2><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Tipo</th><th>Priorità</th><th>Fase</th><th>Codice</th><th class="num">%</th><th>Contatto</th><th></th></tr></thead><tbody>
+   ${ps.map(p=>`<tr><td><b>${esc(p.name)}</b><br><span class="muted">${esc(p.zone||"")}</span>${p.url?` · <a href="${esc(p.url)}" target="_blank" rel="noopener">sito</a>`:""}${daysAgo(p.verified)>90?' <span class="chip warn">ricontrolla</span>':""}</td>
+    <td>${PTYPES[p.type]||esc(p.type)}</td><td>${PRIO[p.prio]||""}</td>
+    <td><select data-ph="${p.id}" aria-label="Fase di ${esc(p.name)}">${opts(PHASES,p.phase)}</select></td>
+    <td class="mono">${esc(p.code||"")}<br><a class="muted" href="/book/${encodeURIComponent(p.id)}/" target="_blank" rel="noopener">/book/${esc(p.id)}/</a>${(S.clicks&&S.clicks[p.id])?` · ${S.clicks[p.id]} scansioni`:""}</td><td class="num">${p.pct??""}</td>
+    <td class="muted">${[p.person,p.email,p.phone].filter(Boolean).map(esc).join("<br>")||"—"}</td>
+    <td><div class="row" style="gap:6px;flex-wrap:nowrap"><button class="small" data-pmsg="${p.id}">Messaggio</button><button class="small" data-pedit="${p.id}">Modifica</button></div></td></tr>
+    ${showMsg===p.id?`<tr><td colspan="8"><div class="split"><b>Messaggio per ${esc(p.name)}</b><button class="small" data-copy="pm-${p.id}">Copia</button></div><textarea class="out" id="pm-${p.id}" aria-label="Messaggio">${esc(partnerMsg(p))}</textarea></td></tr>`:""}`).join("")}
+  </tbody></table></div></div>
+  <form class="panel stack" id="f-pt"><h2>${editP?"Modifica "+esc(e.name):"Aggiungi una struttura"}</h2>
+   <div class="row"><label>Nome<input id="pt-name" required value="${esc(e.name||"")}"></label><label>Zona<input id="pt-zone" value="${esc(e.zone||"")}" placeholder="Baleal"></label></div>
+   <div class="row"><label>Tipo<select id="pt-type">${opts(PTYPES,e.type||"hotel")}</select></label><label>Priorità<select id="pt-prio">${opts(PRIO,e.prio||"media")}</select></label><label>Fase<select id="pt-phase">${opts(PHASES,e.phase||"dacontattare")}</select></label></div>
+   <label>Perché è un buon target<input id="pt-why" value="${esc(e.why||"")}"></label>
+   <div class="row"><label>Persona di riferimento<input id="pt-person" value="${esc(e.person||"")}"></label><label>Email<input id="pt-email" type="email" value="${esc(e.email||"")}"></label><label>Telefono<input id="pt-phone" type="tel" value="${esc(e.phone||"")}"></label></div>
+   <div class="row"><label>Sito<input id="pt-url" value="${esc(e.url||"")}"></label><label>Codice partner<input id="pt-code" value="${esc(e.code||"")}" placeholder="RIDE"></label><label>Commissione %<input id="pt-pct" type="number" min="0" max="50" value="${esc(e.pct??15)}"></label></div>
+   <label>Note<textarea id="pt-notes">${esc(e.notes||"")}</textarea></label>
+   <div class="row"><button class="primary" type="submit">${editP?"Salva modifiche":"Aggiungi"}</button>${editP?'<button type="button" id="pt-cancel">Annulla</button><button type="button" class="danger" id="pt-del">Elimina</button>':""}</div></form>
+  ${bk.length?`<details class="panel"><summary>Tutte le sessioni registrate (${bk.length})</summary><div class="table-wrap"><table><thead><tr><th>Data</th><th>Da</th><th>Pacchetto</th><th class="num">Pacchetto</th><th class="num">Extra</th><th class="num">Comm.</th><th></th></tr></thead><tbody>
+   ${bk.sort((a,b)=>b.date.localeCompare(a.date)).map(b=>`<tr><td class="mono">${esc(b.date)}</td><td>${esc(S.partners[b.partnerId]?.name||"Diretto")}${b.client?`<br><span class="muted">${esc(b.client)}</span>`:""}</td><td>${esc(PACKAGES[b.package]?.[0]||b.package)}</td><td class="num">${eur(b.pkg)}</td><td class="num">${eur(b.extra)}</td><td class="num">${eur(b.commission)}</td><td><button class="small" data-bdel="${b.id}">Elimina</button></td></tr>`).join("")}
+  </tbody></table></div></details>`:""}
+  </div>`;
+}
+
+/* ACCOUNT */
+let editT=null;
+function vDatabase(){
+  const ts=list(S.targets).sort((a,b)=>(a.tier+a.name).localeCompare(b.tier+b.name));
+  const e=editT? S.targets[editT]||{} : {};
+  return `<div class="stack"><div><h1>Account</h1><p class="lede">Magazine, pagine, brand ed eventi. Ogni voce ha la data di verifica: ricontrolla quelle più vecchie di 3 mesi.</p></div>
+  <form class="panel stack" id="f-t"><h2>${editT?"Modifica "+esc(e.name):"Aggiungi un account"}</h2>
+   <div class="row"><label>Nome<input id="t-name" required value="${esc(e.name||"")}"></label><label>Handle Instagram<input id="t-handle" value="${esc(e.handle||"")}" placeholder="@..."></label></div>
+   <div class="row"><label>Tipo<select id="t-type">${opts(TYPES,e.type)}</select></label><label>Livello<select id="t-tier">${opts(TIERS,e.tier)}</select></label><label>Lingua<select id="t-lang">${opts(LANG,e.lang||"en")}</select></label></div>
+   <fieldset class="chips" style="border:1px solid var(--line);border-radius:7px;padding:10px;margin:0"><legend class="label">Nicchie</legend>${Object.entries(NICHES).map(([k,v])=>`<label class="check"><input type="checkbox" class="t-n" value="${k}" ${(e.niches||[]).includes(k)?"checked":""}> ${v}</label>`).join("")}</fieldset>
+   <div class="row"><label>Sito<input id="t-url" value="${esc(e.url||"")}"></label><label>Email<input id="t-email" value="${esc(e.email||"")}"></label></div>
+   <label>Come proporre (regole di submission)<input id="t-sub" value="${esc(e.submission||"")}"></label>
+   <label>Prima riga dei messaggi: perché è il destinatario giusto<input id="t-fit" value="${esc(e.fit||"")}" placeholder="Es. Loved your recent feature on cold-water longboarding."></label>
+   <label>Parole che lo identificano in una foto (per i brand, separate da virgola)<input id="t-match" value="${esc((e.matchWords||[]).join(", "))}"></label>
+   <label>Note<textarea id="t-notes">${esc(e.notes||"")}</textarea></label>
+   <div class="row"><label>Follower<input id="t-fol" type="number" min="0" inputmode="numeric" value="${e.followers??""}"></label><label class="check" style="align-self:end"><input type="checkbox" id="t-hv" ${e.handleVerified?"checked":""}> Handle verificato su Instagram</label></div>
+   <div class="row"><button class="primary" type="submit">${editT?"Salva modifiche":"Aggiungi"}</button>${editT?'<button type="button" id="t-cancel">Annulla</button><button type="button" class="danger" id="t-del">Elimina</button>':""}</div></form>
+  <div class="panel"><h2>${ts.length} account</h2><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Tipo</th><th>Livello</th><th>Nicchie</th><th class="num">Follower</th><th>Verificato</th><th>Stato</th><th></th></tr></thead><tbody>
+  ${ts.map(t=>{const p=isPaused(t);const auto=p&&t.status!=="pausa";return `<tr><td><b>${esc(t.name)}</b><br><span class="mono muted">${esc(t.handle||"")}</span>${t.handle&&!t.handleVerified?' <span class="chip warn">da confermare</span>':""}${t.url?`<br><a href="${esc(t.url)}" target="_blank" rel="noopener">sito</a>`:""}</td>
+   <td>${TYPES[t.type]||esc(t.type)}</td><td>${TIERS[t.tier]||esc(t.tier)}</td><td><div class="chips">${(t.niches||[]).map(n=>`<span class="chip">${NICHES[n]||esc(n)}</span>`).join("")}</div></td>
+   <td class="num">${fmtN(t.followers)||"?"}<br><span class="muted" style="font-size:11.5px">${t.followersChecked?esc(t.followersChecked):""}</span></td>
+   <td class="mono">${esc(t.verified||"")}${daysAgo(t.verified)>90?' <span class="chip warn">ricontrolla</span>':""}</td>
+   <td>${p?`<span class="chip bad">${auto?"pausa auto":"in pausa"}</span>`:'<span class="chip good">attivo</span>'}</td>
+   <td><div class="row" style="gap:6px;flex-wrap:nowrap"><button class="small" data-edit="${t.id}">Modifica</button><button class="small" data-pause="${t.id}">${t.status==="pausa"?"Riattiva":"Pausa"}</button></div></td></tr>`}).join("")}
+  </tbody></table></div></div></div>`;
+}
+
+/* HASHTAG */
+function vHashtag(){
+  const used=tagUse();
+  const hs=list(S.hashtags).sort((a,b)=>a.tag.localeCompare(b.tag));
+  return `<div class="stack"><div><h1>Hashtag</h1><p class="lede">Instagram non mostra le visualizzazioni degli hashtag. Il numero di post lo leggi tu cercando l'hashtag nell'app e lo aggiorni qui. L'app ruota gli hashtag e non ripete quelli usati di recente.</p></div>
+  <form class="panel row" id="f-h"><label>Hashtag<input id="h-tag" placeholder="#..." required></label>
+   <label>Dimensione<select id="h-size"><option value="grande">Grande</option><option value="medio">Medio</option><option value="nicchia" selected>Nicchia</option><option value="locale">Locale</option></select></label>
+   <label>Nicchia<select id="h-n"><option value="tutte">Tutte</option>${nicheOpts("")}</select></label>
+   <div style="align-self:end;flex:0 0 auto"><button class="primary" type="submit">Aggiungi</button></div></form>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Hashtag</th><th>Dimensione</th><th>Nicchie</th><th class="num">Post</th><th>Contato il</th><th>Ultimo uso</th><th></th></tr></thead><tbody>
+  ${hs.map(h=>`<tr><td class="mono">${esc(h.tag)}${h.avoid?' <span class="chip bad">evita</span>':""}${h.note?`<br><span class="muted" style="font-family:var(--f-body);font-size:12.5px">${esc(h.note)}</span>`:""}</td><td>${esc(h.size)}</td>
+   <td><div class="chips">${(h.niches||[]).map(n=>`<span class="chip">${NICHES[n]||esc(n)}</span>`).join("")}</div></td>
+   <td class="num"><input type="number" min="0" step="1000" data-hc="${h.id}" value="${h.posts??""}" placeholder="?" style="width:120px" inputmode="numeric" aria-label="Numero di post per ${esc(h.tag)}"></td>
+   <td class="mono">${esc(h.checked||"mai")}${h.posts?`<br><span class="muted">${fmtN(h.posts)}</span>`:""}</td><td class="mono">${esc(used[h.tag]||"—")}</td>
+   <td><button class="small" data-hdel="${h.id}">Elimina</button></td></tr>`).join("")}
+  </tbody></table></div></div></div>`;
+}
+
+/* PERSONE */
+function vPersone(){
+  const ps=list(S.people).sort((a,b)=>a.name.localeCompare(b.name));
+  return `<div class="stack"><div><h1>Persone</h1><p class="lede">Surfisti che fotografi. Tieni traccia della liberatoria e di cosa avete concordato se un brand compra una foto.</p></div>
+  <form class="panel stack" id="f-p"><h2>Aggiungi una persona</h2>
+   <div class="row"><label>Nome<input id="p-name" required></label><label>Handle<input id="p-handle" placeholder="@..."></label>
+   <label>Liberatoria<select id="p-rel"><option value="no">Non firmata</option><option value="attesa">In attesa</option><option value="si">Firmata</option></select></label></div>
+   <label>Accordo per uso commerciale<input id="p-share" placeholder="Es. 30% al surfista se un brand compra una foto"></label>
+   <label>Note<input id="p-notes" placeholder="Livello, tavola, sponsor"></label>
+   <div><button class="primary" type="submit">Aggiungi</button></div></form>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Liberatoria</th><th>Accordo</th><th>Note</th><th></th></tr></thead><tbody>
+  ${ps.map(p=>`<tr><td><b>${esc(p.name)}</b><br><span class="mono muted">${esc(p.handle||"")}</span></td>
+   <td><select data-rel="${p.id}" aria-label="Liberatoria di ${esc(p.name)}">${opts({no:"Non firmata",attesa:"In attesa",si:"Firmata"},p.release)}</select></td>
+   <td>${esc(p.share||"")}</td><td class="muted">${esc(p.notes||"")}</td><td><button class="small" data-pdel="${p.id}">Elimina</button></td></tr>`).join("")||'<tr><td colspan="5" class="empty">Nessuna persona ancora. Aggiungi i surfisti che fotografi più spesso.</td></tr>'}
+  </tbody></table></div></div></div>`;
+}
+
+/* RISULTATI */
+function vRisultati(){
+  const rows=list(S.targets).map(t=>({t,s:statsFor(t.id)})).filter(r=>r.s.ev.length).sort((a,b)=>(b.s.reposts*3+b.s.replies*2+b.s.jobs*5)-(a.s.reposts*3+a.s.replies*2+a.s.jobs*5));
+  const pub=list(S.posts).filter(p=>p.status==="pubblicato");
+  const byN={}; for(const p of pub){byN[p.niche]=(byN[p.niche]||0)+1}
+  const tot=k=>rows.reduce((a,r)=>a+r.s[k],0);
+  const bk=list(S.bookings); const byP={};
+  for(const b of bk){const k=b.partnerId||"_";(byP[k]=byP[k]||{n:0,tot:0,c:0});byP[k].n++;byP[k].tot+=(b.pkg||0)+(b.extra||0);byP[k].c+=b.commission||0}
+  return `<div class="stack"><div><h1>Risultati</h1><p class="lede">Quali account e quali partner ti portano risultati. Investi il tempo su quelli in cima.</p></div>
+  <div class="panel"><h2>Instagram</h2><div class="kpis">${[["Post pubblicati",pub.length],["Tag",tot("tags")],["DM ed email",tot("dms")],["Risposte",tot("replies")],["Repost",tot("reposts")],["Lavori",tot("jobs")]].map(([l,v])=>`<div class="kpi"><div class="label">${l}</div><div class="v">${v}</div></div>`).join("")}</div></div>
+  <div class="panel"><h2>Per account</h2><div class="table-wrap"><table><thead><tr><th>Account</th><th class="num">Tag</th><th class="num">DM</th><th class="num">Risposte</th><th class="num">Repost</th><th class="num">Alta ris.</th><th class="num">Lavori</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td>${esc(r.t.name)}${isPaused(r.t)?' <span class="chip bad">pausa</span>':""}</td>${["tags","dms","replies","reposts","hires","jobs"].map(k=>`<td class="num">${r.s[k]}</td>`).join("")}</tr>`).join("")||'<tr><td colspan="7" class="empty">I numeri compaiono quando inizi a registrare tag e messaggi.</td></tr>'}
+  </tbody></table></div></div>
+  <div class="panel"><h2>Sessioni per canale</h2><div class="table-wrap"><table><thead><tr><th>Canale</th><th class="num">Sessioni</th><th class="num">Incasso</th><th class="num">Commissioni</th><th class="num">Netto</th></tr></thead><tbody>
+  ${Object.entries(byP).sort((a,b)=>b[1].tot-a[1].tot).map(([k,v])=>`<tr><td>${k==="_"?"Diretto":esc(S.partners[k]?.name||"?")}</td><td class="num">${v.n}</td><td class="num">${eur(v.tot)}</td><td class="num">${eur(v.c)}</td><td class="num">${eur(v.tot-v.c)}</td></tr>`).join("")||'<tr><td colspan="5" class="empty">Registra le sessioni in Partner per vedere da dove arrivano i clienti.</td></tr>'}
+  </tbody></table></div></div>
+  <div class="panel"><h2>Post per nicchia</h2><div class="chips">${Object.entries(NICHES).map(([k,v])=>`<span class="chip">${v}: ${byN[k]||0}</span>`).join("")}</div></div></div>`;
+}
+
+/* IMPOSTAZIONI */
+function vImpostazioni(){
+  const pr=S.profile||{};
+  const n={}; for(const c of COLS) n[c]=list(S[c]).length;
+  return `<div class="stack"><div><h1>Impostazioni</h1><p class="lede">L'app non usa account né server: tutto resta su questo dispositivo. Per passare i dati da un telefono a un computer, esporta il backup e importalo sull'altro.</p></div>
+  ${storageOk?"":'<div class="notice">Questo browser non mi lascia salvare i dati: forse sei in navigazione privata. Apri l\'app in una finestra normale.</div>'}
+  <form class="panel stack" id="f-pr"><h2>Profilo</h2>
+   <div class="row"><label>Nome del brand<input id="pr-brand" value="${esc(pr.brand||"")}"></label><label>Handle Instagram<input id="pr-handle" value="${esc(pr.handle||"")}"></label><label>Base<input id="pr-base" value="${esc(pr.base||"")}"></label></div>
+   <div><button class="primary" type="submit">Salva profilo</button></div></form>
+  <div class="panel stack"><h2>Backup</h2>
+   <p class="muted" style="margin:0">Sul dispositivo: ${n.targets} account, ${n.partners} partner, ${n.posts} post, ${n.log} contatti, ${n.bookings} sessioni, ${n.people} persone, ${n.hashtags} hashtag. Ultimo backup: ${esc(S.meta.lastExport||"mai")}.</p>
+   <div class="row" style="flex-wrap:wrap"><button class="primary" id="exp" style="flex:0 0 auto">Esporta backup</button>
+    <label style="flex:0 0 auto;align-self:center"><span class="muted">Importa un backup</span><input type="file" id="imp" accept="application/json,.json"></label></div>
+   <p class="muted" style="margin:0;font-size:13px">L'importazione sostituisce i dati di questo dispositivo con quelli del file.</p>
+   <p id="persist" class="muted" style="margin:0;font-size:13px"></p>
+  </div>
+  <div class="panel stack"><h2>Installa sul telefono</h2>
+   <p style="margin:0">Android (Chrome): menu ⋮ e poi <b>Installa app</b>. Chrome la installa come un'app vera, con l'icona e senza barra del browser. Funziona anche offline.</p>
+   <p style="margin:0">iPhone (Safari): tasto Condividi e poi <b>Aggiungi alla schermata Home</b>.</p></div>
+  <div class="panel stack"><h2>Azzera</h2><p class="muted" style="margin:0">Cancella tutti i dati, anche quelli online, e riparte dall'elenco iniziale. Esporta prima un backup.</p><div><button class="danger" id="reset">Cancella tutto</button></div></div>
+  </div>`;
+}
+
+/* ---------- bindings ---------- */
+function bind(v){
+  document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>copyEl($("#"+b.dataset.copy)));
+  if(v==="nuovo"){
+    $("#f-brief").onsubmit=e=>{e.preventDefault(); const inp=readDraft(); if(!inp.desc){toast("Scrivi una descrizione della foto");$("#b-desc").focus();return}
+      lastOut={inp,pl:plan(inp)}; $("#out").innerHTML=outHtml(lastOut); bindOut(); if(innerWidth<860) $("#out").scrollIntoView({behavior:"smooth"})};
+    bindOut();
+  }
+  if(v==="coda"){
+    document.querySelectorAll("[data-pub]").forEach(b=>b.onclick=()=>{const p=S.posts[b.dataset.pub]; if(!p) return; const d=today();
+      if(p.status==="inedita"){ for(const id of p.exclusiveTargets||[]) S.log[newId("l")]={targetId:id,kind:"email",date:d,outcome:"inviato",postId:p.id,note:"Proposta in esclusiva"} }
+      else { for(const id of p.tagTargets||[]) S.log[newId("l")]={targetId:id,kind:"tag",date:d,outcome:"inviato",postId:p.id};
+             for(const id of p.dmTargets||[]) S.log[newId("l")]={targetId:id,kind:"dm",date:d,outcome:"inviato",postId:p.id} }
+      for(const id in S.log) if(!S.log[id].id) S.log[id].id=id;
+      toast(p.status==="inedita"?"Proposta registrata":"Pubblicato: tag e DM registrati");
+      patch("posts",p.id,{status:"pubblicato",publishedAt:d})});
+    document.querySelectorAll("[data-delpost]").forEach(b=>armDelete(b,()=>del("posts",b.dataset.delpost)));
+  }
+  if(v==="contatti"){
+    document.querySelectorAll("[data-oc]").forEach(s=>s.onchange=()=>patch("log",s.dataset.oc,{outcome:s.value}));
+    document.querySelectorAll("[data-fu]").forEach(b=>b.onclick=()=>{const e=S.log[b.dataset.fu]; const id=newId("l"); S.log[e.id]={...e,followed:true};
+      S.log[id]={id,targetId:e.targetId,kind:e.kind,date:today(),outcome:"inviato",followed:true,note:"Follow-up"}; save(); toast("Follow-up registrato"); route()});
+    $("#f-log").onsubmit=e=>{e.preventDefault(); if(!$("#l-t").value) return; const id=newId("l");
+      put("log",id,{id,targetId:$("#l-t").value,kind:$("#l-k").value,date:$("#l-d").value||today(),outcome:"inviato",note:$("#l-n").value.trim()}); toast("Registrato")};
+  }
+  if(v==="partner"){
+    document.querySelectorAll("[data-ph]").forEach(s=>s.onchange=()=>{const up={phase:s.value}; if(["contattato","incontro"].includes(s.value)) up.lastContact=today(); patch("partners",s.dataset.ph,up)});
+    document.querySelectorAll("[data-pc]").forEach(b=>b.onclick=()=>{const p=S.partners[b.dataset.pc]; patch("partners",p.id,{lastContact:today(),phase:p.phase==="dacontattare"?"contattato":p.phase}); toast("Registrato: follow-up tra 5 giorni")});
+    document.querySelectorAll("[data-pmsg]").forEach(b=>b.onclick=()=>{showMsg = showMsg===b.dataset.pmsg? null : b.dataset.pmsg; route()});
+    document.querySelectorAll("[data-pedit]").forEach(b=>b.onclick=()=>{editP=b.dataset.pedit; route(); $("#f-pt").scrollIntoView({behavior:"smooth"})});
+    document.querySelectorAll("[data-paid]").forEach(b=>b.onclick=()=>{const [m,pid]=b.dataset.paid.split("|"); for(const k in S.bookings){const x=S.bookings[k]; if(x.partnerId===pid && month(x.date)===m) S.bookings[k]={...x,paid:true}} save(); toast("Commissione segnata come pagata"); route()});
+    document.querySelectorAll("[data-bdel]").forEach(b=>armDelete(b,()=>del("bookings",b.dataset.bdel)));
+    const hint=()=>{const p=S.partners[$("#k-p").value]; const a=+$("#k-a").value||0; $("#k-hint").textContent = p? `Commissione per ${p.name}: ${p.pct||0}% di ${eur(a)} = ${eur(a*(p.pct||0)/100)}. Gli extra restano tuoi.` : "Cliente diretto: nessuna commissione."};
+    $("#k-pk").onchange=()=>{const pk=PACKAGES[$("#k-pk").value]; if(pk&&pk[1]) $("#k-a").value=pk[1]; hint()};
+    $("#k-p").onchange=hint; $("#k-a").oninput=hint; hint();
+    $("#f-bk").onsubmit=e=>{e.preventDefault(); const p=S.partners[$("#k-p").value]; const a=Math.max(0,+$("#k-a").value||0); const id=newId("b");
+      put("bookings",id,{id,date:$("#k-d").value||today(),partnerId:p?p.id:"",package:$("#k-pk").value,pkg:a,extra:Math.max(0,+$("#k-x").value||0),pct:p?(p.pct||0):0,commission:p?Math.round(a*(p.pct||0))/100:0,client:$("#k-c").value.trim(),paid:false});
+      toast("Sessione registrata")};
+    const c=$("#pt-cancel"); if(c) c.onclick=()=>{editP=null;route()};
+    const d=$("#pt-del"); if(d) armDelete(d,()=>{const id=editP; editP=null; del("partners",id)});
+    $("#f-pt").onsubmit=e=>{e.preventDefault(); const name=$("#pt-name").value.trim(); if(!name) return;
+      const id=editP||("p-"+name.toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,30)+"-"+Date.now().toString(36).slice(-3)); const old=S.partners[id]||{};
+      const phase=$("#pt-phase").value;
+      const rec={...old,id,name,zone:$("#pt-zone").value.trim(),type:$("#pt-type").value,prio:$("#pt-prio").value,phase,why:$("#pt-why").value.trim(),person:$("#pt-person").value.trim(),
+        email:$("#pt-email").value.trim(),phone:$("#pt-phone").value.trim(),url:$("#pt-url").value.trim(),code:$("#pt-code").value.trim().toUpperCase(),pct:Math.max(0,+$("#pt-pct").value||0),
+        notes:$("#pt-notes").value.trim(),verified:today()};
+      if(phase!==old.phase && ["contattato","incontro"].includes(phase)) rec.lastContact=today();
+      editP=null; put("partners",id,rec); toast("Salvato")};
+  }
+  if(v==="database"){
+    document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editT=b.dataset.edit;route();scrollTo({top:0})});
+    document.querySelectorAll("[data-pause]").forEach(b=>b.onclick=()=>{const t=S.targets[b.dataset.pause];patch("targets",t.id,{status:t.status==="pausa"?"attivo":"pausa"})});
+    const c=$("#t-cancel"); if(c) c.onclick=()=>{editT=null;route()};
+    const d=$("#t-del"); if(d) armDelete(d,()=>{const id=editT; editT=null; del("targets",id)});
+    $("#f-t").onsubmit=e=>{e.preventDefault(); const name=$("#t-name").value.trim(); if(!name) return;
+      const id=editT||("t-"+name.toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,40)+"-"+Date.now().toString(36).slice(-3)); const old=S.targets[id]||{};
+      editT=null;
+      put("targets",id,{...old,id,name,handle:$("#t-handle").value.trim(),type:$("#t-type").value,tier:$("#t-tier").value,lang:$("#t-lang").value,
+        niches:[...document.querySelectorAll(".t-n:checked")].map(x=>x.value),url:$("#t-url").value.trim(),email:$("#t-email").value.trim(),submission:$("#t-sub").value.trim(),fit:$("#t-fit").value.trim(),
+        matchWords:$("#t-match").value.split(",").map(s=>s.trim()).filter(Boolean),notes:$("#t-notes").value.trim(),handleVerified:$("#t-hv").checked,verified:today(),status:old.status||"attivo",
+        followers:$("#t-fol").value===""?null:Number($("#t-fol").value),followersChecked:($("#t-fol").value!==String(old.followers??""))?today():(old.followersChecked||null)});
+      toast("Salvato")};
+  }
+  if(v==="hashtag"){
+    document.querySelectorAll("[data-hc]").forEach(i=>i.onchange=()=>patch("hashtags",i.dataset.hc,{posts:i.value===""?null:Number(i.value),checked:today()}));
+    document.querySelectorAll("[data-hdel]").forEach(b=>armDelete(b,()=>del("hashtags",b.dataset.hdel)));
+    $("#f-h").onsubmit=e=>{e.preventDefault(); let tag=$("#h-tag").value.trim().replace(/\s+/g,"").toLowerCase(); if(!tag) return; if(!tag.startsWith("#")) tag="#"+tag;
+      const id="h-"+tag.slice(1).replace(/[^a-z0-9]/g,""); put("hashtags",id,{id,tag,size:$("#h-size").value,niches:[$("#h-n").value],posts:null,checked:null}); toast("Aggiunto")};
+  }
+  if(v==="persone"){
+    document.querySelectorAll("[data-rel]").forEach(s=>s.onchange=()=>patch("people",s.dataset.rel,{release:s.value}));
+    document.querySelectorAll("[data-pdel]").forEach(b=>armDelete(b,()=>del("people",b.dataset.pdel)));
+    $("#f-p").onsubmit=e=>{e.preventDefault(); const name=$("#p-name").value.trim(); if(!name) return; const id=newId("p");
+      put("people",id,{id,name,handle:$("#p-handle").value.trim(),release:$("#p-rel").value,share:$("#p-share").value.trim(),notes:$("#p-notes").value.trim()}); toast("Aggiunta")};
+  }
+  if(v==="impostazioni"){
+    $("#f-pr").onsubmit=e=>{e.preventDefault(); S.profile={...S.profile,_u:now(),brand:$("#pr-brand").value.trim(),handle:$("#pr-handle").value.trim(),base:$("#pr-base").value.trim()}; save(); toast("Profilo salvato"); route()};
+    $("#exp").onclick=()=>{ const data=JSON.stringify({app:"verdemare-desk",exported:new Date().toISOString(),...S},null,1);
+      const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([data],{type:"application/json"})); a.download="verdemare-backup-"+today()+".json"; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+      S.meta.lastExport=today(); save(); toast("Backup esportato"); route() };
+    $("#imp").onchange=async e=>{ const f=e.target.files[0]; if(!f) return;
+      try{ const d=JSON.parse(await f.text()); if(d.app!=="verdemare-desk") throw new Error("not ours");
+        const t=now(); for(const c of COLS){ S[c]=d[c]||{}; for(const k in S[c]) S[c][k]={...S[c][k],_u:t} } S.profile={...(d.profile||{}),_u:t}; S.meta={...(d.meta||{}),lastExport:S.meta.lastExport,deleted:{}}; mergeSeed(); save(); toast("Backup importato"); route() }
+      catch(err){ toast("Il file non è un backup di Verdemare Desk") } };
+    armDelete($("#reset"),()=>{ const t=now(), gone={}; for(const c of COLS) for(const id in S[c]) gone[c+"/"+id]=t;
+  S={targets:{},hashtags:{},log:{},posts:{},people:{},partners:{},bookings:{},profile:{},meta:{deleted:gone}}; mergeSeed();
+  for(const c of COLS) for(const id in S[c]) S[c][id]={...S[c][id],_u:t+1}; S.profile={...S.profile,_u:t+1}; save(); toast("Dati cancellati"); route() });
+    const pe=$("#persist"); if(navigator.storage&&navigator.storage.persisted){ navigator.storage.persisted().then(ok=>{ pe.textContent = ok? "Il browser tiene questi dati al sicuro e non li cancella da solo." : "Il browser potrebbe cancellare i dati se manca spazio: installa l'app e fai backup regolari." }) }
+  }
+}
+function refreshOut(){
+  const o=lastOut; if(!o) return; const s=selected(o);
+  $("#o-count").innerHTML=countsHtml(o);
+  $("#o-tags").value=s.tags.join(" ");
+  $("#o-msgs").innerHTML=msgsHtml(o);
+  const cap=$("#o-cap"); if(cap) cap.value=captionTemplate(o.inp,s.tag,s.tags);
+  document.querySelectorAll("#o-msgs [data-copy]").forEach(b=>b.onclick=()=>copyEl($("#"+b.dataset.copy)));
+}
+function bindOut(){
+  const o=lastOut; if(!o) return;
+  document.querySelectorAll("#out [data-copy]").forEach(b=>b.onclick=()=>copyEl($("#"+b.dataset.copy)));
+  document.querySelectorAll("#out [data-sel]").forEach(s=>s.onchange=()=>{ o.pl.sel[s.dataset.sel]=s.value; s.closest(".cand").classList.toggle("on",!!s.value); refreshOut() });
+  document.querySelectorAll("#out [data-tg]").forEach(c=>c.onchange=()=>{ if(c.checked) o.pl.tagSel.add(c.dataset.tg); else o.pl.tagSel.delete(c.dataset.tg); c.closest(".cand").classList.toggle("on",c.checked); refreshOut() });
+  document.querySelectorAll("#out [data-fol]").forEach(i=>i.onchange=()=>{ quiet("targets",i.dataset.fol,{followers:i.value===""?null:Number(i.value),followersChecked:today()});
+    const c=i.closest(".cand-num"); c.querySelector(".nage").textContent=ageNote(today()); c.querySelector(".nlab").textContent=i.value===""?"follower: scrivili tu":"follower"; toast("Follower salvati") });
+  document.querySelectorAll("#out [data-hc2]").forEach(i=>i.onchange=()=>{ quiet("hashtags",i.dataset.hc2,{posts:i.value===""?null:Number(i.value),checked:today()});
+    const c=i.closest(".cand-num"); c.querySelector(".nage").textContent=ageNote(today()); c.querySelector(".nlab").textContent=i.value===""?"post: scrivili tu":"post"; toast("Salvato") });
+  $("#save-post").onclick=()=>{const id=newId("post");const i=o.inp; const s=selected(o);
+    if(!i.unpublished && !s.tag.length && !s.dm.length){ toast("Scegli almeno un account da taggare o a cui scrivere"); return }
+    put("posts",id,{id,date:today(),status:i.unpublished?"inedita":"idea",niche:i.niche,spot:i.spot,desc:i.desc,conditions:i.conditions,board:i.board,people:i.people,
+      tagTargets:s.tag.map(t=>t.id),dmTargets:s.dm.map(t=>t.id),exclusiveTargets:s.ex.map(t=>t.id),hashtags:($("#o-tags")?.value||"").split(/\s+/).filter(Boolean),
+      caption:i.unpublished?"":($("#o-cap")?.value||"")});
+    toast("Salvato in coda"); lastOut=null; draft={...draft,desc:"",spot:"",conditions:"",board:"",people:[]}; location.hash="#coda"};
+}
+
+/* ---------- boot ---------- */
+load();
+window.addEventListener("hashchange",()=>{route()});
+route();
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+  if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+}
+let installEvt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault(); installEvt=e; $("#install").hidden=false});
+$("#install").onclick=async()=>{ if(!installEvt) return; installEvt.prompt(); try{await installEvt.userChoice}catch(e){} installEvt=null; $("#install").hidden=true };
+</script>
+</body>
+</html>

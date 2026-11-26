@@ -23,14 +23,6 @@ content:
           - { name: travel, label: Supplemento Ericeira/Nazaré, type: number }
           - { name: commission, label: Commissione hotel, type: string }
       - { name: steps, label: How it works (passaggi), type: string, list: true }
-  - name: hotels
-    label: Hotel partner (link e QR)
-    type: file
-    path: data/hotels.yaml
-    list: true
-    fields:
-      - { name: slug, label: "Indirizzo (minuscole e trattini, es. kohola-surf-house)", type: string }
-      - { name: name, label: Nome dell'hotel, type: string }
   - name: home
     label: Home
     type: file

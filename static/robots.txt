@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /desk/
+Disallow: /book/
+Disallow: /partners/
