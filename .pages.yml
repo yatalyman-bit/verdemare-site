@@ -107,3 +107,22 @@ content:
       - { name: format, label: "photo session / video session", type: string }
       - { name: cover, label: Nome file copertina, type: string }
       - { name: weight, label: Ordine, type: number }
+  - name: work
+    label: Work (capitoli del portfolio)
+    type: collection
+    path: content/work
+    subfolders: true
+    fields:
+      - { name: title, type: string }
+      - { name: subtitle, label: Sottotitolo, type: string }
+      - { name: summary, label: Riassunto (pagina Work), type: text }
+      - { name: body, label: Testo, type: rich-text }
+      - name: projects
+        label: Progetti (solo BELOW e CREW)
+        type: object
+        list: true
+        fields:
+          - { name: title, type: string }
+          - { name: dir, label: Cartella delle foto, type: string }
+          - { name: cols, label: "Colonne su computer (1-3)", type: number }
+          - { name: text, type: text }

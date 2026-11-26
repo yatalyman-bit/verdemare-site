@@ -1,7 +1,29 @@
 {{ define "main" }}
-<section class="sec"><div class="wrap narrow"><a href="/work/">← Work</a><h1>{{ .Title }}</h1>{{ .Content }}</div></section>
-<section class="sec" style="padding-top:0"><div class="wrap narrow gallery">
-  {{ range sort (.Resources.ByType "image") "Name" }}{{ partial "img.html" (dict "res" . "alt" $.Title "sizes" "(min-width: 900px) 860px, 100vw") }}{{ end }}
-  {{ with .NextInSection }}<p><a href="{{ .RelPermalink }}">Next: {{ .Title }} →</a></p>{{ end }}
+<section class="sec"><div class="wrap narrow">
+  <a href="/work/">← Work</a>
+  <h1>{{ .Title }}</h1>
+  {{ with .Params.subtitle }}<p class="kicker">{{ . }}</p>{{ end }}
+  {{ .Content }}
+</div></section>
+{{ with .Params.projects }}
+  {{ range $i, $p := . }}
+  <section class="sec {{ if modBool $i 2 }}{{ else }}light{{ end }}"><div class="wrap">
+    <h2>{{ $p.title }}</h2>
+    {{ with $p.text }}<p>{{ . }}</p>{{ end }}
+    <div class="masonry c{{ $p.cols | default 2 }}">
+      {{ range sort ($.Resources.Match (printf "%s/*" $p.dir)) "Name" }}{{ partial "img.html" (dict "res" . "alt" (printf "%s · %s" $.Title $p.title) "sizes" "(min-width: 900px) 50vw, 100vw") }}{{ end }}
+    </div>
+  </div></section>
+  {{ end }}
+{{ else }}
+<section class="sec" style="padding-top:0"><div class="wrap">
+  <div class="masonry c2">
+  {{ range sort (.Resources.Match "[0-9]*.jpg") "Name" }}{{ partial "img.html" (dict "res" . "alt" $.Title "sizes" "(min-width: 900px) 50vw, 100vw") }}{{ end }}
+  </div>
+</div></section>
+{{ end }}
+<section class="sec"><div class="wrap">
+  {{ $all := (where site.RegularPages "Section" "work").ByWeight }}{{ $me := .RelPermalink }}{{ $found := false }}{{ $next := "" }}{{ range $all }}{{ if and $found (not $next) }}{{ $next = . }}{{ end }}{{ if eq .RelPermalink $me }}{{ $found = true }}{{ end }}{{ end }}{{ with $next }}<a class="btn btn-o" href="{{ .RelPermalink }}">Next: {{ .Title }} →</a>{{ end }}
+  <a class="btn btn-o" href="/work/">All work</a>
 </div></section>
 {{ end }}

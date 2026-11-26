@@ -7,7 +7,7 @@
 {{ range $i, $c := .Pages.ByWeight }}
 <section class="sec {{ if modBool $i 2 }}light{{ end }}"><div class="wrap grid2 {{ if not (modBool $i 2) }}flip{{ end }}">
   <a href="{{ .RelPermalink }}">{{ partial "img.html" (dict "res" (.Resources.GetMatch (.Params.cover | default "*")) "ratio" "3x2" "alt" .Title "sizes" "(min-width: 760px) 50vw, 100vw") }}</a>
-  <div><h2>{{ .Title }}</h2><p>{{ .Params.summary }}</p><a class="btn btn-o" href="{{ .RelPermalink }}">Open</a></div>
+  <div><h2>{{ .Title }}</h2>{{ with .Params.subtitle }}<p class="kicker">{{ . }}</p>{{ end }}<p>{{ .Params.summary }}</p><a class="btn btn-o" href="{{ .RelPermalink }}">Open</a></div>
 </div></section>
 {{ end }}
 {{ end }}
