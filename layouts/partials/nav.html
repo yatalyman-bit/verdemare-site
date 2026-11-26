@@ -1,5 +1,5 @@
 <header class="nav">
-  <a class="logo" href="/">VERDEMARE</a>
+  {{ $l := resources.Get "logo.png" }}<a class="logo" href="/" aria-label="Verdemare home">{{ with $l.Resize "112x webp" }}<img src="{{ .RelPermalink }}" width="56" height="56" alt="">{{ end }}<span>VERDEMARE</span></a>
   <nav class="links" aria-label="Main">
     {{ range site.Menus.main }}<a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}
   </nav>

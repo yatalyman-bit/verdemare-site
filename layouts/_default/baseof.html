@@ -6,6 +6,8 @@
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · Verdemare{{ end }}</title>
 <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}In-water surf photo and video in Peniche, Portugal. Private sessions from {{ index site.Data.site.prices.photo 0 }}€.{{ end }}">
 {{ if .Params.noindex }}<meta name="robots" content="noindex, nofollow">{{ end }}
+{{ with (resources.Get "logo.png").Resize "64x png" }}<link rel="icon" href="{{ .RelPermalink }}" type="image/png">{{ end }}
+{{ with (resources.Get "logo.png").Resize "180x png" }}<link rel="apple-touch-icon" href="{{ .RelPermalink }}">{{ end }}
 <link rel="preload" href="/fonts/norwester.woff2" as="font" type="font/woff2" crossorigin>
 {{ $css := resources.Get "css/main.css" | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
