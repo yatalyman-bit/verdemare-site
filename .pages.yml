@@ -30,6 +30,7 @@ content:
     fields:
       - { name: hero_title, label: Titolo, type: string }
       - { name: hero_text, label: Sottotitolo, type: string }
+      - { name: hero_focus_mobile, label: "Foto H1 su telefono: posizione del surfer (0 sinistra – 100 destra)", type: number }
       - name: types
         label: Tipi di sessione
         type: object
@@ -38,6 +39,7 @@ content:
           - { name: title, type: string }
           - { name: text, type: string }
           - { name: image, label: Nome file foto, type: string }
+          - { name: focus_mobile, label: "Telefono: posizione del soggetto (0 sinistra – 100 destra)", type: number }
       - { name: video_title, type: string }
       - { name: video_text, type: text }
       - { name: real_text, label: Testo Real sessions, type: text }

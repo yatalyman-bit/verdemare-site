@@ -12,12 +12,15 @@ types:
   - title: Solo
     text: One surfer, every wave.
     image: H2.jpg
+    focus_mobile: 50
   - title: Couple
     text: Two surfers, one session.
     image: H3.jpg
+    focus_mobile: 50
   - title: Friends
     text: Up to four surfers.
     image: H4.jpg
+    focus_mobile: 50
 video: V1.mp4
 video_placeholder: V1-placeholder.jpg
 video_title: Photo or video

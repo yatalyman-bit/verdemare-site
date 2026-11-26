@@ -1,7 +1,7 @@
 {{ define "main" }}
 {{ $p := site.Data.site.prices }}
 <section class="hero">
-  <div class="hero-img">{{ partial "hero-img.html" (dict "res" (.Resources.GetMatch .Params.hero_image) "alt" "Surfer photographed from the water" "anchor_d" (.Params.hero_anchor_desktop | default "Center") "anchor_m" (.Params.hero_anchor_mobile | default "Center") "focus_m" .Params.hero_focus_mobile) }}</div>
+  <div class="hero-img">{{ partial "art-img.html" (dict "res" (.Resources.GetMatch .Params.hero_image) "rd" "2x1" "rm" "4x5" "wd" (slice 960 1600 2400) "alt" "Surfer photographed from the water" "anchor_d" (.Params.hero_anchor_desktop | default "Center") "anchor_m" (.Params.hero_anchor_mobile | default "Center") "focus_m" .Params.hero_focus_mobile "eager" true) }}</div>
   <div class="hero-text wrap">
     <h1>{{ .Params.hero_title }}</h1>
     <p>{{ .Params.hero_text }} From&nbsp;{{ index $p.photo 0 }}€.</p>
@@ -15,7 +15,7 @@
   <div class="grid3">
   {{ range $i, $t := .Params.types }}
     <div>
-      {{ partial "img.html" (dict "res" ($.Resources.GetMatch $t.image) "ratio" "4x5" "alt" $t.title "sizes" "(min-width: 760px) 33vw, 100vw") }}
+      {{ partial "art-img.html" (dict "res" ($.Resources.GetMatch $t.image) "rd" "3x2" "rm" "4x5" "alt" $t.title "sizes_d" "33vw" "focus_m" $t.focus_mobile) }}
       <h3>{{ $t.title }}</h3>
       <p>{{ $t.text }} From&nbsp;{{ index $p.photo $i }}€</p>
     </div>
