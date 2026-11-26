@@ -1,0 +1,22 @@
+{{- /* Immagine responsive. dict "res" risorsa "ratio" "4x5"|"" "alt" testo "sizes" sizes "eager" bool */ -}}
+{{- $r := .res -}}
+{{- if $r -}}
+{{- $widths := slice 480 960 1600 -}}
+{{- $set := slice -}}
+{{- $last := "" -}}
+{{- range $widths -}}
+  {{- $w := . -}}
+  {{- if gt $w $r.Width }}{{ $w = $r.Width }}{{ end -}}
+  {{- $img := "" -}}
+  {{- if $.ratio -}}
+    {{- $p := split $.ratio "x" -}}
+    {{- $h := div (mul $w (int (index $p 1))) (int (index $p 0)) -}}
+    {{- $img = $r.Fill (printf "%dx%d smart webp" $w $h) -}}
+  {{- else -}}
+    {{- $img = $r.Resize (printf "%dx webp" $w) -}}
+  {{- end -}}
+  {{- $set = $set | append (printf "%s %dw" $img.RelPermalink $img.Width) -}}
+  {{- $last = $img -}}
+{{- end -}}
+<img src="{{ $last.RelPermalink }}" srcset="{{ delimit $set ", " }}" sizes="{{ .sizes | default "100vw" }}" width="{{ $last.Width }}" height="{{ $last.Height }}" alt="{{ .alt }}"{{ if not .eager }} loading="lazy"{{ end }} decoding="async">
+{{- end -}}

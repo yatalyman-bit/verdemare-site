@@ -1,0 +1,7 @@
+{{ define "main" }}
+<section class="sec"><div class="wrap narrow"><a href="/work/">← Work</a><h1>{{ .Title }}</h1>{{ .Content }}</div></section>
+<section class="sec" style="padding-top:0"><div class="wrap narrow gallery">
+  {{ range sort (.Resources.ByType "image") "Name" }}{{ partial "img.html" (dict "res" . "alt" $.Title "sizes" "(min-width: 900px) 860px, 100vw") }}{{ end }}
+  {{ with .NextInSection }}<p><a href="{{ .RelPermalink }}">Next: {{ .Title }} →</a></p>{{ end }}
+</div></section>
+{{ end }}

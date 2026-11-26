@@ -1,0 +1,24 @@
+{{ define "main" }}
+{{ $p := site.Data.site.prices }}
+<section class="sec"><div class="wrap grid2">
+  <div><h1>{{ .Title }}</h1>{{ .Content }}<a class="btn" href="{{ partial "wa.html" "Hi Flavio! I'm writing from a hotel / surf house about a partnership." }}">Talk to me on WhatsApp</a></div>
+  {{ partial "img.html" (dict "res" (.Resources.GetMatch .Params.image) "ratio" "3x2" "alt" "Guests surfing" "sizes" "(min-width: 760px) 50vw, 100vw" "eager" true) }}
+</div></section>
+<section class="sec light"><div class="wrap grid3">
+  {{ range .Params.points }}<div><h3>{{ .title }}</h3><p>{{ replace .text "{commission}" $p.commission }}</p></div>{{ end }}
+</div></section>
+<section class="sec"><div class="wrap">
+  <h2>Full price list</h2>
+  <dl class="prices">
+    <div><dt>Photo · 1 hour · 1 / 2 / 3 / 4 surfers</dt><dd>{{ delimit $p.photo " / " }}€</dd></div>
+    <div><dt>Video · 1 hour · 1 / 2 / 3 / 4 surfers</dt><dd>{{ delimit $p.video " / " }}€</dd></div>
+    <div><dt>Extra time (per group)</dt><dd>+{{ $p.extra_hour }}€/h</dd></div>
+    <div><dt>Reel edit</dt><dd>+{{ $p.reel }}€</dd></div>
+    <div><dt>Ericeira or Nazaré (travel)</dt><dd>+{{ $p.travel }}€</dd></div>
+  </dl>
+</div></section>
+<section class="sec light"><div class="wrap">
+  <h2>Downloads</h2>
+  {{ range .Params.downloads }}<a class="btn btn-o" href="{{ .file }}">{{ .label }}</a>{{ else }}<p class="muted">PDF coming soon.</p>{{ end }}
+</div></section>
+{{ end }}

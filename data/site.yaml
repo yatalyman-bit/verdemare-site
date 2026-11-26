@@ -1,0 +1,22 @@
+# Contatti e prezzi: si modificano qui (o dal pannello Pages CMS)
+whatsapp: "351000000000"        # TODO: numero con prefisso, senza + e senza spazi
+instagram: "verdemare.photo"
+email: "TODO@example.com"       # TODO: la nuova email
+place: "Peniche, Portugal"
+goatcounter: ""                 # vuoto = statistiche spente
+booking_message: "Hi Flavio! I'd like info on a private surf session."
+
+prices:
+  photo: [60, 90, 120, 150]     # 1, 2, 3, 4 persone, 1 ora
+  video: [70, 100, 130, 160]
+  extra_hour: 50                # per gruppo
+  reel: 30
+  travel: 25                    # Ericeira / Nazaré  TODO: da confermare
+  commission: "15%"
+
+steps:
+  - Message me on WhatsApp
+  - We pick the best day from the forecast
+  - 50% deposit to book
+  - We shoot
+  - You see a preview, pay the rest, get the full files

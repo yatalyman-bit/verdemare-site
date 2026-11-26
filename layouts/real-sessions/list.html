@@ -1,0 +1,5 @@
+{{ define "main" }}
+<section class="sec"><div class="wrap"><h1>{{ .Title }}</h1>{{ .Content }}</div></section>
+<section class="sec" style="padding-top:0"><div class="wrap">{{ partial "cards.html" 99 }}</div></section>
+{{ partial "cta.html" (dict "title" "Want yours?" "text" (printf "From %d€ · up to %d surfers." (index site.Data.site.prices.photo 0) (len site.Data.site.prices.photo))) }}
+{{ end }}

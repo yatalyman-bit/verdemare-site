@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · Verdemare{{ end }}</title>
+<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}In-water surf photo and video in Peniche, Portugal. Private sessions from {{ index site.Data.site.prices.photo 0 }}€.{{ end }}">
+{{ if .Params.noindex }}<meta name="robots" content="noindex, nofollow">{{ end }}
+<link rel="preload" href="/fonts/norwester.woff2" as="font" type="font/woff2" crossorigin>
+{{ $css := resources.Get "css/main.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+<meta property="og:title" content="{{ .Title }}">
+<meta property="og:type" content="website">
+</head>
+<body>
+{{ partial "nav.html" . }}
+<main>{{ block "main" . }}{{ end }}</main>
+{{ partial "footer.html" . }}
+{{ with site.Data.site.goatcounter }}<script data-goatcounter="https://{{ . }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>{{ end }}
+</body>
+</html>

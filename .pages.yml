@@ -1,0 +1,103 @@
+# Pannello di modifica Pages CMS (https://app.pagescms.org)
+# Qui si modificano i TESTI. Le foto si caricano nelle cartelle di content/ (vedi README).
+content:
+  - name: site
+    label: Contatti e prezzi
+    type: file
+    path: data/site.yaml
+    fields:
+      - { name: whatsapp, label: "WhatsApp (prefisso, senza + e spazi)", type: string }
+      - { name: instagram, type: string }
+      - { name: email, type: string }
+      - { name: place, label: Luogo, type: string }
+      - { name: booking_message, label: Messaggio WhatsApp precompilato, type: string }
+      - { name: goatcounter, label: Codice GoatCounter, type: string }
+      - name: prices
+        label: Prezzi
+        type: object
+        fields:
+          - { name: photo, label: "Foto 1h (1, 2, 3, 4 persone)", type: number, list: true }
+          - { name: video, label: "Video 1h (1, 2, 3, 4 persone)", type: number, list: true }
+          - { name: extra_hour, label: Ora extra per gruppo, type: number }
+          - { name: reel, label: Reel, type: number }
+          - { name: travel, label: Supplemento Ericeira/Nazaré, type: number }
+          - { name: commission, label: Commissione hotel, type: string }
+      - { name: steps, label: How it works (passaggi), type: string, list: true }
+  - name: hotels
+    label: Hotel partner (link e QR)
+    type: file
+    path: data/hotels.yaml
+    list: true
+    fields:
+      - { name: slug, label: "Indirizzo (minuscole e trattini, es. kohola-surf-house)", type: string }
+      - { name: name, label: Nome dell'hotel, type: string }
+  - name: home
+    label: Home
+    type: file
+    path: content/_index.md
+    fields:
+      - { name: hero_title, label: Titolo, type: string }
+      - { name: hero_text, label: Sottotitolo, type: string }
+      - name: types
+        label: Tipi di sessione
+        type: object
+        list: true
+        fields:
+          - { name: title, type: string }
+          - { name: text, type: string }
+          - { name: image, label: Nome file foto, type: string }
+      - { name: video_title, type: string }
+      - { name: video_text, type: text }
+      - { name: real_text, label: Testo Real sessions, type: text }
+  - name: sessions
+    label: Sessions
+    type: file
+    path: content/sessions/index.md
+    fields:
+      - { name: title, type: string }
+      - { name: body, label: Testo introduttivo, type: rich-text }
+      - { name: good_to_know, label: Good to know, type: text, list: true }
+      - name: faq
+        label: FAQ
+        type: object
+        list: true
+        fields:
+          - { name: q, label: Domanda, type: string }
+          - { name: a, label: Risposta, type: text }
+  - name: about
+    label: About
+    type: file
+    path: content/about/index.md
+    fields:
+      - { name: title, type: string }
+      - { name: body, label: Bio, type: rich-text }
+      - { name: languages, type: string }
+      - { name: octopus_title, type: string }
+      - { name: octopus_text, type: text }
+  - name: partners
+    label: Partners (hotel)
+    type: file
+    path: content/partners/index.md
+    fields:
+      - { name: title, type: string }
+      - { name: body, label: Testo, type: rich-text }
+      - name: points
+        type: object
+        list: true
+        fields:
+          - { name: title, type: string }
+          - { name: text, label: "Testo ({commission} = la commissione)", type: text }
+  - name: real_sessions
+    label: Real sessions (testi delle schede)
+    type: collection
+    path: content/real-sessions
+    subfolders: true
+    fields:
+      - { name: title, type: string }
+      - { name: group, label: "Tipo (Solo, Couple, Friends)", type: string }
+      - { name: duration, label: Durata, type: string }
+      - { name: place, label: Luogo, type: string }
+      - { name: date, label: "Mese e anno", type: string }
+      - { name: format, label: "photo session / video session", type: string }
+      - { name: cover, label: Nome file copertina, type: string }
+      - { name: weight, label: Ordine, type: number }

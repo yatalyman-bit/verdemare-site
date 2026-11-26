@@ -1,0 +1,57 @@
+{{ define "main" }}
+{{ $p := site.Data.site.prices }}
+<section class="hero">
+  {{ partial "img.html" (dict "res" (.Resources.GetMatch .Params.hero_image) "ratio" "2x1" "alt" "Surfer photographed from the water" "eager" true) }}
+  <div class="hero-text wrap">
+    <h1>{{ .Params.hero_title }}</h1>
+    <p>{{ .Params.hero_text }} From {{ index $p.photo 0 }}€.</p>
+    <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a>
+    <a class="btn btn-o" href="/sessions/">See sessions</a>
+  </div>
+</section>
+
+<section class="sec"><div class="wrap">
+  <h2>Choose your session</h2>
+  <div class="grid3">
+  {{ range $i, $t := .Params.types }}
+    <div>
+      {{ partial "img.html" (dict "res" ($.Resources.GetMatch $t.image) "ratio" "4x5" "alt" $t.title "sizes" "(min-width: 760px) 33vw, 100vw") }}
+      <h3>{{ $t.title }}</h3>
+      <p>{{ $t.text }} From {{ index $p.photo $i }}€</p>
+    </div>
+  {{ end }}
+  </div>
+  <a class="btn btn-o" href="/sessions/">Prices &amp; details</a>
+</div></section>
+
+<section class="sec light"><div class="wrap">
+  <h2>How it works</h2>
+  {{ partial "steps.html" . }}
+</div></section>
+
+<section class="sec"><div class="wrap grid2">
+  {{ with .Resources.GetMatch .Params.video }}
+    <video src="{{ .RelPermalink }}" autoplay muted loop playsinline preload="metadata"></video>
+  {{ else }}
+    {{ partial "img.html" (dict "res" ($.Resources.GetMatch $.Params.video_placeholder) "ratio" "16x9" "alt" "") }}
+  {{ end }}
+  <div><h2>{{ .Params.video_title }}</h2><p>{{ .Params.video_text }}</p><a class="btn btn-o" href="/sessions/">See sessions</a></div>
+</div></section>
+
+<section class="sec light"><div class="wrap">
+  <h2>Real sessions</h2>
+  <p>{{ .Params.real_text }}</p>
+  {{ partial "cards.html" 3 }}
+  <a class="btn btn-o" href="/real-sessions/">See all sessions</a>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <h2>My work</h2>
+  <div class="grid3">
+  {{ range first 3 (where site.RegularPages "Section" "work").ByWeight }}
+    <a class="card" href="{{ .RelPermalink }}">{{ partial "img.html" (dict "res" (.Resources.GetMatch (.Params.cover | default "*")) "ratio" "3x2" "alt" .Title "sizes" "(min-width: 760px) 33vw, 100vw") }}<h3>{{ .Title }}</h3></a>
+  {{ end }}
+  </div>
+  <a class="btn btn-o" href="/work/">See my work</a>
+</div></section>
+{{ end }}

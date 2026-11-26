@@ -1,0 +1,11 @@
+<header class="nav">
+  <a class="logo" href="/">VERDEMARE</a>
+  <nav class="links" aria-label="Main">
+    {{ range site.Menus.main }}<a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}
+  </nav>
+  <a class="btn btn-s" href="{{ partial "wa.html" "" }}">Book</a>
+  <details class="burger">
+    <summary aria-label="Menu"><span></span><span></span><span></span></summary>
+    <nav aria-label="Mobile">{{ range site.Menus.main }}<a href="{{ .URL }}">{{ .Name }}</a>{{ end }}</nav>
+  </details>
+</header>

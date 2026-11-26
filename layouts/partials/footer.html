@@ -1,0 +1,10 @@
+{{ $d := site.Data.site }}
+<footer class="foot">
+  <div><strong>VERDEMARE</strong><br>In-water surf photo &amp; video · {{ $d.place }}</div>
+  <div>
+    <a href="{{ partial "wa.html" "" }}">WhatsApp</a><br>
+    <a href="https://instagram.com/{{ $d.instagram }}">Instagram @{{ $d.instagram }}</a><br>
+    <a href="mailto:{{ $d.email }}">{{ $d.email }}</a>
+  </div>
+  <div><a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a></div>
+</footer>

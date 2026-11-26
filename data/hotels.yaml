@@ -1,0 +1,3 @@
+# Un hotel per riga. Il link diventa /book/<slug>/ ed è quello nel QR del poster.
+- slug: example-surf-house
+  name: Example Surf House

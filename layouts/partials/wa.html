@@ -1,0 +1,4 @@
+{{- /* Restituisce il link WhatsApp. Uso: partial "wa.html" "messaggio" ("" = messaggio standard) */ -}}
+{{- $msg := . | default site.Data.site.booking_message -}}
+{{- $q := replace ($msg | urlquery) "+" "%20" -}}
+{{- return (printf "https://wa.me/%s?text=%s" site.Data.site.whatsapp $q | safeURL) -}}

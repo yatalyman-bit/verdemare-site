@@ -1,0 +1,5 @@
+<section class="sec dark"><div class="wrap">
+  <h2>{{ .title | default "Ready?" }}</h2>
+  {{ with .text }}<p>{{ . }}</p>{{ end }}
+  <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a>
+</div></section>

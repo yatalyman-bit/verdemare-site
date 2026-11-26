@@ -1,0 +1,39 @@
+{{ define "main" }}
+{{ $p := site.Data.site.prices }}
+<section class="sec"><div class="wrap grid2">
+  <div><h1>{{ .Title }}</h1>{{ .Content }}<a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a></div>
+  {{ partial "img.html" (dict "res" (.Resources.GetMatch .Params.image) "ratio" "4x5" "alt" "Private surf session" "sizes" "(min-width: 760px) 50vw, 100vw" "eager" true) }}
+</div></section>
+
+<section class="sec light"><div class="wrap">
+  <h2>Real sessions</h2>
+  <p>See what you actually get from one hour in the water.</p>
+  {{ partial "cards.html" 3 }}
+  <a class="btn btn-o" href="/real-sessions/">See all sessions</a>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <h2>Prices</h2>
+  <dl class="prices">
+    <div><dt>Photo session · 1 hour</dt><dd>from {{ index $p.photo 0 }}€</dd></div>
+    <div><dt>Video session · 1 hour</dt><dd>from {{ index $p.video 0 }}€</dd></div>
+    <div><dt>Extra time · Reel edit · Video analysis from the beach</dt><dd>ask me</dd></div>
+  </dl>
+  <p>Up to {{ len $p.photo }} surfers per session. Full price list on WhatsApp.</p>
+  <a class="btn" href="{{ partial "wa.html" "Hi Flavio! Could you send me the full price list?" }}">Get the full price list</a>
+</div></section>
+
+<section class="sec light"><div class="wrap"><h2>How it works</h2>{{ partial "steps.html" . }}</div></section>
+
+<section class="sec"><div class="wrap">
+  <h2>Good to know</h2>
+  <ul class="list">{{ range .Params.good_to_know }}<li>{{ . }}</li>{{ end }}</ul>
+</div></section>
+
+<section class="sec light"><div class="wrap">
+  <h2>FAQ</h2>
+  {{ range .Params.faq }}<details class="faq"><summary>{{ .q }}</summary><p>{{ .a }}</p></details>{{ end }}
+</div></section>
+
+{{ partial "cta.html" (dict "title" "Ready?" "text" "Message me with your dates and how many surfers.") }}
+{{ end }}

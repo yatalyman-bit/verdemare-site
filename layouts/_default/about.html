@@ -1,0 +1,10 @@
+{{ define "main" }}
+<section class="sec"><div class="wrap grid2">
+  {{ partial "img.html" (dict "res" (.Resources.GetMatch .Params.image) "ratio" "4x5" "alt" "Flavio in the water with his camera" "sizes" "(min-width: 760px) 50vw, 100vw" "eager" true) }}
+  <div><h1>{{ .Title }}</h1>{{ .Content }}<p class="muted">{{ .Params.languages }}</p><a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a></div>
+</div></section>
+<section class="sec light"><div class="wrap grid2">
+  <div><h2>{{ .Params.octopus_title }}</h2><p>{{ .Params.octopus_text }}</p></div>
+  {{ partial "img.html" (dict "res" (.Resources.GetMatch .Params.logo) "alt" "Verdemare octopus" "sizes" "(min-width: 760px) 50vw, 100vw") }}
+</div></section>
+{{ end }}
