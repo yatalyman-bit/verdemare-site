@@ -23,12 +23,12 @@ types:
   - title: Friends
     text: Up to four surfers.
     image: H4.jpg
-    focus_mobile: 39
+    focus_mobile: 50
     focus_mobile_y: 48
-    zoom_mobile: 72
-    focus_desktop: 56
-    focus_desktop_y: 48
-    zoom_desktop: 74
+    zoom_mobile: 100
+    focus_desktop: 50
+    focus_desktop_y: 50
+    zoom_desktop: 100
 video: V1.mp4
 video_placeholder: V1-placeholder.jpg
 video_title: Photo or video
