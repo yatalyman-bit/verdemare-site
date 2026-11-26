@@ -17,5 +17,5 @@ video: V1.mp4
 video_placeholder: V1-placeholder.jpg
 video_title: Photo or video
 video_text: Photos are selected and edited. Video comes as clips, one per wave, ready to share.
-real_text: Every photo comes from one hour in the water with one client.
+real_text: Every photo comes from one real session, delivered to the client as it is.
 ---

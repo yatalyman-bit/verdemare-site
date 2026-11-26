@@ -1,4 +1,4 @@
 ---
 title: Real sessions
 ---
-Each one is a real private session: one client, one hour in the water. No best-of from the archive.
+Each one is a real private session, shown as the client received it. No best-of from the archive.
