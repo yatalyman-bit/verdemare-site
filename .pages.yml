@@ -71,6 +71,12 @@ content:
     fields:
       - { name: title, type: string }
       - { name: body, label: Bio, type: rich-text }
+      - { name: image_ratio, label: "Foto A1: formato (es. 2x5, 4x5)", type: string }
+      - { name: image_focus_x, label: "Foto A1: centro orizzontale (0-100)", type: number }
+      - { name: image_focus_y, label: "Foto A1: centro verticale (0-100)", type: number }
+      - { name: image_zoom, label: "Foto A1: zoom (100 = intera)", type: number }
+      - { name: image_credit, label: "Foto A1: credito (nome del fotografo, vuoto = nessuno)", type: string }
+      - { name: octopus_credit, label: "Foto del polpo: credito", type: string }
       - { name: languages, type: string }
       - { name: octopus_title, type: string }
       - { name: octopus_text, type: text }

@@ -1,10 +1,10 @@
 {{ define "main" }}
-<section class="sec"><div class="wrap grid2">
-  {{ partial "img.html" (dict "res" (.Resources.GetMatch .Params.image) "ratio" "4x5" "alt" "Flavio in the water with his camera" "sizes" "(min-width: 760px) 50vw, 100vw" "eager" true) }}
+<section class="sec"><div class="wrap grid2 about-top">
+  <figure class="fig">{{ partial "art-img.html" (dict "res" (.Resources.GetMatch .Params.image) "rd" (.Params.image_ratio | default "4x5") "rm" (.Params.image_ratio | default "4x5") "alt" (.Params.image_alt | default "Flavio in the water") "sizes_d" "50vw" "focus_d" (.Params.image_focus_x | default 50) "focus_m" (.Params.image_focus_x | default 50) "focus_dy" (.Params.image_focus_y | default 50) "focus_my" (.Params.image_focus_y | default 50) "zoom_d" (.Params.image_zoom | default 100) "zoom_m" (.Params.image_zoom | default 100) "eager" true) }}{{ with .Params.image_credit }}<figcaption>Photo: {{ . }}</figcaption>{{ end }}</figure>
   <div><h1>{{ .Title }}</h1>{{ .Content }}<p class="muted">{{ .Params.languages }}</p><a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a></div>
 </div></section>
 <section class="sec light"><div class="wrap grid2">
   <div><h2>{{ .Params.octopus_title }}</h2><p>{{ .Params.octopus_text }}</p></div>
-  {{ with (resources.Get "logo.png").Resize "800x webp" }}<img class="biglogo" src="{{ .RelPermalink }}" width="400" height="400" alt="Verdemare octopus logo" loading="lazy">{{ end }}
+  {{ with .Resources.GetMatch .Params.octopus_image }}<figure class="fig">{{ partial "art-img.html" (dict "res" . "rd" "3x2" "rm" "4x5" "alt" "Flavio walking out of the water with the Verdemare octopus on his back" "sizes_d" "50vw" "focus_m" ($.Params.octopus_focus_mobile | default 50)) }}{{ with $.Params.octopus_credit }}<figcaption>Photo: {{ . }}</figcaption>{{ end }}</figure>{{ else }}{{ with (resources.Get "logo.png").Resize "800x webp" }}<img class="biglogo" src="{{ .RelPermalink }}" width="400" height="400" alt="Verdemare octopus logo" loading="lazy">{{ end }}{{ end }}
 </div></section>
 {{ end }}

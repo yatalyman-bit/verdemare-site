@@ -4,6 +4,15 @@ description: "Flavio has surfed for about 20 years and shoots from the water aro
 title: About
 layout: about
 image: A1.jpg
+image_ratio: 2x5
+image_focus_x: 61
+image_focus_y: 50
+image_zoom: 100
+image_alt: Flavio in the water, wearing his orange helmet
+image_credit: ""
+octopus_image: A2.jpg
+octopus_focus_mobile: 48
+octopus_credit: ""
 languages: English · Italiano · Español · Português
 octopus_title: Why an octopus
 octopus_text: Shooting in the water takes more than two hands… Back on land, the edit begins. That's why Verdemare is an octopus. Eight arms, and some days barely enough.

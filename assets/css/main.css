@@ -57,6 +57,8 @@ p{margin:0 0 1em;max-width:62ch}
   .links{display:flex}.burger{display:none}
   .grid2{grid-template-columns:1fr 1fr;align-items:center;gap:40px}
   .grid2.flip>:first-child{order:2}
+  .about-top{grid-template-columns:1fr 2fr}
+  .about-top .fig{max-width:340px}
   .grid3{grid-template-columns:repeat(3,1fr)}
   .steps{grid-template-columns:repeat(5,1fr)}
   .steps li{padding:52px 14px 14px}.steps li::before{left:14px}
@@ -69,3 +71,6 @@ p{margin:0 0 1em;max-width:62ch}
   .sec{padding:72px 0}
 }
 .logo{display:flex;align-items:center;gap:10px}.logo img{width:44px;height:44px}.biglogo{max-width:360px;width:100%;margin:0 auto}
+.fig{margin:0}.fig figcaption{font-size:.75rem;color:var(--muted);margin-top:6px}
+.about-top .fig{max-width:60%}
+@media (min-width:760px){.about-top .fig{max-width:340px}}

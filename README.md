@@ -14,7 +14,7 @@ Su GitHub: apri la cartella giusta → **Add file → Upload files** → trascin
 | Sessions | `content/sessions/` | `S1.jpg` |
 | Real sessions | `content/real-sessions/<sessione>/` | `01.jpg`, `02.jpg`… in ordine; `01.jpg` è la copertina |
 | Work | `content/work/<capitolo>/` | `01.jpg`, `02.jpg`… |
-| About | `content/about/` | `A1.jpg` (il logo è in `assets/logo.png`) |
+| About | `content/about/` | `A1.jpg` (apertura), `A2.jpg` (sezione del polpo); il logo è in `assets/logo.png` |
 | Partners | `content/partners/` | `P1.jpg` |
 
 Per sostituire una foto basta caricarne una con lo stesso nome.
