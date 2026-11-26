@@ -22,14 +22,17 @@
 {{- $d := slice -}}{{- $dl := "" -}}
 {{- range .wd | default (slice 480 960 1600) -}}{{- $w := cond (gt . $srcd.Width) $srcd.Width . -}}{{- $i := $srcd.Fill (printf "%dx%d %s webp" $w (div (mul $w (int (index $pd 1))) (int (index $pd 0))) $ad) -}}{{- $d = $d | append (printf "%s %dw" $i.RelPermalink $i.Width) -}}{{- $dl = $i -}}{{- end -}}
 {{- $src := $r -}}
-{{- with .focus_m -}}
+{{- if or .focus_m .zoom_m -}}
+  {{- $fx := .focus_m | default 50 -}}{{- $fy := .focus_my | default 50 -}}
   {{- $cw := div (mul $r.Height (int (index $pm 0))) (int (index $pm 1)) -}}
-  {{- if lt $cw $r.Width -}}
-    {{- $x0 := sub (div (mul $r.Width .) 100) (div $cw 2) -}}
-    {{- if lt $x0 0 }}{{ $x0 = 0 }}{{ end -}}
-    {{- if gt (add $x0 $cw) $r.Width }}{{ $x0 = sub $r.Width $cw }}{{ end -}}
-    {{- $src = ($r.Crop (printf "%dx%d TopRight" (sub $r.Width $x0) $r.Height)).Crop (printf "%dx%d TopLeft" $cw $r.Height) -}}
-  {{- end -}}
+  {{- if gt $cw $r.Width }}{{ $cw = $r.Width }}{{ end -}}
+  {{- with $.zoom_m }}{{ $cw = div (mul $cw .) 100 }}{{ end -}}
+  {{- $ch := div (mul $cw (int (index $pm 1))) (int (index $pm 0)) -}}
+  {{- if gt $ch $r.Height }}{{ $ch = $r.Height }}{{ $cw = div (mul $ch (int (index $pm 0))) (int (index $pm 1)) }}{{ end -}}
+  {{- $x0 := sub (div (mul $r.Width $fx) 100) (div $cw 2) -}}{{- $y0 := sub (div (mul $r.Height $fy) 100) (div $ch 2) -}}
+  {{- if lt $x0 0 }}{{ $x0 = 0 }}{{ end -}}{{- if gt (add $x0 $cw) $r.Width }}{{ $x0 = sub $r.Width $cw }}{{ end -}}
+  {{- if lt $y0 0 }}{{ $y0 = 0 }}{{ end -}}{{- if gt (add $y0 $ch) $r.Height }}{{ $y0 = sub $r.Height $ch }}{{ end -}}
+  {{- $src = ($r.Crop (printf "%dx%d BottomRight" (sub $r.Width $x0) (sub $r.Height $y0))).Crop (printf "%dx%d TopLeft" $cw $ch) -}}
 {{- end -}}
 {{- $m := slice -}}{{- $ml := "" -}}
 {{- range .wm | default (slice 480 960 1200) -}}{{- $w := cond (gt . $src.Width) $src.Width . -}}{{- $i := $src.Fill (printf "%dx%d %s webp" $w (div (mul $w (int (index $pm 1))) (int (index $pm 0))) $am) -}}{{- $m = $m | append (printf "%s %dw" $i.RelPermalink $i.Width) -}}{{- $ml = $i -}}{{- end -}}

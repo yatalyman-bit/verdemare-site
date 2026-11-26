@@ -40,6 +40,8 @@ content:
           - { name: text, type: string }
           - { name: image, label: Nome file foto, type: string }
           - { name: focus_mobile, label: "Telefono: posizione del soggetto (0 sinistra – 100 destra)", type: number }
+          - { name: focus_mobile_y, label: "Telefono: centro verticale (0 alto – 100 basso)", type: number }
+          - { name: zoom_mobile, label: "Telefono: zoom (100 = altezza intera, 70 = più stretta)", type: number }
           - { name: focus_desktop, label: "Computer: centro orizzontale (0-100, vuoto = centro)", type: number }
           - { name: focus_desktop_y, label: "Computer: centro verticale (0 alto – 100 basso)", type: number }
           - { name: zoom_desktop, label: "Computer: zoom (100 = foto intera, 80 = più stretta)", type: number }
