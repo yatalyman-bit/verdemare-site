@@ -15,7 +15,7 @@
   <div class="grid3">
   {{ range $i, $t := .Params.types }}
     <div>
-      {{ partial "art-img.html" (dict "res" ($.Resources.GetMatch $t.image) "rd" "3x2" "rm" "4x5" "alt" $t.title "sizes_d" "33vw" "focus_m" $t.focus_mobile) }}
+      {{ partial "art-img.html" (dict "res" ($.Resources.GetMatch $t.image) "rd" "3x2" "rm" "4x5" "alt" $t.title "sizes_d" "33vw" "focus_m" $t.focus_mobile "focus_d" $t.focus_desktop "focus_dy" $t.focus_desktop_y "zoom_d" $t.zoom_desktop) }}
       <h3>{{ $t.title }}</h3>
       <p>{{ $t.text }} From&nbsp;{{ index $p.photo $i }}€</p>
     </div>

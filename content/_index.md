@@ -16,7 +16,10 @@ types:
   - title: Couple
     text: Two surfers, one session.
     image: H3.jpg
-    focus_mobile: 50
+    focus_mobile: 63
+    focus_desktop: 63    # computer: centro orizzontale dei soggetti (0-100)
+    focus_desktop_y: 52  # computer: centro verticale (0 alto - 100 basso)
+    zoom_desktop: 78     # computer: quanto stringere (100 = foto intera)
   - title: Friends
     text: Up to four surfers.
     image: H4.jpg

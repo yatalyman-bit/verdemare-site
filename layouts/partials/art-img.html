@@ -5,15 +5,19 @@
 {{- if $r -}}
 {{- $pd := split (.rd | default "3x2") "x" -}}{{- $pm := split (.rm | default "4x5") "x" -}}
 {{- $ad := .anchor_d | default "Center" -}}{{- $am := .anchor_m | default "Center" -}}
+{{- /* computer: focus_d (0-100) centra in orizzontale; zoom_d (es. 80) stringe l'inquadratura al 80% della larghezza; focus_dy (0-100) centra in verticale */ -}}
 {{- $srcd := $r -}}
-{{- with .focus_d -}}
+{{- if or .focus_d .zoom_d -}}
+  {{- $fx := .focus_d | default 50 -}}{{- $fy := .focus_dy | default 50 -}}
   {{- $cw := div (mul $r.Height (int (index $pd 0))) (int (index $pd 1)) -}}
-  {{- if lt $cw $r.Width -}}
-    {{- $x0 := sub (div (mul $r.Width .) 100) (div $cw 2) -}}
-    {{- if lt $x0 0 }}{{ $x0 = 0 }}{{ end -}}
-    {{- if gt (add $x0 $cw) $r.Width }}{{ $x0 = sub $r.Width $cw }}{{ end -}}
-    {{- $srcd = ($r.Crop (printf "%dx%d TopRight" (sub $r.Width $x0) $r.Height)).Crop (printf "%dx%d TopLeft" $cw $r.Height) -}}
-  {{- end -}}
+  {{- if gt $cw $r.Width }}{{ $cw = $r.Width }}{{ end -}}
+  {{- with $.zoom_d }}{{ $cw = div (mul $cw .) 100 }}{{ end -}}
+  {{- $ch := div (mul $cw (int (index $pd 1))) (int (index $pd 0)) -}}
+  {{- if gt $ch $r.Height }}{{ $ch = $r.Height }}{{ $cw = div (mul $ch (int (index $pd 0))) (int (index $pd 1)) }}{{ end -}}
+  {{- $x0 := sub (div (mul $r.Width $fx) 100) (div $cw 2) -}}{{- $y0 := sub (div (mul $r.Height $fy) 100) (div $ch 2) -}}
+  {{- if lt $x0 0 }}{{ $x0 = 0 }}{{ end -}}{{- if gt (add $x0 $cw) $r.Width }}{{ $x0 = sub $r.Width $cw }}{{ end -}}
+  {{- if lt $y0 0 }}{{ $y0 = 0 }}{{ end -}}{{- if gt (add $y0 $ch) $r.Height }}{{ $y0 = sub $r.Height $ch }}{{ end -}}
+  {{- $srcd = ($r.Crop (printf "%dx%d BottomRight" (sub $r.Width $x0) (sub $r.Height $y0))).Crop (printf "%dx%d TopLeft" $cw $ch) -}}
 {{- end -}}
 {{- $d := slice -}}{{- $dl := "" -}}
 {{- range .wd | default (slice 480 960 1600) -}}{{- $w := cond (gt . $srcd.Width) $srcd.Width . -}}{{- $i := $srcd.Fill (printf "%dx%d %s webp" $w (div (mul $w (int (index $pd 1))) (int (index $pd 0))) $ad) -}}{{- $d = $d | append (printf "%s %dw" $i.RelPermalink $i.Width) -}}{{- $dl = $i -}}{{- end -}}

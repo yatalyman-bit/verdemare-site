@@ -2,7 +2,7 @@
 {{ $p := site.Data.site.prices }}
 <section class="sec"><div class="wrap grid2">
   <div><h1>{{ .Title }}</h1>{{ .Content }}<a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a></div>
-  {{ partial "art-img.html" (dict "res" (.Resources.GetMatch .Params.image) "rd" "4x5" "rm" "4x5" "alt" "Surfer laughing in the water during a private session" "sizes_d" "50vw" "focus_d" .Params.image_focus "focus_m" .Params.image_focus "eager" true) }}
+  {{ partial "art-img.html" (dict "res" (.Resources.GetMatch .Params.image) "rd" "4x5" "rm" "4x5" "alt" "Surfer laughing in the water during a private session" "sizes_d" "50vw" "focus_d" .Params.image_focus "zoom_d" 100 "focus_m" .Params.image_focus "eager" true) }}
 </div></section>
 
 <section class="sec light"><div class="wrap">
