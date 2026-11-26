@@ -1,7 +1,7 @@
 {{ define "main" }}
 {{ $p := site.Data.site.prices }}
 <section class="hero">
-  {{ partial "img.html" (dict "res" (.Resources.GetMatch .Params.hero_image) "ratio" "2x1" "alt" "Surfer photographed from the water" "eager" true) }}
+  <div class="hero-img">{{ partial "hero-img.html" (dict "res" (.Resources.GetMatch .Params.hero_image) "alt" "Surfer photographed from the water" "anchor_d" (.Params.hero_anchor_desktop | default "Center") "anchor_m" (.Params.hero_anchor_mobile | default "Center")) }}</div>
   <div class="hero-text wrap">
     <h1>{{ .Params.hero_title }}</h1>
     <p>{{ .Params.hero_text }} From {{ index $p.photo 0 }}€.</p>

@@ -3,6 +3,8 @@ seo_title: "Surf photographer in Peniche · Private in-water sessions | Verdemar
 description: "In-water surf photographer in Peniche, Portugal. Private photo and video sessions in and around Peniche, from 60€. Book on WhatsApp."
 title: Verdemare
 hero_image: H1.jpg
+hero_anchor_desktop: Center   # Center, Left, Right, Top, Bottom, TopLeft…: quale parte della foto tenere
+hero_anchor_mobile: Center
 hero_title: Private surf sessions
 hero_text: In-water photo and video in Peniche.
 types:

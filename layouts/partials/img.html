@@ -1,4 +1,4 @@
-{{- /* Immagine responsive. dict "res" risorsa "ratio" "4x5"|"" "alt" testo "sizes" sizes "eager" bool */ -}}
+{{- /* Immagine responsive. dict "res" risorsa "ratio" "4x5"|"" "alt" testo "sizes" sizes "eager" bool "anchor" Center|Left|Right|TopLeft…|Smart */ -}}
 {{- $r := .res -}}
 {{- if $r -}}
 {{- $widths := slice 480 960 1600 -}}
@@ -11,7 +11,7 @@
   {{- if $.ratio -}}
     {{- $p := split $.ratio "x" -}}
     {{- $h := div (mul $w (int (index $p 1))) (int (index $p 0)) -}}
-    {{- $img = $r.Fill (printf "%dx%d smart webp" $w $h) -}}
+    {{- $img = $r.Fill (printf "%dx%d %s webp" $w $h ($.anchor | default "Smart")) -}}
   {{- else -}}
     {{- $img = $r.Resize (printf "%dx webp" $w) -}}
   {{- end -}}
