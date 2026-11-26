@@ -12,15 +12,24 @@
   <a class="btn btn-o" href="/real-sessions/">See all sessions</a>
 </div></section>
 
-<section class="sec"><div class="wrap">
-  <h2>Prices</h2>
-  <dl class="prices">
-    <div><dt>Photo session · 1 hour</dt><dd>from {{ index $p.photo 0 }}€</dd></div>
-    <div><dt>Video session · 1 hour</dt><dd>from {{ index $p.video 0 }}€</dd></div>
-    <div><dt>Extra time · Reel edit · Video analysis from the beach</dt><dd>ask me</dd></div>
-  </dl>
-  <p>Up to {{ len $p.photo }} surfers per session. Full price list on WhatsApp.</p>
-  <a class="btn" href="{{ partial "wa.html" "Hi Flavio! Could you send me the full price list?" }}">Get the full price list</a>
+<section class="sec" id="prices"><div class="wrap">
+  <h2>Choose your session</h2>
+  <div class="grid3 types">
+  {{ range $i, $t := .Params.types }}
+    {{ $n := $t.surfers }}
+    <article class="type" id="{{ $t.anchor }}">
+      <h3>{{ $t.title }}</h3>
+      <p>{{ $t.text }}</p>
+      <dl class="prices">
+        <div><dt>Photo · 1 hour</dt><dd>{{ if gt (len $n) 1 }}from {{ end }}{{ index $p.photo (sub (index $n 0) 1) }}€</dd></div>
+        <div><dt>Video · 1 hour</dt><dd>{{ if gt (len $n) 1 }}from {{ end }}{{ index $p.video (sub (index $n 0) 1) }}€</dd></div>
+      </dl>
+      {{ with $t.note }}<p class="muted small">{{ . }}</p>{{ end }}
+      <a class="btn" href="{{ partial "wa.html" (printf "Hi Flavio! I'd like info on a %s session." (lower $t.title)) }}">Book a {{ lower $t.title }} session</a>
+    </article>
+  {{ end }}
+  </div>
+  <p class="muted">Extra time +{{ $p.extra_hour }}€/h per group · Reel edit +{{ $p.reel }}€ · Video analysis from the beach on request.</p>
 </div></section>
 
 <section class="sec light"><div class="wrap"><h2>How it works</h2>{{ partial "steps.html" . }}</div></section>

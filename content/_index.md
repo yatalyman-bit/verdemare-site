@@ -10,10 +10,12 @@ hero_title: Private surf sessions
 hero_text: In-water photo and video in Peniche.
 types:
   - title: Solo
+    anchor: solo
     text: One surfer, every wave.
     image: H2.jpg
     focus_mobile: 50
   - title: Couple
+    anchor: couple
     text: Two surfers, one session.
     image: H3.jpg
     focus_mobile: 63
@@ -21,6 +23,7 @@ types:
     focus_desktop_y: 52  # computer: centro verticale (0 alto - 100 basso)
     zoom_desktop: 78     # computer: quanto stringere (100 = foto intera)
   - title: Friends
+    anchor: friends
     text: Up to four surfers.
     image: H4.jpg
     focus_mobile: 50

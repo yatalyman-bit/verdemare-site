@@ -5,6 +5,20 @@ title: Sessions
 layout: sessions
 image: S1.jpg
 image_focus: 55   # dove sta il soggetto, da 0 (sinistra) a 100 (destra)
+types:
+  - title: Solo
+    anchor: solo
+    surfers: [1]
+    text: One surfer, every wave. The camera follows only you.
+  - title: Couple
+    anchor: couple
+    surfers: [2]
+    text: Two surfers, one session. Shots of each of you, and of you together.
+  - title: Friends
+    anchor: friends
+    surfers: [3, 4]
+    text: Three or four surfers sharing the session.
+    note: 4 surfers? I recommend 1h30, so everyone gets enough waves on camera.
 good_to_know:
   - You pay for time in the water. I can't choose the waves or how many you catch, so the number of photos isn't fixed.
   - If I judge the conditions aren't good, we move the session at no cost (up to twice). If no date works, you get your deposit back.
