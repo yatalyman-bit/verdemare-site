@@ -1,10 +1,10 @@
 {{ define "main" }}
 {{ $p := site.Data.site.prices }}
 <section class="hero">
-  <div class="hero-img">{{ partial "hero-img.html" (dict "res" (.Resources.GetMatch .Params.hero_image) "alt" "Surfer photographed from the water" "anchor_d" (.Params.hero_anchor_desktop | default "Center") "anchor_m" (.Params.hero_anchor_mobile | default "Center")) }}</div>
+  <div class="hero-img">{{ partial "hero-img.html" (dict "res" (.Resources.GetMatch .Params.hero_image) "alt" "Surfer photographed from the water" "anchor_d" (.Params.hero_anchor_desktop | default "Center") "anchor_m" (.Params.hero_anchor_mobile | default "Center") "focus_m" .Params.hero_focus_mobile) }}</div>
   <div class="hero-text wrap">
     <h1>{{ .Params.hero_title }}</h1>
-    <p>{{ .Params.hero_text }} From {{ index $p.photo 0 }}€.</p>
+    <p>{{ .Params.hero_text }} From&nbsp;{{ index $p.photo 0 }}€.</p>
     <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a>
     <a class="btn btn-o" href="/sessions/">See sessions</a>
   </div>
@@ -17,7 +17,7 @@
     <div>
       {{ partial "img.html" (dict "res" ($.Resources.GetMatch $t.image) "ratio" "4x5" "alt" $t.title "sizes" "(min-width: 760px) 33vw, 100vw") }}
       <h3>{{ $t.title }}</h3>
-      <p>{{ $t.text }} From {{ index $p.photo $i }}€</p>
+      <p>{{ $t.text }} From&nbsp;{{ index $p.photo $i }}€</p>
     </div>
   {{ end }}
   </div>

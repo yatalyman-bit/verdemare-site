@@ -5,6 +5,7 @@ title: Verdemare
 hero_image: H1.jpg
 hero_anchor_desktop: Center   # Center, Left, Right, Top, Bottom, TopLeft…: quale parte della foto tenere
 hero_anchor_mobile: Center
+hero_focus_mobile: 40          # telefono: dove sta il surfer, da 0 (bordo sinistro) a 100 (bordo destro)
 hero_title: Private surf sessions
 hero_text: In-water photo and video in Peniche.
 types:
