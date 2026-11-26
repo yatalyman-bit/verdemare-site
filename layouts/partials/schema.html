@@ -1,0 +1,22 @@
+{{- $d := site.Data.site -}}
+{{- $p := $d.prices -}}
+{{- $s := dict
+  "@context" "https://schema.org"
+  "@type" "ProfessionalService"
+  "name" "Verdemare"
+  "description" "In-water surf photography and video: private sessions in Peniche, Portugal."
+  "url" site.BaseURL
+  "logo" ((resources.Get "logo.png").Resize "512x png").Permalink
+  "image" ((resources.Get "logo.png").Resize "512x png").Permalink
+  "areaServed" (slice "Peniche" "Baleal" "Ferrel" "Ericeira" "Nazaré")
+  "address" (dict "@type" "PostalAddress" "addressLocality" "Peniche" "addressCountry" "PT")
+  "telephone" (printf "+%s" $d.whatsapp)
+  "email" $d.email
+  "sameAs" (slice (printf "https://instagram.com/%s" $d.instagram))
+  "priceRange" (printf "€%d–€%d" (index $p.photo 0) (index $p.video (sub (len $p.video) 1)))
+  "knowsLanguage" (slice "en" "it" "es" "pt")
+  "makesOffer" (slice
+     (dict "@type" "Offer" "name" "Private in-water surf photo session, 1 hour" "price" (index $p.photo 0) "priceCurrency" "EUR")
+     (dict "@type" "Offer" "name" "Private in-water surf video session, 1 hour" "price" (index $p.video 0) "priceCurrency" "EUR"))
+-}}
+<script type="application/ld+json">{{ $s | jsonify | safeJS }}</script>

@@ -2,7 +2,7 @@ baseURL = "https://example.com/"   # TODO: il dominio, quando lo compri
 languageCode = "en"
 title = "Verdemare · Private surf sessions"
 disableKinds = ["taxonomy", "term", "RSS"]
-enableRobotsTXT = false
+enableRobotsTXT = true
 
 [outputs]
   home = ["HTML", "JSON"]

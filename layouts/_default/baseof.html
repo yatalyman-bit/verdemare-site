@@ -3,16 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · Verdemare{{ end }}</title>
-<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}In-water surf photo and video in Peniche, Portugal. Private sessions from {{ index site.Data.site.prices.photo 0 }}€.{{ end }}">
-{{ if .Params.noindex }}<meta name="robots" content="noindex, nofollow">{{ end }}
+{{- $title := cond .IsHome (.Params.seo_title | default site.Title) (printf "%s · Verdemare" (.Params.seo_title | default .Title)) -}}
+{{- $desc := .Description | default (printf "In-water surf photographer in Peniche, Portugal. Private photo and video sessions from %d€." (index site.Data.site.prices.photo 0)) -}}
+{{- $og := "" -}}{{- with .Resources.GetMatch (.Params.hero_image | default .Params.image | default .Params.cover | default "*.jpg") }}{{ $og = .Fill "1200x630 smart jpg q80" }}{{ end -}}
+{{- $preview := strings.Contains site.BaseURL "pages.dev" -}}
+<title>{{ $title }}</title>
+<meta name="description" content="{{ $desc }}">
+<link rel="canonical" href="{{ .Permalink }}">
+{{ if or .Params.noindex $preview }}<meta name="robots" content="noindex, nofollow">{{ end }}
+<meta property="og:site_name" content="Verdemare">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_GB">
+{{ with $og }}<meta property="og:image" content="{{ .Permalink }}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">{{ end }}
+<meta name="twitter:card" content="summary_large_image">
+{{ if .IsHome }}{{ partial "schema.html" . }}{{ end }}
 {{ with (resources.Get "logo.png").Resize "64x png" }}<link rel="icon" href="{{ .RelPermalink }}" type="image/png">{{ end }}
 {{ with (resources.Get "logo.png").Resize "180x png" }}<link rel="apple-touch-icon" href="{{ .RelPermalink }}">{{ end }}
 <link rel="preload" href="/fonts/norwester.woff2" as="font" type="font/woff2" crossorigin>
 {{ $css := resources.Get "css/main.css" | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
-<meta property="og:title" content="{{ .Title }}">
-<meta property="og:type" content="website">
 </head>
 <body>
 {{ partial "nav.html" . }}

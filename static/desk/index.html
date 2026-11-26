@@ -184,6 +184,7 @@ function merge(a,b){
 async function pull(){
   try{
     const r=await fetch(API,{credentials:"same-origin",headers:{accept:"application/json"}});
+    if(r.status===401){ location.href="/desk/login"; return }
     if(!r.ok) throw new Error(r.status);
     const j=await r.json(); online=true; S.clicks=j.clicks||{};
     const server=j.data||{}; const merged=merge(server,snapshot());

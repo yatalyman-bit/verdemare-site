@@ -1,4 +1,6 @@
 ---
+seo_title: "About Flavio, in-water surf photographer"
+description: "Flavio has surfed for about 20 years and shoots from the water around Peniche, Portugal. Speaks English, Italian, Spanish and Portuguese."
 title: About
 layout: about
 image: A1.jpg

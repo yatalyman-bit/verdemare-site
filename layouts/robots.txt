@@ -1,0 +1,8 @@
+User-agent: *
+{{ if strings.Contains site.BaseURL "pages.dev" }}Disallow: /
+{{ else }}Disallow: /desk/
+Disallow: /book/
+Disallow: /partners/
+
+Sitemap: {{ "sitemap.xml" | absURL }}
+{{ end }}
