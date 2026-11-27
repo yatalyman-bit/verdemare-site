@@ -11,49 +11,70 @@
     <h1>{{ $group }}</h1>
     <p>{{ $t.text }}</p>
     {{ with $t.note }}<p class="muted small">{{ . }}</p>{{ end }}
-    <a class="btn" href="#choose">Prices &amp; your quote</a>
+    <a class="btn" href="#real">See a real session</a> <a class="btn btn-o" href="#choose">Prices</a>
     <p class="gift-line small"><a href="/gift/">🎁 Is it a gift? Get a voucher</a></p>
   </div>
   {{ partial "art-img.html" (dict "res" (.Resources.GetMatch .Params.image) "rd" "4x5" "rm" "4x5" "alt" (printf "%s surf session" $group) "sizes_d" "50vw" "focus_d" .Params.focus "zoom_d" 100 "focus_m" .Params.focus "eager" true) }}
 </div></section>
 
-<section class="sec light" id="choose"><div class="wrap">
+{{ with $sessions }}
+{{ $first := index . 0 }}{{ $imgs := sort ($first.Resources.ByType "image") "Name" }}
+<section class="sec" id="real"><div class="wrap">
+  <h2>A real {{ lower $group }} session</h2>
+  <p><strong>{{ $first.Params.duration }} · {{ $first.Params.place }}{{ with $first.Params.date }} · {{ . }}{{ end }}</strong> · Every photo below, as the client received it.</p>
+  <div class="masonry c3 rs-grid">
+    {{ range $i, $im := $imgs }}<div class="rs-item{{ if ge $i 9 }} rs-more{{ end }}">{{ partial "img.html" (dict "res" $im "alt" (printf "%s session" $group) "sizes" "(min-width: 760px) 33vw, 100vw") }}</div>{{ end }}
+  </div>
+  {{ if gt (len $imgs) 9 }}<button class="btn btn-o rs-all" type="button">See all {{ len $imgs }} photos</button>{{ end }}
+  {{ range $first.Resources.Match "*.mp4" }}<video src="{{ .RelPermalink }}" controls playsinline preload="metadata"></video>{{ end }}
+  {{ if gt (len .) 1 }}
+  <h3 style="margin-top:32px">More {{ lower $group }} sessions</h3>
+  <div class="grid3">
+  {{ range after 1 . }}
+    <a class="card" href="{{ .RelPermalink }}">
+      {{ partial "img.html" (dict "res" (.Resources.GetMatch (.Params.cover | default "*")) "ratio" "3x2" "alt" .Title "sizes" "(min-width: 760px) 33vw, 100vw") }}
+      <h3>{{ .Params.duration }} · {{ .Params.place }} <span class="arrow">→</span></h3>
+    </a>
+  {{ end }}
+  </div>
+  {{ end }}
+</div></section>
+{{ end }}
+
+<section class="sec light" id="choose"><div class="wrap narrow">
   <h2>Photo or video?</h2>
-  <p>One hour in the water{{ if gt $n 1 }}, prices for the whole group{{ end }}. Pick one, then add extras below.</p>
-  {{ $first := index (where (where site.RegularPages "Section" "real-sessions") "Params.group" $group) 0 }}
-  <div class="grid2 pv">
-    <article class="pv-card">
-      <h3>Photo session</h3>
-      <div class="pv-media pv-photos">{{ with $first }}{{ range first 3 (sort (.Resources.ByType "image") "Name") }}{{ partial "img.html" (dict "res" . "ratio" "1x1" "alt" (printf "%s photo session" $group) "sizes" "(min-width: 760px) 16vw, 33vw") }}{{ end }}{{ end }}</div>
-      {{ partial "perks.html" "Included · only with Verdemare" }}
-      <p class="small muted" style="margin:0">Choose one of the two:</p>
-      <div class="opt">
-        <div class="opt-h"><strong>Surf photos · 1 hour</strong><span class="pv-price">{{ partial "price.html" (dict "list" $p.photo "surfers" $t.surfers "mode" "big") }}</span></div>
-        <p>Your waves from the water, selected and edited, in 48 hours.</p>
-        <button class="btn btn-o pick" type="button" data-svc="photo">Choose surf photos</button>
-      </div>
-      <div class="opt opt-star">
-        <div class="opt-h"><strong>Surf + photoshoot · 1h{{ $p.shoot_minutes }}</strong><span class="pv-price">{{ partial "price.html" (dict "list" $shoot "surfers" $t.surfers "mode" "big") }}</span></div>
-        <p>After the surf, {{ $p.shoot_minutes }} more minutes for a proper shoot in and out of the water: {{ if gt $n 1 }}portraits of each of you and together{{ else }}portraits{{ end }}, with your board, on the beach, in the lineup.</p>
-        <button class="btn btn-o pick" type="button" data-svc="shoot">Choose surf + photoshoot</button>
-      </div>
-    </article>
-    <article class="pv-card pv-video">
-      <span class="badge">Best for Instagram</span>
-      <h3>Video session</h3>
-      <div class="pv-media">{{ partial "reel.html" . }}</div>
-      <p class="small muted" style="margin:0">Choose one of the two:</p>
-      <div class="opt">
-        <div class="opt-h"><strong>Edited reel + all clips</strong><span class="pv-price">{{ partial "price.html" (dict "list" $p.video "surfers" $t.surfers "mode" "big") }}</span></div>
-        <p>I edit a reel of about 1 minute{{ if gt $n 1 }} with all of you{{ end }}, ready to post. You also get every clip of your waves.</p>
-        <button class="btn btn-o pick" type="button" data-svc="video">Choose reel + clips</button>
-      </div>
-      <div class="opt">
-        <div class="opt-h"><strong>Clips only, no edit</strong><span class="pv-price">{{ partial "price.html" (dict "list" $p.clips "surfers" $t.surfers "mode" "big") }}</span></div>
-        <p>Every clip of your waves, as filmed. No reel: you edit them yourself.</p>
-        <button class="btn btn-o pick" type="button" data-svc="clips">Choose clips only</button>
-      </div>
-    </article>
+  <p>One hour in the water{{ if gt $n 1 }}, prices for the whole group{{ end }}.</p>
+  <div class="tabs-pv" role="tablist">
+    <button type="button" role="tab" id="tab-photo" aria-controls="panel-photo" aria-selected="true" data-tab="photo"><span>📷 Photo</span><small>from {{ index $p.photo (sub $n 1) }}€</small></button>
+    <button type="button" role="tab" id="tab-video" aria-controls="panel-video" aria-selected="false" data-tab="video"><em>Best for Instagram</em><span>🎬 Video</span><small>from {{ index $p.clips (sub $n 1) }}€</small></button>
+  </div>
+  <div class="pv-card" role="tabpanel" id="panel-photo" aria-labelledby="tab-photo">
+    {{ partial "perks.html" "Included · only with Verdemare" }}
+    <p class="small muted" style="margin:0">Choose one of the two:</p>
+    <div class="opt">
+      <div class="opt-h"><strong>Surf photos · 1 hour</strong><span class="pv-price">{{ partial "price.html" (dict "list" $p.photo "surfers" $t.surfers "mode" "big") }}</span></div>
+      <p>Your waves from the water, selected and edited, in 48 hours.</p>
+      <button class="btn btn-o pick" type="button" data-svc="photo">Choose surf photos</button>
+    </div>
+    <div class="opt opt-star">
+      <div class="opt-h"><strong>Surf + photoshoot · 1h{{ $p.shoot_minutes }}</strong><span class="pv-price">{{ partial "price.html" (dict "list" $shoot "surfers" $t.surfers "mode" "big") }}</span></div>
+      <p>After the surf, {{ $p.shoot_minutes }} more minutes for a proper shoot in and out of the water: {{ if gt $n 1 }}portraits of each of you and together{{ else }}portraits{{ end }}, with your board, on the beach, in the lineup.</p>
+      <button class="btn btn-o pick" type="button" data-svc="shoot">Choose surf + photoshoot</button>
+    </div>
+  </div>
+  <div class="pv-card" role="tabpanel" id="panel-video" aria-labelledby="tab-video" hidden>
+    <div class="pv-media">{{ partial "reel.html" . }}</div>
+    <p class="small muted" style="margin:0">Choose one of the two:</p>
+    <div class="opt">
+      <div class="opt-h"><strong>Edited reel + all clips</strong><span class="pv-price">{{ partial "price.html" (dict "list" $p.video "surfers" $t.surfers "mode" "big") }}</span></div>
+      <p>I edit a reel of about 1 minute{{ if gt $n 1 }} with all of you{{ end }}, ready to post. You also get every clip of your waves.</p>
+      <button class="btn btn-o pick" type="button" data-svc="video">Choose reel + clips</button>
+    </div>
+    <div class="opt">
+      <div class="opt-h"><strong>Clips only, no edit</strong><span class="pv-price">{{ partial "price.html" (dict "list" $p.clips "surfers" $t.surfers "mode" "big") }}</span></div>
+      <p>Every clip of your waves, as filmed. No reel: you edit them yourself.</p>
+      <button class="btn btn-o pick" type="button" data-svc="clips">Choose clips only</button>
+    </div>
   </div>
 </div></section>
 
@@ -96,30 +117,6 @@
 </div></section>
 <script type="application/json" id="q-data">{{ dict "group" $group "prices" $p "wa" (string site.Data.site.whatsapp) | jsonify | safeJS }}</script>
 <script src="/js/quote.js" defer></script>
-
-{{ with $sessions }}
-{{ $first := index . 0 }}
-<section class="sec"><div class="wrap">
-  <h2>Real {{ lower $group }} sessions</h2>
-  <h3>{{ $first.Params.group }} · {{ $first.Params.duration }} · {{ $first.Params.place }}{{ with $first.Params.date }} · {{ . }}{{ end }}</h3>
-  <p>Every photo from this session, as the client received it.</p>
-  <div class="masonry c3">
-    {{ range sort ($first.Resources.ByType "image") "Name" }}{{ partial "img.html" (dict "res" . "alt" (printf "%s session" $group) "sizes" "(min-width: 760px) 33vw, 100vw") }}{{ end }}
-  </div>
-  {{ range $first.Resources.Match "*.mp4" }}<video src="{{ .RelPermalink }}" controls playsinline preload="metadata"></video>{{ end }}
-  {{ if gt (len .) 1 }}
-  <h3 style="margin-top:32px">More {{ lower $group }} sessions</h3>
-  <div class="grid3">
-  {{ range after 1 . }}
-    <a class="card" href="{{ .RelPermalink }}">
-      {{ partial "img.html" (dict "res" (.Resources.GetMatch (.Params.cover | default "*")) "ratio" "3x2" "alt" .Title "sizes" "(min-width: 760px) 33vw, 100vw") }}
-      <h3>{{ .Params.duration }} · {{ .Params.place }} <span class="arrow">→</span></h3>
-    </a>
-  {{ end }}
-  </div>
-  {{ end }}
-</div></section>
-{{ end }}
 
 <section class="sec light"><div class="wrap">
   <h2>What you get</h2>

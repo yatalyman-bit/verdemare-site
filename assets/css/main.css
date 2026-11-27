@@ -129,3 +129,12 @@ p{margin:0 0 1em;max-width:62ch}
 .perk{display:flex;gap:12px;align-items:flex-start}.perk-i{font-size:1.6rem;line-height:1}.perk strong{display:block}.perk span{font-size:.92rem;color:var(--muted)}
 .pv-card .perks{margin:0}.opt-star{background:#fbfaf7;margin:0 -8px;padding:12px 8px 8px;border-radius:8px}
 .video-sec .perks{margin-top:8px}
+.tabs-pv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
+.tabs-pv button{font:inherit;cursor:pointer;position:relative;background:#fff;border:2px solid var(--line);border-radius:12px;padding:14px 10px;display:grid;gap:2px;justify-items:center;color:var(--ink)}
+.tabs-pv button span{font-weight:700;font-size:1.1rem}.tabs-pv button small{color:var(--muted);font-size:.9rem}
+.tabs-pv button[aria-selected=true]{border-color:var(--orange);background:#fff6ef}
+.tabs-pv button em{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-style:normal;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+#choose .pv-card{border-color:var(--orange)}#choose .pv-card .reel{max-width:260px;margin:0 auto}
+.rs-more{display:none}.rs-open .rs-more{display:block}.rs-all{margin-top:12px}
+#real{scroll-margin-top:80px}
+[hidden]{display:none!important}

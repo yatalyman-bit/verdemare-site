@@ -19,6 +19,17 @@
     document.getElementById("q-book").dataset.via = 1;
   }
   f.addEventListener("change", calc); calc();
+  // schede Foto / Video: si vede un pannello alla volta; il preventivo segue la scheda
+  const tabs = document.querySelectorAll(".tabs-pv [role=tab]");
+  const GROUP = { photo: ["photo", "shoot"], video: ["video", "clips"] };
+  function setTab(name, fromPick) {
+    tabs.forEach(t => { const on = t.dataset.tab === name; t.setAttribute("aria-selected", on); document.getElementById("panel-" + t.dataset.tab).hidden = !on; });
+    if (!fromPick && !GROUP[name].includes(f.svc.value)) { f.querySelector(`input[name=svc][value=${GROUP[name][0]}]`).checked = true; calc(); }
+  }
+  tabs.forEach(t => t.addEventListener("click", () => setTab(t.dataset.tab)));
+  f.addEventListener("change", e => { if (e.target.name === "svc") setTab(GROUP.photo.includes(e.target.value) ? "photo" : "video", true); });
+  const rsAll = document.querySelector(".rs-all");
+  if (rsAll) rsAll.addEventListener("click", () => { document.querySelector(".rs-grid").classList.add("rs-open"); rsAll.remove(); });
   document.querySelectorAll(".pick").forEach(b => b.addEventListener("click", () => {
     f.querySelector(`input[name=svc][value=${b.dataset.svc}]`).checked = true; calc();
     document.getElementById("quote").scrollIntoView({ behavior: "smooth" });
