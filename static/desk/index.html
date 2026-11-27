@@ -466,7 +466,7 @@ $("#publish").onclick = async () => {
     }
     await api(`galleries/${id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ files, zip_size: zsize, ready: 1, paid: !isOpen && $("#g_paid").value === "1" }) });
     if (isOpen && lastDir) { try { await idbSet(id, { dir: lastDir, at: Date.now() }); } catch {} }
-    sent = totalBytes; bar(); stat("Pubblicata ✓" + (isOpen ? (lastDir ? " · cartella ricordata: per sbloccare gli ordini non dovrai cercare niente" : " · per sbloccare gli ordini ti chiederò la cartella della giornata") : ""));
+    sent = totalBytes; bar(); stat("Pubblicata ✓" + (isOpen ? (lastDir ? " · cartella ricordata: per sbloccare gli ordini non dovrai cercare niente" : " · per sbloccare gli ordini ti chiederò la cartella della giornata") + ". Per 7 giorni non rinominare e non cancellare queste foto dal computer." : ""));
     showLink(id, client, isOpen ? $("#g_title").value.trim() : null);
   } catch (e) { stat("Errore: " + e.message + " — controlla la connessione e riprova (la gallery incompleta si può eliminare dalla scheda Gallery)."); }
   removeEventListener("beforeunload", warn);
