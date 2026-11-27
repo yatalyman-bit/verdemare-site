@@ -34,5 +34,5 @@ types:
     zoom_desktop: 100
 video: reel.mp4
 video_title: Photo or video
-video_text: "Video sessions come with an edited reel of about a minute for each surfer, plus all the clips. Photo sessions include 1–2 bonus video clips."
+video_text: "Video sessions come with an edited reel of about a minute, plus all the clips. Photo sessions include 1–2 bonus video clips."
 ---

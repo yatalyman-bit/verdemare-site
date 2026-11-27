@@ -9,7 +9,7 @@ prices:
     - 90
     - 120
     - 150
-  video:        # video con reel montato (circa 1 minuto a persona) + tutte le clip
+  video:        # video con un reel montato (circa 1 minuto, uno per gruppo) + tutte le clip
     - 100
     - 150
     - 200

@@ -49,7 +49,7 @@ faq:
   - q: Can I post the photos?
     a: Yes, post them wherever you like and tag @verdemare.photo. Commercial use (sponsors, brands, ads) needs a separate licence, just ask.
   - q: What do I get with a video session?
-    a: An edited reel of about one minute for each surfer, from paddling out to your best waves, plus all the clips. If you prefer to edit yourself, you can choose clips only, for less.
+    a: An edited reel of about one minute, from paddling out to your best waves (one reel for the whole group), plus all the clips. If you prefer to edit yourself, you can choose clips only, for less.
   - q: What if I cancel?
     a: At least 24 hours before, you get your deposit back. Later than that, or if conditions are good and you decide not to surf, the deposit is kept.
 ---
