@@ -32,8 +32,7 @@ types:
     focus_desktop: 50
     focus_desktop_y: 50
     zoom_desktop: 100
-video: V1.mp4
-video_placeholder: V1-placeholder.jpg
+video: reel.mp4
 video_title: Photo or video
-video_text: Photos are selected and edited. Video comes as clips, one per wave, ready to share.
+video_text: "Video sessions come with an edited reel of about a minute for each surfer, plus all the clips. Photo sessions include 1–2 bonus video clips."
 ---

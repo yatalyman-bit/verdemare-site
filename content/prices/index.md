@@ -32,6 +32,8 @@ what_you_get:
     text: A few portraits and moments around the surf, like paddling out, waiting for a set, laughing after a good wave.
   - title: Your photos in 48 hours
     text: Selected and edited, in a private online gallery.
+  - title: A bonus with every photo session
+    text: 1–2 short video clips of your best waves, at no extra cost.
 good_to_know:
   - You pay for time in the water. I can't choose the waves or how many you catch, so the number of photos isn't fixed.
   - If I judge the conditions aren't good, we move the session at no cost (up to twice). If no date works, you get your deposit back.
@@ -46,6 +48,8 @@ faq:
     a: The best spot for the day's conditions around Peniche. Ericeira and Nazaré are possible with a travel fee.
   - q: Can I post the photos?
     a: Yes, post them wherever you like and tag @verdemare.photo. Commercial use (sponsors, brands, ads) needs a separate licence, just ask.
+  - q: What do I get with a video session?
+    a: An edited reel of about one minute for each surfer, from paddling out to your best waves, plus all the clips. If you prefer to edit yourself, you can choose clips only, for less.
   - q: What if I cancel?
     a: At least 24 hours before, you get your deposit back. Later than that, or if conditions are good and you decide not to surf, the deposit is kept.
 ---

@@ -11,14 +11,15 @@
       <p>{{ .text }}</p>
       <dl class="prices">
         <div><dt>Photo · 1 hour</dt><dd>{{ $from }}{{ index $p.photo (sub $n 1) }}€</dd></div>
-        <div><dt>Video · 1 hour</dt><dd>{{ $from }}{{ index $p.video (sub $n 1) }}€</dd></div>
+        <div><dt>Video + reel · 1 hour</dt><dd>{{ $from }}{{ index $p.video (sub $n 1) }}€</dd></div>
+        <div class="muted"><dt>Video, clips only</dt><dd>{{ $from }}{{ index $p.clips (sub $n 1) }}€</dd></div>
       </dl>
       {{ with .note }}<p class="muted small">{{ . }}</p>{{ end }}
       <a class="btn btn-o" href="/{{ .anchor }}/">See {{ lower .title }} sessions</a>
     </article>
   {{ end }}
   </div>
-  <p class="muted">Extra time +{{ $p.extra_hour }}€/h per group · Reel edit +{{ $p.reel }}€ · Ericeira or Nazaré +{{ $p.travel }}€ · Video analysis from the beach on request.</p>
+  <p class="muted">Photo sessions include 1–2 bonus video clips. Extra time +{{ $p.extra_hour }}€/h per group · Ericeira or Nazaré +{{ $p.travel }}€ · Video analysis from the beach on request.</p>
   <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a>
 </div></section>
 

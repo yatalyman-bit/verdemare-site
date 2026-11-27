@@ -9,13 +9,17 @@ prices:
     - 90
     - 120
     - 150
-  video:
+  video:        # video con reel montato (circa 1 minuto a persona) + tutte le clip
+    - 100
+    - 150
+    - 200
+    - 250
+  clips:        # video, solo clip senza montaggio
     - 70
     - 100
     - 130
     - 160
   extra_hour: 50
-  reel: 30
   travel: 25
   commission: 15%
 steps:

@@ -17,9 +17,9 @@ content:
         type: object
         fields:
           - { name: photo, label: "Foto 1h (1, 2, 3, 4 persone)", type: number, list: true }
-          - { name: video, label: "Video 1h (1, 2, 3, 4 persone)", type: number, list: true }
+          - { name: video, label: "Video con reel 1h (1, 2, 3, 4 persone)", type: number, list: true }
+          - { name: clips, label: "Video solo clip 1h (1, 2, 3, 4 persone)", type: number, list: true }
           - { name: extra_hour, label: Ora extra per gruppo, type: number }
-          - { name: reel, label: Reel, type: number }
           - { name: travel, label: Supplemento Ericeira/Nazaré, type: number }
           - { name: commission, label: Commissione hotel, type: string }
       - { name: steps, label: How it works (passaggi), type: string, list: true }

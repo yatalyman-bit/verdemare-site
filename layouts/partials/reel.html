@@ -1,0 +1,8 @@
+{{- /* Reel di esempio: content/reel.mp4 (+ reel-poster.jpg facoltativo). Senza file, un segnaposto. */ -}}
+{{- $home := site.Home -}}
+{{- with $home.Resources.GetMatch "reel.mp4" -}}
+  {{- $poster := $home.Resources.GetMatch "reel-poster.jpg" -}}
+  <div class="reel"><video src="{{ .RelPermalink }}"{{ with $poster }} poster="{{ (.Resize "720x webp").RelPermalink }}"{{ end }} autoplay muted loop playsinline preload="metadata" aria-label="Example reel from a video session"></video></div>
+{{- else -}}
+  <div class="reel reel-ph"><span>Example reel<br><small>(9:16, max 1 min)</small></span></div>
+{{- end -}}

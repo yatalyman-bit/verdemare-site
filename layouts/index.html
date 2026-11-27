@@ -29,13 +29,11 @@
   {{ partial "steps.html" . }}
 </div></section>
 
-<section class="sec"><div class="wrap grid2">
-  {{ with .Resources.GetMatch .Params.video }}
-    <video src="{{ .RelPermalink }}" autoplay muted loop playsinline preload="metadata"></video>
-  {{ else }}
-    {{ partial "img.html" (dict "res" ($.Resources.GetMatch $.Params.video_placeholder) "ratio" "16x9" "alt" "") }}
-  {{ end }}
-  <div><h2>{{ .Params.video_title }}</h2><p>{{ .Params.video_text }}</p><h3>Extras</h3><p>Extra time +{{ $p.extra_hour }}€/h per group · Reel edit +{{ $p.reel }}€ · Video analysis from the beach on request.</p></div>
+<section class="sec"><div class="wrap grid2 video-sec">
+  {{ partial "reel.html" . }}
+  <div><h2>{{ .Params.video_title }}</h2><p>{{ .Params.video_text }}</p>
+  <p class="muted">Extra time +{{ $p.extra_hour }}€/h per group · Video analysis from the beach on request.</p>
+  <a class="btn btn-o" href="/prices/">See prices</a></div>
 </div></section>
 
 <section class="sec light"><div class="wrap">
