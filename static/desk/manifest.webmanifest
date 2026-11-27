@@ -1,12 +1,12 @@
 {
- "name": "Verdemare Desk",
+ "name": "Verdemare Studio",
  "short_name": "Verdemare",
- "description": "Instagram, partner e commissioni per Verdemare",
+ "description": "Foto, gallery clienti, stampe, buoni regalo, Instagram e partner",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
  "background_color": "#edf1f0",
- "theme_color": "#0d6a70",
+ "theme_color": "#1d2a2e",
  "lang": "it",
  "icons": [
   {
