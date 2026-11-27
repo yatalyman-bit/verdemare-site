@@ -1,11 +1,21 @@
 <header class="nav">
   {{ $l := resources.Get "logo.png" }}<a class="logo" href="/" aria-label="Verdemare home">{{ with $l.Resize "112x webp" }}<img src="{{ .RelPermalink }}" width="56" height="56" alt="">{{ end }}<span>VERDEMARE</span></a>
   <nav class="links" aria-label="Main">
-    {{ range site.Menus.main }}<a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}
+    {{ range site.Menus.main }}
+      {{ if .HasChildren }}
+        <div class="dd"><button type="button" class="dd-btn"{{ if $.HasMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }} <span aria-hidden="true">▾</span></button>
+          <div class="dd-menu">{{ range .Children }}<a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}</div></div>
+      {{ else }}<a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}
+    {{ end }}
   </nav>
   <a class="btn btn-s" href="{{ partial "wa.html" "" }}">Book</a>
   <details class="burger">
     <summary aria-label="Menu"><span></span><span></span><span></span></summary>
-    <nav aria-label="Mobile">{{ range site.Menus.main }}<a href="{{ .URL }}">{{ .Name }}</a>{{ end }}</nav>
+    <nav aria-label="Mobile">
+    {{ range site.Menus.main }}
+      {{ if .HasChildren }}<span class="m-head">{{ .Name }}</span>{{ range .Children }}<a class="m-sub" href="{{ .URL }}">{{ .Name }}</a>{{ end }}
+      {{ else }}<a href="{{ .URL }}">{{ .Name }}</a>{{ end }}
+    {{ end }}
+    </nav>
   </details>
 </header>

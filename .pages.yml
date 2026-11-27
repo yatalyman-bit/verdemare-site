@@ -65,6 +65,13 @@ content:
           - { name: text, type: text }
           - { name: note, label: Nota piccola, type: string }
           - { name: surfers, label: "Numero di surfisti (es. 1, oppure 3 e 4)", type: number, list: true }
+      - name: what_you_get
+        label: What you get (compare in Prices e nelle pagine Solo/Couple/Friends)
+        type: object
+        list: true
+        fields:
+          - { name: title, type: string }
+          - { name: text, type: text }
       - { name: good_to_know, label: Good to know, type: text, list: true }
       - name: faq
         label: FAQ

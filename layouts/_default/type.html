@@ -44,11 +44,7 @@
 
 <section class="sec"><div class="wrap">
   <h2>What you get</h2>
-  <ul class="list">
-    <li>One hour in the water, with the camera only on {{ cond (eq $n 1) "you" (cond (eq $n 2) "you two" "your group") }}.</li>
-    <li>Selected and edited photos in a private online gallery within 48 hours.</li>
-    <li>Video sessions: clips, one per wave, ready to share.</li>
-  </ul>
+  <ul class="wyg">{{ range (site.GetPage "/prices").Params.what_you_get }}<li><strong>{{ .title }}</strong>{{ .text }}</li>{{ end }}</ul>
   <p class="muted">Extra time +{{ $p.extra_hour }}€/h · Reel edit +{{ $p.reel }}€ · Ericeira or Nazaré +{{ $p.travel }}€</p>
 </div></section>
 

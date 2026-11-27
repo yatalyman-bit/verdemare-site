@@ -21,14 +21,34 @@ enableRobotsTXT = true
 
 [menus]
   [[menus.main]]
-    name = "Prices"
+    name = "Sessions"
+    identifier = "sessions"
     pageRef = "/prices"
     weight = 1
   [[menus.main]]
+    name = "Solo"
+    pageRef = "/solo"
+    parent = "sessions"
+    weight = 1
+  [[menus.main]]
+    name = "Couple"
+    pageRef = "/couple"
+    parent = "sessions"
+    weight = 2
+  [[menus.main]]
+    name = "Friends"
+    pageRef = "/friends"
+    parent = "sessions"
+    weight = 3
+  [[menus.main]]
+    name = "Prices"
+    pageRef = "/prices"
+    weight = 2
+  [[menus.main]]
     name = "Work"
     pageRef = "/work"
-    weight = 2
+    weight = 3
   [[menus.main]]
     name = "About"
     pageRef = "/about"
-    weight = 3
+    weight = 4

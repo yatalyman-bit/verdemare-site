@@ -22,15 +22,16 @@
   <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a>
 </div></section>
 
-<section class="sec light"><div class="wrap"><h2>How it works</h2>{{ partial "steps.html" . }}</div></section>
+<section class="sec light"><div class="wrap"><h2>What you get</h2><ul class="wyg">{{ range .Params.what_you_get }}<li><strong>{{ .title }}</strong>{{ .text }}</li>{{ end }}</ul></div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec"><div class="wrap"><h2>How it works</h2>{{ partial "steps.html" . }}</div></section>
+
+<section class="sec light"><div class="wrap">
   <h2>Good to know</h2>
-  {{ .Content }}
   <ul class="list">{{ range .Params.good_to_know }}<li>{{ . }}</li>{{ end }}</ul>
 </div></section>
 
-<section class="sec light"><div class="wrap">
+<section class="sec"><div class="wrap">
   <h2>FAQ</h2>
   {{ range .Params.faq }}<details class="faq"><summary>{{ .q }}</summary><p>{{ .a }}</p></details>{{ end }}
 </div></section>

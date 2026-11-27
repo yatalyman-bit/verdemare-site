@@ -21,6 +21,17 @@ types:
     surfers: [3, 4]
     text: Three or four surfers sharing the session.
     note: 4 surfers? I recommend 1h30, so everyone gets enough waves on camera.
+what_you_get:
+  - title: The right moment
+    text: We pick the day and time together, depending on waves and light.
+  - title: The camera only on you
+    text: Once in the water I focus only on you. That lets me position myself properly in the lineup, anticipate your waves and get better angles and timing.
+  - title: Variety
+    text: During the session I move around the lineup with you to find the best spot, so you get a good variety of waves and turns.
+  - title: More than surfing shots
+    text: A few portraits and moments around the surf, like paddling out, waiting for a set, laughing after a good wave.
+  - title: Your photos in 48 hours
+    text: Selected and edited, in a private online gallery.
 good_to_know:
   - You pay for time in the water. I can't choose the waves or how many you catch, so the number of photos isn't fixed.
   - If I judge the conditions aren't good, we move the session at no cost (up to twice). If no date works, you get your deposit back.
