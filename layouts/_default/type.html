@@ -26,9 +26,10 @@
 <section class="sec" id="real"><div class="wrap">
   <h2>A real {{ lower $group }} session</h2>
   <p><strong>{{ $first.Params.duration }} · {{ $first.Params.place }}{{ with $first.Params.date }} · {{ . }}{{ end }}</strong> · A selection from one session, as the client received it.</p>
-  <div class="masonry c3 rs-grid">
-    {{ range $i, $im := $imgs }}<div class="rs-item{{ if ge $i 9 }} rs-more{{ end }}">{{ partial "img.html" (dict "res" $im "alt" (printf "%s session" $group) "sizes" "(min-width: 760px) 33vw, 100vw") }}</div>{{ end }}
+  <div class="jg rs-grid">
+    {{ range $i, $im := $imgs }}<div class="jg-i{{ if ge $i 9 }} rs-more{{ end }}">{{ partial "img.html" (dict "res" $im "alt" (printf "%s session" $group) "sizes" "(min-width: 760px) 50vw, 100vw") }}</div>{{ end }}
   </div>
+  <script src="/js/gallery.js" defer></script>
   {{ if gt (len $imgs) 9 }}<button class="btn btn-o rs-all" type="button">See all {{ len $imgs }} photos</button>{{ end }}
   {{ range $first.Resources.Match "*.mp4" }}<video src="{{ .RelPermalink }}" controls playsinline preload="metadata"></video>{{ end }}
   {{ if gt (len .) 1 }}

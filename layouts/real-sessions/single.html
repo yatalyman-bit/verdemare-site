@@ -6,8 +6,9 @@
   <p>{{ .Params.place }}{{ with .Params.date }} · {{ . }}{{ end }} · {{ .Params.format | default "photo session" }}</p>
   {{ .Content }}
 </div></section>
-<section class="sec" style="padding-top:0"><div class="wrap narrow gallery">
-  {{ range sort (.Resources.ByType "image") "Name" }}{{ partial "img.html" (dict "res" . "alt" $.Title "sizes" "(min-width: 900px) 860px, 100vw") }}{{ end }}
+<section class="sec" style="padding-top:0"><div class="wrap">
+  <div class="jg">{{ range sort (.Resources.ByType "image") "Name" }}<div class="jg-i">{{ partial "img.html" (dict "res" . "alt" $.Title "sizes" "(min-width: 760px) 60vw, 100vw") }}</div>{{ end }}</div>
+  <script src="/js/gallery.js" defer></script>
   {{ range .Resources.Match "*.mp4" }}<video src="{{ .RelPermalink }}" controls playsinline preload="metadata"></video>{{ end }}
 </div></section>
 <section class="sec dark"><div class="wrap">

@@ -29,7 +29,7 @@
   tabs.forEach(t => t.addEventListener("click", () => setTab(t.dataset.tab)));
   f.addEventListener("change", e => { if (e.target.name === "svc") setTab(GROUP.photo.includes(e.target.value) ? "photo" : "video", true); });
   const rsAll = document.querySelector(".rs-all");
-  if (rsAll) rsAll.addEventListener("click", () => { document.querySelector(".rs-grid").classList.add("rs-open"); rsAll.remove(); });
+  if (rsAll) rsAll.addEventListener("click", () => { document.querySelector(".rs-grid").classList.add("rs-open"); rsAll.remove(); window.vmGalleryLayout && window.vmGalleryLayout(); });
   document.querySelectorAll(".pick").forEach(b => b.addEventListener("click", () => {
     f.querySelector(`input[name=svc][value=${b.dataset.svc}]`).checked = true; calc();
     document.getElementById("quote").scrollIntoView({ behavior: "smooth" });
