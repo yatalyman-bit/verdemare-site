@@ -57,6 +57,7 @@ form.f input,form.f select,form.f textarea{padding:10px;border:1px solid var(--l
 .tot{display:flex;justify-content:space-between;font-weight:700;padding:10px 0}
 .hp{position:absolute;left:-9999px}
 .msg{padding:20px;text-align:center}
+.locked img{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
 footer{padding:30px 16px;color:var(--muted);font-size:.8rem;text-align:center}
 .prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--o);transition:width .2s}
 </style></head>
@@ -97,6 +98,7 @@ async function load() {
   if (r.status === 410) return fail("This gallery has expired. Message me on WhatsApp if you still need your photos.");
   if (!r.ok) return fail("Gallery not found. Check the link, or message me on WhatsApp.");
   G = await r.json();
+  if (!G.paid) { document.body.classList.add("locked"); document.addEventListener("contextmenu", e => { if (e.target.tagName === "IMG") e.preventDefault(); }); document.addEventListener("dragstart", e => { if (e.target.tagName === "IMG") e.preventDefault(); }); }
   document.title = `${G.client} · Verdemare`;
   render();
 }

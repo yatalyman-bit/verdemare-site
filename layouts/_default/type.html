@@ -8,12 +8,10 @@
 
 <section class="sec"><div class="wrap grid2">
   <div>
-    <a href="/prices/">← All sessions &amp; prices</a>
     <h1>{{ $group }}</h1>
     <p>{{ $t.text }}</p>
-    <p><strong>Photo {{ partial "price.html" (dict "list" $p.photo "surfers" $t.surfers "mode" "short") }} · Video {{ partial "price.html" (dict "list" $p.video "surfers" $t.surfers "mode" "short") }}</strong></p>
     {{ with $t.note }}<p class="muted small">{{ . }}</p>{{ end }}
-    <a class="btn btn-o" href="#choose">Photo or video?</a>
+    <a class="btn" href="#choose">Prices &amp; your quote</a>
     <p class="gift-line small"><a href="/gift/">🎁 Is it a gift? Get a voucher</a></p>
   </div>
   {{ partial "art-img.html" (dict "res" (.Resources.GetMatch .Params.image) "rd" "4x5" "rm" "4x5" "alt" (printf "%s surf session" $group) "sizes_d" "50vw" "focus_d" .Params.focus "zoom_d" 100 "focus_m" .Params.focus "eager" true) }}
@@ -21,33 +19,77 @@
 
 <section class="sec light" id="choose"><div class="wrap">
   <h2>Photo or video?</h2>
+  <p>One hour in the water{{ if gt $n 1 }}, prices for the whole group{{ end }}. Pick one, then add extras below.</p>
   {{ $first := index (where (where site.RegularPages "Section" "real-sessions") "Params.group" $group) 0 }}
   <div class="grid2 pv">
     <article class="pv-card">
       <h3>Photo session</h3>
       <div class="pv-media pv-photos">{{ with $first }}{{ range first 3 (sort (.Resources.ByType "image") "Name") }}{{ partial "img.html" (dict "res" . "ratio" "1x1" "alt" (printf "%s photo session" $group) "sizes" "(min-width: 760px) 16vw, 33vw") }}{{ end }}{{ end }}</div>
-      <p class="pv-price">{{ partial "price.html" (dict "list" $p.photo "surfers" $t.surfers "mode" "big" "suffix" "<span>· 1 hour</span>") }}</p>
+      <p class="pv-price">{{ partial "price.html" (dict "list" $p.photo "surfers" $t.surfers "mode" "big") }}</p>
       <ul class="wyg small-list">
         <li>Selected and edited photos in 48 hours</li>
         <li>Portraits and moments around the surf</li>
         <li><strong class="inline">Bonus:</strong> 1–2 video clips of your best waves</li>
       </ul>
-      <a class="btn" href="{{ partial "wa.html" (printf "Hi Flavio! I'd like info on a %s photo session." (lower $group)) }}">Book a photo session</a>
+      <button class="btn btn-o pick" type="button" data-svc="photo">Choose photo</button>
     </article>
     <article class="pv-card pv-video">
       <span class="badge">Best for Instagram</span>
       <h3>Video session</h3>
       <div class="pv-media">{{ partial "reel.html" . }}</div>
-      <p class="pv-price">{{ partial "price.html" (dict "list" $p.video "surfers" $t.surfers "mode" "big" "suffix" "<span>· 1 hour</span>") }}</p>
-      <ul class="wyg small-list">
-        <li>An edited reel of about 1 minute{{ if gt $n 1 }} with all of you{{ end }}, ready to post</li>
-        <li>All the clips of your waves</li>
-        <li>Clips only, no edit: {{ partial "price.html" (dict "list" $p.clips "surfers" $t.surfers "mode" "short") }}</li>
-      </ul>
-      <a class="btn" href="{{ partial "wa.html" (printf "Hi Flavio! I'd like info on a %s video session." (lower $group)) }}">Book a video session</a>
+      <p class="small muted" style="margin:0">Choose one of the two:</p>
+      <div class="opt">
+        <div class="opt-h"><strong>Edited reel + all clips</strong><span class="pv-price">{{ partial "price.html" (dict "list" $p.video "surfers" $t.surfers "mode" "big") }}</span></div>
+        <p>I edit a reel of about 1 minute{{ if gt $n 1 }} with all of you{{ end }}, ready to post. You also get every clip of your waves.</p>
+        <button class="btn btn-o pick" type="button" data-svc="video">Choose reel + clips</button>
+      </div>
+      <div class="opt">
+        <div class="opt-h"><strong>Clips only, no edit</strong><span class="pv-price">{{ partial "price.html" (dict "list" $p.clips "surfers" $t.surfers "mode" "big") }}</span></div>
+        <p>Every clip of your waves, as filmed. No reel: you edit them yourself.</p>
+        <button class="btn btn-o pick" type="button" data-svc="clips">Choose clips only</button>
+      </div>
     </article>
   </div>
 </div></section>
+
+<section class="sec" id="quote"><div class="wrap narrow">
+  <h2>Your quote</h2>
+  <form class="quote" id="q" onsubmit="return false">
+    <fieldset><legend>Session</legend>
+      <label><input type="radio" name="svc" value="photo" checked> Photo</label>
+      <label><input type="radio" name="svc" value="video"> Video: edited reel + all clips</label>
+      <label><input type="radio" name="svc" value="clips"> Video: clips only</label>
+    </fieldset>
+    {{ if gt (len $t.surfers) 1 }}
+    <fieldset><legend>Surfers</legend>
+      {{ range $i, $s := $t.surfers }}<label><input type="radio" name="n" value="{{ $s }}"{{ if eq $i 0 }} checked{{ end }}> {{ $s }}</label>{{ end }}
+    </fieldset>
+    {{ else }}<input type="hidden" name="n" value="{{ $n }}">{{ end }}
+    <fieldset><legend>Extra time</legend>
+      <select name="x" aria-label="Extra time">
+        <option value="0">No extra time (1 hour)</option>
+        <option value="1">+30 min (1h30)</option>
+        <option value="2">+1 hour (2 hours)</option>
+        <option value="3">+1h30 (2h30)</option>
+        <option value="4">+2 hours (3 hours)</option>
+      </select>
+      <p class="small muted hint4" hidden>With 4 surfers I recommend 1h30, so everyone gets enough waves on camera.</p>
+    </fieldset>
+    <fieldset><legend>Where</legend>
+      <label><input type="radio" name="w" value="0" checked> Peniche and Baleal</label>
+      <label><input type="radio" name="w" value="1"> Ericeira or Nazaré (+{{ $p.travel }}€)</label>
+    </fieldset>
+    <div class="q-out" aria-live="polite">
+      <div id="q-lines"></div>
+      <div class="q-tot"><span>Total</span><strong id="q-tot"></strong></div>
+      <p class="small muted" id="q-each"></p>
+      <a class="btn" id="q-book" href="#">Book this on WhatsApp</a>
+      <p class="small muted">50% deposit to book, the rest after you see the preview. We pick the day together from the forecast.</p>
+    </div>
+  </form>
+</div></section>
+<script type="application/json" id="q-data">{{ dict "group" $group "prices" $p "wa" (string site.Data.site.whatsapp) | jsonify | safeJS }}</script>
+<script src="/js/quote.js" defer></script>
 
 {{ with $sessions }}
 {{ $first := index . 0 }}
@@ -76,13 +118,12 @@
 <section class="sec light"><div class="wrap">
   <h2>What you get</h2>
   <ul class="wyg">{{ range (site.GetPage "/prices").Params.what_you_get }}<li><strong>{{ .title }}</strong>{{ partial "prices-text.html" .text }}</li>{{ end }}</ul>
-  <p class="muted">Extra time +{{ $p.extra_hour }}€/h · Ericeira or Nazaré +{{ $p.travel }}€</p>
 </div></section>
 
 <section class="sec dark"><div class="wrap">
   <h2>Ready?</h2>
-  <a class="btn" href="{{ partial "wa.html" (printf "Hi Flavio! I'd like info on a %s photo session." (lower $group)) }}">Book photo</a>
-  <a class="btn" href="{{ partial "wa.html" (printf "Hi Flavio! I'd like info on a %s video session." (lower $group)) }}">Book video</a>
+  <a class="btn" href="#quote">Build your quote</a>
+  <a class="btn btn-o" href="{{ partial "wa.html" (printf "Hi Flavio! I have a question about a %s session." (lower $group)) }}">Ask me on WhatsApp</a>
   <p class="other">{{ range (site.GetPage "/prices").Params.types }}{{ if ne .title $group }}<a href="/{{ .anchor }}/">{{ .title }}</a> · {{ end }}{{ end }}<a href="/prices/">All prices</a></p>
 </div></section>
 {{ end }}

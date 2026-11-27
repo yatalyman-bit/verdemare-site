@@ -108,3 +108,19 @@ p{margin:0 0 1em;max-width:62ch}
 .gift-line{margin-top:6px}
 
 .each{font-size:.78em;font-weight:400;color:var(--muted);white-space:nowrap}.prices dd{text-align:right;line-height:1.5}.pv-price{line-height:1.35}
+.opt{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:6px}.opt p{margin:0;font-size:.95rem}
+.opt-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.opt .pv-price{font-size:1.2rem;text-align:right}
+.pv-card .opt .btn{margin-top:4px}button.btn{font:inherit;font-weight:700;cursor:pointer}
+.reel-ph{background-size:cover;background-position:center;position:relative}.reel-ph span{background:rgba(29,42,46,.75);padding:10px 14px;border-radius:8px}
+.narrow{max-width:640px}
+.quote{display:grid;gap:14px}.quote fieldset{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 10px}
+.quote legend{font-weight:700;margin-bottom:6px;width:100%}
+.quote label{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer}
+.quote label:has(input:checked){border-color:var(--orange);background:#fff6ef}
+.quote input[type=radio]{accent-color:var(--orange);margin:0}
+.quote select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;width:100%}
+.quote .hint4{width:100%;margin:0}
+.q-out{background:var(--light);border-radius:12px;padding:16px;display:grid;gap:8px}
+.q-row,.q-tot{display:flex;justify-content:space-between;gap:12px}.q-row{font-size:.95rem;padding:4px 0;border-bottom:1px solid var(--line)}
+.q-tot{font-size:1.3rem;padding-top:6px}.q-out .btn{justify-self:start}.q-out p{margin:0}
+#choose,#quote{scroll-margin-top:80px}

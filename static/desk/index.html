@@ -391,10 +391,10 @@ $("#publish").onclick = async () => {
       while (next < items.length) {
         const i = next++, it = items[i], tn = base(it.name) + ".jpg";
         const src = await sourceOf(it);
-        const [tw, th] = fit(src.w, src.h, 400, 400);
-        await upload(id, "thumb", tn, await jpg(canvasOf(src.bmp, tw, th), .78));
+        const [tw, th] = fit(src.w, src.h, 360, 360);   // miniature piccole: inutili se rubate
+        await upload(id, "thumb", tn, await jpg(canvasOf(src.bmp, tw, th), .72));
         const [pw, ph] = fit(src.w, src.h, S.w, S.h);
-        await upload(id, "prev", tn, await jpg(watermark(canvasOf(src.bmp, pw, ph)), S.q / 100));
+        await upload(id, "prev", tn, await jpg(watermark(canvasOf(src.bmp, pw, ph)), Math.min(S.q, 82) / 100));   // anteprima: ridotta alla misura del watermark (1200×600) + watermark
         if (it.kind === "p") { const [ww, wh] = fit(src.w, src.h, 2560, 2560); await upload(id, "web", it.name, await jpg(canvasOf(src.bmp, ww, wh), .9)); }
         if (src.bmp.close) src.bmp.close();
         await upload(id, "orig", it.name, it.file);

@@ -1,8 +1,15 @@
-{{- /* Reel di esempio: content/reel.mp4 (+ reel-poster.jpg facoltativo). Senza file, un segnaposto. */ -}}
-{{- $home := site.Home -}}
-{{- with $home.Resources.GetMatch "reel.mp4" -}}
-  {{- $poster := $home.Resources.GetMatch "reel-poster.jpg" -}}
+{{- /* Reel di esempio.
+  Home: content/reel.mp4.  Pagine Solo/Couple/Friends: reel.mp4 nella cartella della pagina,
+  oppure "reel: home" nel front matter per usare quello della home. Senza reel: foto della pagina con la scritta "coming soon". */ -}}
+{{- $p := . -}}
+{{- $src := $p -}}{{- if or $p.IsHome (eq $p.Params.reel "home") }}{{ $src = site.Home }}{{ end -}}
+{{- with $src.Resources.GetMatch "reel.mp4" -}}
+  {{- $poster := $src.Resources.GetMatch "reel-poster.jpg" -}}
   <div class="reel"><video src="{{ .RelPermalink }}"{{ with $poster }} poster="{{ (.Resize "720x webp").RelPermalink }}"{{ end }} autoplay muted loop playsinline preload="metadata" aria-label="Example reel from a video session"></video></div>
 {{- else -}}
-  <div class="reel reel-ph"><span>Example reel<br><small>(9:16, max 1 min)</small></span></div>
+  {{- with $p.Resources.GetMatch ($p.Params.image | default "hero.jpg") -}}
+  <div class="reel reel-ph" style="background-image:url({{ (.Fill "540x960 Center webp q70").RelPermalink }})"><span>Example reel<br>coming soon</span></div>
+  {{- else -}}
+  <div class="reel reel-ph"><span>Example reel<br>coming soon</span></div>
+  {{- end -}}
 {{- end -}}
