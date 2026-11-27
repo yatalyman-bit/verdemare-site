@@ -4,7 +4,11 @@
 {{ $t := dict }}{{ range (site.GetPage "/prices").Params.types }}{{ if eq .title $group }}{{ $t = . }}{{ end }}{{ end }}
 {{ $n := index $t.surfers 0 }}{{ $shoot := slice }}{{ range $p.photo }}{{ $shoot = $shoot | append (add . $p.shoot) }}{{ end }}{{ $from := cond (gt (len $t.surfers) 1) "from " "" }}
 {{ $book := partial "wa.html" (printf "Hi Flavio! I'd like info on a %s session." (lower $group)) }}
-{{ $sessions := where (where site.RegularPages "Section" "real-sessions") "Params.group" $group }}
+{{ $all := where site.RegularPages "Section" "real-sessions" }}
+{{ $mine := where $all "Params.group" $group }}
+{{ $std := where $mine "Params.shoot" "!=" true }}{{ $shootMine := where $mine "Params.shoot" true }}
+{{ $sessions := $std | append $shootMine }}
+{{ $shootEx := index ($shootMine | default (where $all "Params.shoot" true)) 0 }}
 
 <section class="sec"><div class="wrap grid2">
   <div>
@@ -21,7 +25,7 @@
 {{ $first := index . 0 }}{{ $imgs := sort ($first.Resources.ByType "image") "Name" }}
 <section class="sec" id="real"><div class="wrap">
   <h2>A real {{ lower $group }} session</h2>
-  <p><strong>{{ $first.Params.duration }} · {{ $first.Params.place }}{{ with $first.Params.date }} · {{ . }}{{ end }}</strong> · Every photo below, as the client received it.</p>
+  <p><strong>{{ $first.Params.duration }} · {{ $first.Params.place }}{{ with $first.Params.date }} · {{ . }}{{ end }}</strong> · A selection from one session, as the client received it.</p>
   <div class="masonry c3 rs-grid">
     {{ range $i, $im := $imgs }}<div class="rs-item{{ if ge $i 9 }} rs-more{{ end }}">{{ partial "img.html" (dict "res" $im "alt" (printf "%s session" $group) "sizes" "(min-width: 760px) 33vw, 100vw") }}</div>{{ end }}
   </div>
@@ -33,7 +37,7 @@
   {{ range after 1 . }}
     <a class="card" href="{{ .RelPermalink }}">
       {{ partial "img.html" (dict "res" (.Resources.GetMatch (.Params.cover | default "*")) "ratio" "3x2" "alt" .Title "sizes" "(min-width: 760px) 33vw, 100vw") }}
-      <h3>{{ .Params.duration }} · {{ .Params.place }} <span class="arrow">→</span></h3>
+      <h3>{{ if .Params.shoot }}<span class="tag">Surf + lifestyle shoot</span> {{ end }}{{ .Params.duration }} · {{ .Params.place }} <span class="arrow">→</span></h3>
     </a>
   {{ end }}
   </div>
@@ -52,14 +56,16 @@
     {{ partial "perks.html" "Included · only with Verdemare" }}
     <p class="small muted" style="margin:0">Choose one of the two:</p>
     <div class="opt">
+      {{ partial "rs-thumbs.html" (dict "s" (index $std 0) "alt" (printf "%s surf photos" $group)) }}
       <div class="opt-h"><strong>Surf photos · 1 hour</strong><span class="pv-price">{{ partial "price.html" (dict "list" $p.photo "surfers" $t.surfers "mode" "big") }}</span></div>
       <p>Your waves from the water, selected and edited, in 48 hours.</p>
       <button class="btn btn-o pick" type="button" data-svc="photo">Choose surf photos</button>
     </div>
     <div class="opt opt-star">
-      <div class="opt-h"><strong>Surf + photoshoot · 1h{{ $p.shoot_minutes }}</strong><span class="pv-price">{{ partial "price.html" (dict "list" $shoot "surfers" $t.surfers "mode" "big") }}</span></div>
-      <p>After the surf, {{ $p.shoot_minutes }} more minutes for a proper shoot in and out of the water: {{ if gt $n 1 }}portraits of each of you and together{{ else }}portraits{{ end }}, with your board, on the beach, in the lineup.</p>
-      <button class="btn btn-o pick" type="button" data-svc="shoot">Choose surf + photoshoot</button>
+      {{ partial "rs-thumbs.html" (dict "s" $shootEx "alt" "Surf and lifestyle shoot" "link" "See an example shoot") }}
+      <div class="opt-h"><strong>Surf + lifestyle shoot · 1h{{ $p.shoot_minutes }}</strong><span class="pv-price">{{ partial "price.html" (dict "list" $shoot "surfers" $t.surfers "mode" "big") }}</span></div>
+      <p>After the surf, {{ $p.shoot_minutes }} more minutes for a lifestyle shoot, in and out of the water: {{ if gt $n 1 }}portraits of each of you and together{{ else }}portraits{{ end }}, with your board, on the beach, in the lineup.</p>
+      <button class="btn btn-o pick" type="button" data-svc="shoot">Choose surf + lifestyle shoot</button>
     </div>
   </div>
   <div class="pv-card" role="tabpanel" id="panel-video" aria-labelledby="tab-video" hidden>
@@ -83,7 +89,7 @@
   <form class="quote" id="q" onsubmit="return false">
     <fieldset><legend>Session</legend>
       <label><input type="radio" name="svc" value="photo" checked> Surf photos</label>
-      <label><input type="radio" name="svc" value="shoot"> Surf photos + photoshoot</label>
+      <label><input type="radio" name="svc" value="shoot"> Surf + lifestyle shoot</label>
       <label><input type="radio" name="svc" value="video"> Video: edited reel + all clips</label>
       <label><input type="radio" name="svc" value="clips"> Video: clips only</label>
     </fieldset>

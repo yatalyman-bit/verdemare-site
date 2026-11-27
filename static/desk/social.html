@@ -158,7 +158,7 @@ const PRICE_FALLBACK = {photo:[60,90,120,150], video:[100,140,180,220], clips:[7
 let PRICES = (()=>{ try{ return JSON.parse(localStorage.getItem("vd-prices"))||PRICE_FALLBACK }catch{ return PRICE_FALLBACK } })();
 const eachP = (t,n)=>{ const e=t/n; return Number.isInteger(e)? e+"€" : Number.isInteger(e*2)? e.toFixed(2).replace(".",",")+"€" : "≈"+Math.round(e)+"€" };
 function buildPackages(pr){
-  const P={}; const L={f:["photo","Foto"], s:["shoot","Foto + photoshoot"], v:["video","Video + reel"], c:["clips","Solo clip"]};
+  const P={}; const L={f:["photo","Foto"], s:["shoot","Foto + lifestyle shoot"], v:["video","Video + reel"], c:["clips","Solo clip"]};
   if(!pr.shoot_list) pr={...pr, shoot_list:(pr.photo||[]).map(x=>x+(+pr.shoot||0))};
   for(const [k,[key,lab]] of Object.entries(L)) ((key==="shoot"? (pr.shoot? pr.shoot_list:[]) : pr[key])||[]).forEach((t,i)=>{ const n=i+1; P[k+n]=[`${lab} · ${n} ${n>1?"persone":"persona"} · ${key==="shoot"?"1h"+(pr.shoot_minutes||30):"1 h"} · ${t}€${n>1?` (${eachP(t,n)} a testa)`:""}`, t] });
   P.altro=["Altro",0]; return P;

@@ -13,7 +13,7 @@
   <dl class="prices">
     <div><dt>Photo · 1 hour · 1 / 2 / 3 / 4 surfers</dt><dd>{{ delimit $p.photo " / " }}€<br><span class="each">{{ $e := slice }}{{ range $i, $x := $p.photo }}{{ $e = $e | append (partial "pp.html" (dict "t" $x "n" (add $i 1))) }}{{ end }}{{ delimit $e " / " }} each</span></dd></div>
     {{ $shoot := slice }}{{ range $p.photo }}{{ $shoot = $shoot | append (add . $p.shoot) }}{{ end }}
-    <div><dt>Photo + photoshoot · 1h{{ $p.shoot_minutes }} · 1 / 2 / 3 / 4 surfers</dt><dd>{{ delimit $shoot " / " }}€</dd></div>
+    <div><dt>Photo: surf + lifestyle shoot · 1h{{ $p.shoot_minutes }} · 1 / 2 / 3 / 4 surfers</dt><dd>{{ delimit $shoot " / " }}€</dd></div>
     <div><dt>Video + edited reel · 1 hour · 1 / 2 / 3 / 4 surfers</dt><dd>{{ delimit $p.video " / " }}€<br><span class="each">{{ $e := slice }}{{ range $i, $x := $p.video }}{{ $e = $e | append (partial "pp.html" (dict "t" $x "n" (add $i 1))) }}{{ end }}{{ delimit $e " / " }} each</span></dd></div>
     <div><dt>Video, clips only · 1 hour · 1 / 2 / 3 / 4 surfers</dt><dd>{{ delimit $p.clips " / " }}€<br><span class="each">{{ $e := slice }}{{ range $i, $x := $p.clips }}{{ $e = $e | append (partial "pp.html" (dict "t" $x "n" (add $i 1))) }}{{ end }}{{ delimit $e " / " }} each</span></dd></div>
     <div><dt>Extra time (per group)</dt><dd>+{{ div $p.extra_hour 2 }}€ / 30 min</dd></div>

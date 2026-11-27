@@ -2,7 +2,7 @@
 {{ $type := lower .Params.group }}
 <section class="sec"><div class="wrap narrow">
   <a href="/{{ $type }}/">← {{ .Params.group }} sessions</a>
-  <h1>{{ .Params.group }} · {{ .Params.duration }}</h1>
+  <h1>{{ .Params.group }} · {{ .Params.duration }}</h1>{{ if .Params.shoot }}<p><span class="tag">Surf + lifestyle shoot</span> Surf photos plus {{ site.Data.site.prices.shoot_minutes }} minutes of lifestyle shoot, in and out of the water.</p>{{ end }}
   <p>{{ .Params.place }}{{ with .Params.date }} · {{ . }}{{ end }} · {{ .Params.format | default "photo session" }}</p>
   {{ .Content }}
 </div></section>

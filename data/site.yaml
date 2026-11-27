@@ -19,7 +19,7 @@ prices:
     - 100
     - 130
     - 160
-  shoot: 80     # photoshoot fuori e dentro l'acqua, in aggiunta alla sessione foto (per gruppo)
+  shoot: 80     # "Surf + lifestyle shoot": shooting fuori e dentro l'acqua, in aggiunta alla sessione foto (per gruppo)
   shoot_minutes: 30
   extra_hour: 50   # tempo extra: si vende a mezz'ore (metà di questo prezzo ogni 30 min)
   travel: 25

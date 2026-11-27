@@ -1,0 +1,8 @@
+{{- /* 3 miniature di una Real session (.s) per un'opzione. Foto: "preview" della sessione, altrimenti le prime 3. .link = testo del link alla sessione */ -}}
+{{- with .s -}}
+  {{- $s := . -}}{{- $imgs := slice -}}
+  {{- with .Params.preview }}{{ range . }}{{ with $s.Resources.GetMatch . }}{{ $imgs = $imgs | append . }}{{ end }}{{ end }}{{ end -}}
+  {{- if not $imgs }}{{ $imgs = first 3 (sort ($s.Resources.ByType "image") "Name") }}{{ end -}}
+  <a class="opt-thumbs" href="{{ $s.RelPermalink }}">{{ range first 3 $imgs }}{{ partial "img.html" (dict "res" . "ratio" "1x1" "alt" $.alt "sizes" "(min-width: 760px) 200px, 33vw") }}{{ end }}</a>
+  {{- with $.link }}<a class="small opt-link" href="{{ $s.RelPermalink }}">{{ . }} →</a>{{ end -}}
+{{- end -}}

@@ -1,7 +1,7 @@
 // Preventivo nelle pagine Solo / Couple / Friends. Prezzi letti da #q-data (data/site.yaml).
 (() => {
   const D = JSON.parse(document.getElementById("q-data").textContent), P = D.prices, f = document.getElementById("q");
-  const NAMES = { photo: "Surf photos", shoot: "Surf photos + photoshoot", video: "Video: edited reel + all clips", clips: "Video: clips only" };
+  const NAMES = { photo: "Surf photos", shoot: "Surf + lifestyle shoot", video: "Video: edited reel + all clips", clips: "Video: clips only" };
   const each = (t, n) => { const e = t / n; return Number.isInteger(e) ? e + "€" : Number.isInteger(e * 2) ? e.toFixed(2) + "€" : "≈" + Math.round(e) + "€"; };
   const half = P.extra_hour / 2;
   function calc() {

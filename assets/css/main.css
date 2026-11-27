@@ -138,3 +138,6 @@ p{margin:0 0 1em;max-width:62ch}
 .rs-more{display:none}.rs-open .rs-more{display:block}.rs-all{margin-top:12px}
 #real{scroll-margin-top:80px}
 [hidden]{display:none!important}
+.opt-thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;border-radius:8px;overflow:hidden}.opt-link{justify-self:start;font-weight:700}
+.tag{display:inline-block;background:var(--orange);color:#fff;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:99px;vertical-align:middle}
+.opt .pv-price{text-align:left;width:100%}

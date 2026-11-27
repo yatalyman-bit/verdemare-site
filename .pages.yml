@@ -19,8 +19,8 @@ content:
           - { name: photo, label: "Foto 1h (1, 2, 3, 4 persone)", type: number, list: true }
           - { name: video, label: "Video con reel 1h (1, 2, 3, 4 persone)", type: number, list: true }
           - { name: clips, label: "Video solo clip 1h (1, 2, 3, 4 persone)", type: number, list: true }
-          - { name: shoot, label: "Photoshoot fuori/dentro l'acqua: prezzo in più per gruppo €", type: number }
-          - { name: shoot_minutes, label: Photoshoot minuti in più, type: number }
+          - { name: shoot, label: "Surf + lifestyle shoot: prezzo in più per gruppo €", type: number }
+          - { name: shoot_minutes, label: Surf + lifestyle shoot: minuti in più, type: number }
           - { name: extra_hour, label: "Ora extra per gruppo (si vende a mezz'ore: metà ogni 30 min)", type: number }
           - { name: travel, label: Supplemento Ericeira/Nazaré, type: number }
           - { name: commission, label: Commissione hotel, type: string }

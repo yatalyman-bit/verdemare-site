@@ -13,7 +13,7 @@
       <dl class="prices">
         <div><dt>Photo · 1 hour</dt><dd>{{ partial "price.html" (dict "list" $p.photo "surfers" .surfers "mode" "big") }}</dd></div>
         {{ $shoot := slice }}{{ range $p.photo }}{{ $shoot = $shoot | append (add . $p.shoot) }}{{ end }}
-        <div><dt>Photo + photoshoot · 1h{{ $p.shoot_minutes }}</dt><dd>{{ partial "price.html" (dict "list" $shoot "surfers" .surfers "mode" "big") }}</dd></div>
+        <div><dt>Surf + lifestyle shoot · 1h{{ $p.shoot_minutes }}</dt><dd>{{ partial "price.html" (dict "list" $shoot "surfers" .surfers "mode" "big") }}</dd></div>
         <div><dt>Video + reel · 1 hour</dt><dd>{{ partial "price.html" (dict "list" $p.video "surfers" .surfers "mode" "big") }}</dd></div>
         <div class="muted"><dt>Video, clips only</dt><dd>{{ partial "price.html" (dict "list" $p.clips "surfers" .surfers "mode" "big") }}</dd></div>
       </dl>
