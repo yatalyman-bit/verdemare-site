@@ -1,0 +1,5 @@
+{{- /* Le chicche di Verdemare (data/site.yaml → perks). . = titolo opzionale */ -}}
+<div class="perks">
+  <p class="perks-h">{{ . | default "Included in every photo session · only with Verdemare" }}</p>
+  {{ range site.Data.site.perks }}<div class="perk"><span class="perk-i" aria-hidden="true">{{ .icon }}</span><div><strong>{{ .title }}</strong><span>{{ .text }}</span></div></div>{{ end }}
+</div>

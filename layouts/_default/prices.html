@@ -3,6 +3,7 @@
 <section class="sec"><div class="wrap">
   <h1>{{ .Title }}</h1>
   {{ with .Params.intro }}<p>{{ . }}</p>{{ end }}
+  {{ partial "perks.html" }}
   <div class="grid3 types">
   {{ range .Params.types }}
     {{ $n := index .surfers 0 }}{{ $from := cond (gt (len .surfers) 1) "from " "" }}
@@ -11,6 +12,8 @@
       <p>{{ .text }}</p>
       <dl class="prices">
         <div><dt>Photo · 1 hour</dt><dd>{{ partial "price.html" (dict "list" $p.photo "surfers" .surfers "mode" "big") }}</dd></div>
+        {{ $shoot := slice }}{{ range $p.photo }}{{ $shoot = $shoot | append (add . $p.shoot) }}{{ end }}
+        <div><dt>Photo + photoshoot · 1h{{ $p.shoot_minutes }}</dt><dd>{{ partial "price.html" (dict "list" $shoot "surfers" .surfers "mode" "big") }}</dd></div>
         <div><dt>Video + reel · 1 hour</dt><dd>{{ partial "price.html" (dict "list" $p.video "surfers" .surfers "mode" "big") }}</dd></div>
         <div class="muted"><dt>Video, clips only</dt><dd>{{ partial "price.html" (dict "list" $p.clips "surfers" .surfers "mode" "big") }}</dd></div>
       </dl>
@@ -19,7 +22,7 @@
     </article>
   {{ end }}
   </div>
-  <p class="muted">Prices are per group: the more you are, the less you pay each. Photo sessions include 1–2 bonus video clips. Extra time +{{ $p.extra_hour }}€/h per group · Ericeira or Nazaré +{{ $p.travel }}€ · Video analysis from the beach on request.</p>
+  <p class="muted">Prices are per group: the more you are, the less you pay each. Extra time +{{ div $p.extra_hour 2 }}€ every 30 min per group · Ericeira or Nazaré +{{ $p.travel }}€ · Video analysis from the beach on request.</p>
   <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a> <a class="btn btn-o" href="/gift/">Is it a gift?</a>
 </div></section>
 

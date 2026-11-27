@@ -25,6 +25,10 @@
   <a class="btn btn-o" href="/prices/">All prices</a>
 </div></section>
 
+<section class="sec"><div class="wrap">
+  {{ partial "perks.html" "What you get only with me · in every photo session" }}
+</div></section>
+
 <section class="sec light"><div class="wrap">
   <h2>How it works</h2>
   {{ partial "steps.html" . }}
@@ -33,7 +37,6 @@
 <section class="sec"><div class="wrap grid2 video-sec">
   {{ partial "reel.html" . }}
   <div><h2>{{ .Params.video_title }}</h2><p>{{ .Params.video_text }}</p>
-  <p class="muted">Extra time +{{ $p.extra_hour }}€/h per group · Video analysis from the beach on request.</p>
   <a class="btn btn-o" href="/prices/">See prices</a></div>
 </div></section>
 

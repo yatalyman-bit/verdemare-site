@@ -1,13 +1,13 @@
 // Preventivo nelle pagine Solo / Couple / Friends. Prezzi letti da #q-data (data/site.yaml).
 (() => {
   const D = JSON.parse(document.getElementById("q-data").textContent), P = D.prices, f = document.getElementById("q");
-  const NAMES = { photo: "Photo session", video: "Video: edited reel + all clips", clips: "Video: clips only" };
+  const NAMES = { photo: "Surf photos", shoot: "Surf photos + photoshoot", video: "Video: edited reel + all clips", clips: "Video: clips only" };
   const each = (t, n) => { const e = t / n; return Number.isInteger(e) ? e + "€" : Number.isInteger(e * 2) ? e.toFixed(2) + "€" : "≈" + Math.round(e) + "€"; };
   const half = P.extra_hour / 2;
   function calc() {
     const svc = f.svc.value, n = +f.n.value, x = +f.x.value, w = +f.w.value;
-    const base = P[svc][n - 1], extra = x * half, travel = w ? P.travel : 0, tot = base + extra + travel;
-    const lines = [[`${NAMES[svc]} · ${n} surfer${n > 1 ? "s" : ""} · 1 hour`, base]];
+    const base = svc === "shoot" ? P.photo[n - 1] + P.shoot : P[svc][n - 1], extra = x * half, travel = w ? P.travel : 0, tot = base + extra + travel;
+    const lines = [[`${NAMES[svc]} · ${n} surfer${n > 1 ? "s" : ""} · ${svc === "shoot" ? "1h" + P.shoot_minutes : "1 hour"}`, base]];
     if (x) lines.push([`Extra time +${x * 30} min`, extra]);
     if (w) lines.push(["Ericeira or Nazaré", travel]);
     document.getElementById("q-lines").innerHTML = lines.map(([a, b]) => `<div class="q-row"><span>${a}</span><span>${b}€</span></div>`).join("");

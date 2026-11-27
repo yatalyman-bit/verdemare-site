@@ -19,7 +19,9 @@ prices:
     - 100
     - 130
     - 160
-  extra_hour: 50
+  shoot: 40     # photoshoot fuori e dentro l'acqua, in aggiunta alla sessione foto (per gruppo)
+  shoot_minutes: 30
+  extra_hour: 50   # tempo extra: si vende a mezz'ore (metà di questo prezzo ogni 30 min)
   travel: 25
   commission: 15%
 prints:        # stampe consegnate a casa (laboratorio: Saal Digital)
@@ -29,6 +31,13 @@ prints:        # stampe consegnate a casa (laboratorio: Saal Digital)
   - id: 30x45
     label: "30 × 45 cm"
     price: 29
+perks:        # le chicche: incluse in OGNI sessione foto, solo da Verdemare
+  - icon: "🎬"
+    title: 1–2 video clips of your best waves
+    text: Included in every photo session, at no extra cost.
+  - icon: "📸"
+    title: 4–5 portraits around the surf
+    text: Paddling out, waiting for a set, laughing after a good wave. Not just action shots.
 shipping: 6     # spedizione stampe, per ordine (Europa e Regno Unito)
 steps:
   - Message me on WhatsApp

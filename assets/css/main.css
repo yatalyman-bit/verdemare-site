@@ -124,3 +124,8 @@ p{margin:0 0 1em;max-width:62ch}
 .q-row,.q-tot{display:flex;justify-content:space-between;gap:12px}.q-row{font-size:.95rem;padding:4px 0;border-bottom:1px solid var(--line)}
 .q-tot{font-size:1.3rem;padding-top:6px}.q-out .btn{justify-self:start}.q-out p{margin:0}
 #choose,#quote{scroll-margin-top:80px}
+.perks{background:#fff6ef;border:2px solid var(--orange);border-radius:12px;padding:14px 16px;display:grid;gap:10px;margin:0 0 16px}
+.perks-h{margin:0;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--orange)}
+.perk{display:flex;gap:12px;align-items:flex-start}.perk-i{font-size:1.6rem;line-height:1}.perk strong{display:block}.perk span{font-size:.92rem;color:var(--muted)}
+.pv-card .perks{margin:0}.opt-star{background:#fbfaf7;margin:0 -8px;padding:12px 8px 8px;border-radius:8px}
+.video-sec .perks{margin-top:8px}
