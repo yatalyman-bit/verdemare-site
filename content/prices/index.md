@@ -1,14 +1,16 @@
 ---
-seo_title: "Private surf photo & video sessions in Peniche"
+seo_title: "Prices · Private surf photo & video sessions in Peniche"
 description: "One hour in the water with a surf photographer, just for you. Prices from 60€, photos in 48 hours, up to 4 surfers. How it works and FAQ."
-title: Sessions
-layout: sessions
-image: S1.jpg
-image_focus: 55   # dove sta il soggetto, da 0 (sinistra) a 100 (destra)
+title: Prices
+layout: prices
+aliases: ["/sessions/"]
+intro: One price for everyone. Up to 4 surfers per session.
 types:
   - title: Solo
     anchor: solo
     surfers: [1]
+    image: S1.jpg
+    image_focus: 55
     text: One surfer, every wave. The camera follows only you.
   - title: Couple
     anchor: couple

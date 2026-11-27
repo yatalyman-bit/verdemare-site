@@ -6,7 +6,7 @@
     <h1>{{ .Params.hero_title }}</h1>
     <p>{{ .Params.hero_text }} From&nbsp;{{ index $p.photo 0 }}€.</p>
     <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a>
-    <a class="btn btn-o" href="/sessions/">See sessions</a>
+    <a class="btn btn-o" href="/prices/">See prices</a>
   </div>
 </section>
 
@@ -14,14 +14,14 @@
   <h2>Choose your session</h2>
   <div class="grid3">
   {{ range $i, $t := .Params.types }}
-    <a class="card" href="/sessions/#{{ $t.anchor | default (lower $t.title) }}">
+    <a class="card" href="/{{ $t.anchor | default (lower $t.title) }}/">
       {{ partial "art-img.html" (dict "res" ($.Resources.GetMatch $t.image) "rd" "3x2" "rm" "4x5" "alt" $t.title "sizes_d" "33vw" "focus_m" $t.focus_mobile "focus_d" $t.focus_desktop "focus_dy" $t.focus_desktop_y "zoom_d" $t.zoom_desktop "focus_my" $t.focus_mobile_y "zoom_m" $t.zoom_mobile) }}
       <h3>{{ $t.title }} <span class="arrow">→</span></h3>
       <p>{{ $t.text }} From&nbsp;{{ index $p.photo $i }}€</p>
     </a>
   {{ end }}
   </div>
-  <a class="btn btn-o" href="/sessions/">Prices &amp; details</a>
+  <a class="btn btn-o" href="/prices/">All prices</a>
 </div></section>
 
 <section class="sec light"><div class="wrap">
@@ -35,17 +35,10 @@
   {{ else }}
     {{ partial "img.html" (dict "res" ($.Resources.GetMatch $.Params.video_placeholder) "ratio" "16x9" "alt" "") }}
   {{ end }}
-  <div><h2>{{ .Params.video_title }}</h2><p>{{ .Params.video_text }}</p><a class="btn btn-o" href="/sessions/">See sessions</a></div>
+  <div><h2>{{ .Params.video_title }}</h2><p>{{ .Params.video_text }}</p><h3>Extras</h3><p>Extra time +{{ $p.extra_hour }}€/h per group · Reel edit +{{ $p.reel }}€ · Video analysis from the beach on request.</p></div>
 </div></section>
 
 <section class="sec light"><div class="wrap">
-  <h2>Real sessions</h2>
-  <p>{{ .Params.real_text }}</p>
-  {{ partial "cards.html" 3 }}
-  <a class="btn btn-o" href="/real-sessions/">See all sessions</a>
-</div></section>
-
-<section class="sec"><div class="wrap">
   <h2>My work</h2>
   <div class="grid3">
   {{ range first 3 (where site.RegularPages "Section" "work").ByWeight }}

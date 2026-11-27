@@ -1,0 +1,39 @@
+{{ define "main" }}
+{{ $p := site.Data.site.prices }}
+<section class="sec"><div class="wrap">
+  <h1>{{ .Title }}</h1>
+  {{ with .Params.intro }}<p>{{ . }}</p>{{ end }}
+  <div class="grid3 types">
+  {{ range .Params.types }}
+    {{ $n := index .surfers 0 }}{{ $from := cond (gt (len .surfers) 1) "from " "" }}
+    <article class="type" id="{{ .anchor }}">
+      <h3>{{ .title }}</h3>
+      <p>{{ .text }}</p>
+      <dl class="prices">
+        <div><dt>Photo · 1 hour</dt><dd>{{ $from }}{{ index $p.photo (sub $n 1) }}€</dd></div>
+        <div><dt>Video · 1 hour</dt><dd>{{ $from }}{{ index $p.video (sub $n 1) }}€</dd></div>
+      </dl>
+      {{ with .note }}<p class="muted small">{{ . }}</p>{{ end }}
+      <a class="btn btn-o" href="/{{ .anchor }}/">See {{ lower .title }} sessions</a>
+    </article>
+  {{ end }}
+  </div>
+  <p class="muted">Extra time +{{ $p.extra_hour }}€/h per group · Reel edit +{{ $p.reel }}€ · Ericeira or Nazaré +{{ $p.travel }}€ · Video analysis from the beach on request.</p>
+  <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a>
+</div></section>
+
+<section class="sec light"><div class="wrap"><h2>How it works</h2>{{ partial "steps.html" . }}</div></section>
+
+<section class="sec"><div class="wrap">
+  <h2>Good to know</h2>
+  {{ .Content }}
+  <ul class="list">{{ range .Params.good_to_know }}<li>{{ . }}</li>{{ end }}</ul>
+</div></section>
+
+<section class="sec light"><div class="wrap">
+  <h2>FAQ</h2>
+  {{ range .Params.faq }}<details class="faq"><summary>{{ .q }}</summary><p>{{ .a }}</p></details>{{ end }}
+</div></section>
+
+{{ partial "cta.html" (dict "title" "Ready?" "text" "Message me with your dates and how many surfers.") }}
+{{ end }}

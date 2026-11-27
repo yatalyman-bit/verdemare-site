@@ -1,19 +1,18 @@
 {{ define "main" }}
+{{ $type := lower .Params.group }}
 <section class="sec"><div class="wrap narrow">
-  <a href="/real-sessions/">← All sessions</a>
+  <a href="/{{ $type }}/">← {{ .Params.group }} sessions</a>
   <h1>{{ .Params.group }} · {{ .Params.duration }}</h1>
   <p>{{ .Params.place }}{{ with .Params.date }} · {{ . }}{{ end }} · {{ .Params.format | default "photo session" }}</p>
   {{ .Content }}
 </div></section>
 <section class="sec" style="padding-top:0"><div class="wrap narrow gallery">
-  {{ range sort (.Resources.ByType "image") "Name" }}
-    {{ partial "img.html" (dict "res" . "alt" $.Title "sizes" "(min-width: 900px) 860px, 100vw") }}
-  {{ end }}
+  {{ range sort (.Resources.ByType "image") "Name" }}{{ partial "img.html" (dict "res" . "alt" $.Title "sizes" "(min-width: 900px) 860px, 100vw") }}{{ end }}
   {{ range .Resources.Match "*.mp4" }}<video src="{{ .RelPermalink }}" controls playsinline preload="metadata"></video>{{ end }}
 </div></section>
 <section class="sec dark"><div class="wrap">
   <h2>Want yours?</h2>
-  <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a>
-  {{ with .NextInSection }}<p><a href="{{ .RelPermalink }}">Next session →</a></p>{{ end }}
+  <a class="btn" href="{{ partial "wa.html" (printf "Hi Flavio! I'd like info on a %s session." $type) }}">Book a {{ $type }} session</a>
+  <p class="other"><a href="/{{ $type }}/">More {{ $type }} sessions</a> · <a href="/prices/">All prices</a></p>
 </div></section>
 {{ end }}

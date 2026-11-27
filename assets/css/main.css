@@ -75,9 +75,10 @@ p{margin:0 0 1em;max-width:62ch}
 .about-top .fig{max-width:60%}
 @media (min-width:760px){.about-top .fig{max-width:340px}}
 .kicker{font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.85rem;color:var(--muted);margin-top:-.4em}
-.masonry{columns:1;column-gap:12px}.masonry img{width:100%;margin:0 0 12px;break-inside:avoid}
+.masonry{columns:1;column-gap:12px}.masonry.c3{columns:2;column-gap:8px}.masonry.c3 img{margin-bottom:8px}.masonry img{width:100%;margin:0 0 12px;break-inside:avoid}
 @media (min-width:760px){.masonry.c2{columns:2}.masonry.c3{columns:3}.masonry.c1{columns:1;max-width:860px}}
 .card h3 .arrow{color:var(--orange);transition:margin .2s}.card:hover h3 .arrow{margin-left:6px}.card p{color:var(--ink)}
 .type{background:var(--light);border-radius:10px;padding:20px;scroll-margin-top:90px;border:2px solid transparent;display:flex;flex-direction:column}
 .type .btn{margin-top:auto;align-self:flex-start}.type:target{border-color:var(--orange)}.small{font-size:.85rem}
 .types{margin-bottom:20px}
+.other{margin-top:14px}.other a{color:#fff}

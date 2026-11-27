@@ -21,18 +21,14 @@ enableRobotsTXT = true
 
 [menus]
   [[menus.main]]
-    name = "Sessions"
-    pageRef = "/sessions"
+    name = "Prices"
+    pageRef = "/prices"
     weight = 1
-  [[menus.main]]
-    name = "Real sessions"
-    pageRef = "/real-sessions"
-    weight = 2
   [[menus.main]]
     name = "Work"
     pageRef = "/work"
-    weight = 3
+    weight = 2
   [[menus.main]]
     name = "About"
     pageRef = "/about"
-    weight = 4
+    weight = 3

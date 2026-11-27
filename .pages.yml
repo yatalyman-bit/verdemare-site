@@ -47,15 +47,14 @@ content:
           - { name: zoom_desktop, label: "Computer: zoom (100 = foto intera, 80 = più stretta)", type: number }
       - { name: video_title, type: string }
       - { name: video_text, type: text }
-      - { name: real_text, label: Testo Real sessions, type: text }
-  - name: sessions
-    label: Sessions
+  - name: prices
+    label: Prices (prezzi, tipi, regole, FAQ)
     type: file
-    path: content/sessions/index.md
+    path: content/prices/index.md
     fields:
       - { name: title, type: string }
       - { name: body, label: Testo introduttivo, type: rich-text }
-      - { name: image_focus, label: "Foto S1: posizione del soggetto (0 sinistra – 100 destra)", type: number }
+      - { name: intro, label: Frase sotto il titolo, type: string }
       - name: types
         label: Tipi di sessione (Solo, Couple, Friends)
         type: object
@@ -65,6 +64,7 @@ content:
           - { name: anchor, label: "Ancora (non cambiare: solo, couple, friends)", type: string }
           - { name: text, type: text }
           - { name: note, label: Nota piccola, type: string }
+          - { name: surfers, label: "Numero di surfisti (es. 1, oppure 3 e 4)", type: number, list: true }
       - { name: good_to_know, label: Good to know, type: text, list: true }
       - name: faq
         label: FAQ

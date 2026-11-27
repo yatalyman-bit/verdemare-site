@@ -11,8 +11,8 @@ Su GitHub: apri la cartella giusta → **Add file → Upload files** → trascin
 | Dove | Cartella | Nomi file |
 |---|---|---|
 | Home | `content/` | `H1.jpg` (hero), `H2.jpg` solo, `H3.jpg` coppia, `H4.jpg` gruppo, `V1.mp4` clip |
-| Sessions | `content/sessions/` | `S1.jpg` |
-| Real sessions | `content/real-sessions/<sessione>/` | `01.jpg`, `02.jpg`… in ordine; `01.jpg` è la copertina |
+| Solo / Couple / Friends | `content/solo/`, `content/couple/`, `content/friends/` | `hero.jpg` (foto in alto) |
+| Sessioni vere | `content/real-sessions/<sessione>/` | `01.jpg`, `02.jpg`… in ordine; `01.jpg` è la copertina. Nel file `index.md`, `group: Solo/Couple/Friends` decide in quale pagina compare |
 | Work | `content/work/<capitolo>/` | `01.jpg`, `02.jpg`… |
 | About | `content/about/` | `A1.jpg` (apertura), `A2.jpg` (sezione del polpo); il logo è in `assets/logo.png` |
 | Partners | `content/partners/` | `P1.jpg` |

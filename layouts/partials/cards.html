@@ -1,9 +1,0 @@
-{{- /* Le prime N schede di Real sessions. Uso: partial "cards.html" 3 */ -}}
-<div class="grid3">
-{{ range first . (where site.RegularPages "Section" "real-sessions") }}
-  <a class="card" href="{{ .RelPermalink }}">
-    {{ partial "img.html" (dict "res" (.Resources.GetMatch (.Params.cover | default "*")) "ratio" "3x2" "alt" .Title "sizes" "(min-width: 760px) 33vw, 100vw") }}
-    <h3>{{ .Params.group }} · {{ .Params.duration }} · {{ .Params.place }}</h3>
-  </a>
-{{ end }}
-</div>
