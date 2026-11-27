@@ -11,9 +11,9 @@ prices:
     - 150
   video:        # video con un reel montato (circa 1 minuto, uno per gruppo) + tutte le clip
     - 100
-    - 150
-    - 200
-    - 250
+    - 140
+    - 180
+    - 220
   clips:        # video, solo clip senza montaggio
     - 70
     - 100
