@@ -59,6 +59,9 @@ form.f input,form.f select,form.f textarea{padding:10px;border:1px solid var(--l
 .tot{display:flex;justify-content:space-between;font-weight:700;padding:10px 0}
 .hp{position:absolute;left:-9999px}
 .msg{padding:20px;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{display:inline-flex;align-items:center;gap:4px;border:1.5px solid var(--line);border-radius:99px;padding:6px 12px;font-weight:700;font-size:.9rem;color:var(--ink);text-decoration:none;background:#fff}.chip small{font-weight:400;color:var(--muted)}
+.tiers{display:flex;flex-wrap:wrap;gap:8px 16px}.tiers span{background:#fff;border-radius:10px;padding:8px 12px}.tiers b{margin-right:6px}
+.mini{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.mini img{width:52px;height:52px;object-fit:cover;border-radius:6px}.mini span{align-self:center;font-weight:700;padding:0 6px}
 .locked img{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
 footer{padding:30px 16px;color:var(--muted);font-size:.8rem;text-align:center}
 .prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--o);transition:width .2s}
@@ -78,15 +81,21 @@ footer{padding:30px 16px;color:var(--muted);font-size:.8rem;text-align:center}
 <div id="co" role="dialog" aria-modal="true" aria-label="Order prints"><div class="box" id="cobox"></div></div>
 <footer>Verdemare · In-water surf photo &amp; video · Peniche, Portugal<br>Photos © Verdemare. Personal use and social media with tag @verdemare.photo.</footer>
 
+<script src="/js/openprice.js"></script>
 <script>
 (() => {
 const id = (location.pathname.match(/\/g\/([A-Za-z0-9]+)/) || [])[1];
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const F = (kind, n) => `/api/g/${id}/f/${kind}/${encodeURIComponent(n)}`;
+// open session: chiave dell'ordine nel link (#o=…&k=…) o salvata su questo telefono
+let CRED = null;
+try { const h = new URLSearchParams(location.hash.slice(1)); if (h.get("o") && h.get("k")) { CRED = { o: h.get("o"), k: h.get("k") }; localStorage.setItem("vm-open-" + (location.pathname.match(/\/g\/([A-Za-z0-9]+)/) || [])[1], JSON.stringify(CRED)); } } catch {}
+const credQ = () => CRED ? `?o=${encodeURIComponent(CRED.o)}&k=${encodeURIComponent(CRED.k)}` : "";
+const F = (kind, n) => `/api/g/${id}/f/${kind}/${encodeURIComponent(n)}` + (G && G.kind === "open" && ["web", "orig"].includes(kind) || (G && G.archived) ? credQ() : "");
+const DL = u => u + (u.includes("?") ? "&" : "?") + "dl=1";
 const isVid = f => f.t === "v";
 const thumbName = f => isVid(f) ? f.n.replace(/\.[^.]+$/, "") + ".jpg" : f.n.replace(/\.[^.]+$/, "") + ".jpg";
-let G = null, idx = 0, selecting = false;
+let G = null, idx = 0, selecting = false, mode = "print";
 const sel = new Map(); // n -> {size, qty}
 
 const canShareFiles = (() => { try { return !!(navigator.canShare && navigator.canShare({ files: [new File(["x"], "x.jpg", { type: "image/jpeg" })] })); } catch { return false; } })();
@@ -96,10 +105,12 @@ const eur = n => n + "€";
 
 async function load() {
   if (!id) return fail("This link is not complete.");
-  const r = await fetch(`/api/g/${id}`);
+  if (!CRED) { try { CRED = JSON.parse(localStorage.getItem("vm-open-" + id) || "null"); } catch {} }
+  const r = await fetch(`/api/g/${id}` + credQ());
   if (r.status === 410) return fail("This gallery has expired. Message me on WhatsApp if you still need your photos.");
   if (!r.ok) return fail("Gallery not found. Check the link, or message me on WhatsApp.");
   G = await r.json();
+  if (G.kind === "open") return renderOpen();
   if (!G.paid) { document.body.classList.add("locked"); document.addEventListener("contextmenu", e => { if (e.target.tagName === "IMG") e.preventDefault(); }); document.addEventListener("dragstart", e => { if (e.target.tagName === "IMG") e.preventDefault(); }); }
   document.title = `${G.client} · Verdemare`;
   render();
@@ -116,7 +127,7 @@ function render() {
   } else {
     top += `<div class="panel">
       ${canShareFiles ? `<div class="row"><button class="btn" id="saveall">Save all photos to my phone</button></div><div id="savebox" class="row"></div>` : ""}
-      <div class="row"><a class="btn ${canShareFiles ? "o" : ""}" href="${F("zip", "originals.zip")}?dl=1">Download originals (.zip, ${fmtSize(G.zip)})</a></div>
+      <div class="row"><a class="btn ${canShareFiles ? "o" : ""}" href="${DL(F("zip", "originals.zip"))}">Download originals (.zip, ${fmtSize(G.zip)})</a></div>
       <p class="small">${canShareFiles ? "The phone version is high quality and ready for Instagram. The zip has the full-size originals, best on a computer." : "The zip has all the full-size originals. On a phone, open a photo and use Save."}</p></div>`;
   }
   if (G.prints && G.prints.length) top += `<div class="row" style="margin:0 0 14px"><button class="btn o" id="printbtn">Order prints, delivered to your door</button><span class="small">from ${eur(Math.min(...G.prints.map(p => p.price)))}</span></div>`;
@@ -172,7 +183,7 @@ function show() {
   const a = $("#lbact"); a.innerHTML = "";
   if (selecting && !isVid(f)) {
     const b = document.createElement("button"); b.className = "btn" + (sel.has(f.n) ? "" : " o");
-    b.textContent = sel.has(f.n) ? "Selected ✓" : "Select for print";
+    b.textContent = sel.has(f.n) ? "Selected ✓" : (mode === "open" ? "Select" : "Select for print");
     b.onclick = () => { toggle(idx, document.querySelector(`.cell[data-i="${idx}"]`)); show(); }; a.appendChild(b);
   } else if (G.paid) {
     const b = document.createElement("button"); b.className = "btn"; b.textContent = "Save";
@@ -188,7 +199,7 @@ async function saveOne(f, b) {
       b.disabled = false; b.textContent = "Save now";
       b.onclick = async () => { try { await navigator.share({ files: [file] }); b.textContent = "Saved ✓"; } catch {} };
     } catch { b.disabled = false; b.textContent = "Try again"; }
-  } else location.href = F(isVid(f) ? "orig" : "orig", f.n) + "?dl=1";
+  } else location.href = DL(F("orig", f.n));
 }
 const step = d => { idx = (idx + d + G.files.length) % G.files.length; show(); };
 $("#lbp").onclick = () => step(-1); $("#lbn").onclick = () => step(1); $("#lbx").onclick = close;
@@ -246,12 +257,21 @@ function startSelect() { selecting = true; document.body.classList.add("sel"); $
 function stopSelect() { selecting = false; document.body.classList.remove("sel"); $("#selbar").classList.remove("on"); }
 function toggle(i, c) {
   const f = G.files[i]; if (isVid(f)) return;
-  if (sel.has(f.n)) { sel.delete(f.n); c && c.classList.remove("on"); } else { sel.set(f.n, { size: G.prints[0].id, qty: 1 }); c && c.classList.add("on"); }
+  if (sel.has(f.n)) { sel.delete(f.n); c && c.classList.remove("on"); } else { sel.set(f.n, mode === "open" ? {} : { size: G.prints[0].id, qty: 1 }); c && c.classList.add("on"); }
   count();
 }
-function count() { $("#selcount").innerHTML = `<b>${sel.size} selected</b><br><span class="small">⤢ to enlarge</span>`; $("#selgo").disabled = !sel.size; }
+function count() {
+  if (mode === "open") {
+    const n = sel.size, p = openPrice(n, G.tiers);
+    let hint = "⤢ to enlarge";
+    if (n) { let m = n + 1; while (m < n + 10 && openPrice(m, G.tiers) === p && !isAllPrice(p)) m++; if (m - 1 > n) hint = `Add ${m - 1 - n} more for free`; else if (isAllPrice(p)) hint = "Price for all your photos: pick as many as you like"; }
+    $("#selcount").innerHTML = `<b>${n} selected${n ? " · " + eur(p) : ""}</b><br><span class="small">${hint}</span>`;
+  } else $("#selcount").innerHTML = `<b>${sel.size} selected</b><br><span class="small">⤢ to enlarge</span>`;
+  $("#selgo").disabled = !sel.size;
+}
+const isAllPrice = p => { const a = (G.tiers || []).find(t => !t.photos); return a && p === a.price; };
 $("#selcancel").onclick = stopSelect;
-$("#selgo").onclick = checkout;
+$("#selgo").onclick = () => mode === "open" ? openCheckout() : checkout();
 
 async function checkout() {
   const countries = (await (await fetch(`/api/g/${id}/print`)).json()).countries;
@@ -302,6 +322,99 @@ async function checkout() {
   };
   draw(); $("#co").classList.add("on"); document.body.style.overflow = "hidden";
 }
+/* ---------- OPEN SESSION: il surfista sceglie e compra le sue foto ---------- */
+function payChips() {
+  return `<div class="chips">${(G.payments || []).map(p => p.url ? `<a class="chip" href="${esc(/^https?:/.test(p.url) ? p.url : "https://" + p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a>` : `<span class="chip" title="${esc(p.note || "")}">${esc(p.name)}${p.note ? ` <small>(${esc(p.note)})</small>` : ""}</span>`).join("")}</div>`;
+}
+function priceLine() {
+  return (G.tiers || []).map(t => `<span><b>${t.photos ? t.photos + " photo" + (t.photos > 1 ? "s" : "") : "All your photos"}</b> ${eur(t.price)}</span>`).join("");
+}
+function renderOpen() {
+  mode = "open";
+  const o = G.order;
+  document.title = `${G.client} · Verdemare`;
+  const head = `<h1>${esc(G.client)}</h1><p class="sub">${esc(G.title)}</p>`;
+  const privateLine = `<p class="small" style="margin:26px 0 120px">Want the camera only on you? <a href="/">Private surf sessions →</a></p>`;
+  if (o && o.status === "paid") {
+    G.paid = true; G.files = G.files.filter(f => o.photos.includes(f.n));
+    $("#app").innerHTML = head + `<div class="panel"><p><strong>Your ${o.photos.length} photo${o.photos.length > 1 ? "s are" : " is"} ready.</strong> Full quality, no watermark. Available until ${fmtDate(new Date(new Date(o.paid || Date.now()).getTime() + (G.kept_days || 30) * 864e5))}.</p>
+      ${canShareFiles ? `<div class="row"><button class="btn" id="saveall">Save all to my phone</button></div><div id="savebox" class="row"></div>` : ""}
+      <div class="row"><button class="btn ${canShareFiles ? "o" : ""}" id="zipdl">Download originals (.zip)</button></div>
+      <p class="small">${canShareFiles ? "The phone version is high quality and ready for Instagram. The zip has the full-size originals, best on a computer." : "The zip has the full-size originals."}</p></div>` + gridHTML() + privateLine;
+    bindGrid(); const sa = $("#saveall"); if (sa) sa.onclick = prepareBatches; $("#zipdl").onclick = zipOriginals; return;
+  }
+  document.body.classList.add("locked");
+  document.addEventListener("contextmenu", e => { if (e.target.tagName === "IMG") e.preventDefault(); });
+  let top = head;
+  if (o && o.status === "new") {
+    top += `<div class="panel"><p><strong>Order ${esc(o.id)} · ${o.photos.length} photo${o.photos.length > 1 ? "s" : ""} · ${eur(o.total)}</strong> — waiting for payment.</p><p class="small">Pay with:</p>${payChips()}
+      <p class="small">As soon as I confirm the payment, your photos unlock right here. Keep this link.</p>
+      <div class="row"><a class="btn" href="https://wa.me/${esc(G.whatsapp)}?text=${encodeURIComponent(`Hi Flavio! Order ${o.id} from ${G.client} ${G.title}: ${o.photos.length} photos, ${o.total}€. How do I pay?`)}">Message me on WhatsApp</a><button class="btn o" id="neworder">Pick different photos</button></div></div>`;
+  } else {
+    top += `<div class="panel"><p><strong>Find yourself and pick your photos.</strong> Tap a photo to select it, ⤢ to see it big. Online until ${fmtDate(G.expires)}.</p><div class="tiers">${priceLine()}</div></div>`;
+  }
+  $("#app").innerHTML = top + gridHTML() + privateLine;
+  bindGrid();
+  if (o && o.status === "new") { o.photos.forEach(n => sel.set(n, {})); document.querySelectorAll(".cell").forEach(c => { if (sel.has(G.files[+c.dataset.i].n)) c.classList.add("on"); }); $("#neworder").onclick = () => { try { localStorage.removeItem("vm-open-" + id); } catch {} CRED = null; history.replaceState(null, "", location.pathname); G.order = null; sel.clear(); renderOpen(); }; document.body.classList.add("sel"); return; }
+  selecting = true; document.body.classList.add("sel"); $("#selbar").classList.add("on"); $("#selcancel").textContent = "Clear"; $("#selcancel").onclick = () => { sel.clear(); document.querySelectorAll(".cell.on").forEach(c => c.classList.remove("on")); count(); }; count();
+}
+function gridHTML() {
+  return `<div class="grid" id="grid">${G.files.map((f, i) => `
+    <div class="cell" data-i="${i}" role="button" tabindex="0" aria-label="${esc(f.n)}"><img loading="lazy" src="${F("thumb", thumbName(f))}" alt="">${isVid(f) ? '<span class="play">▶</span>' : ""}<span class="chk"></span><button class="zoom" aria-label="Enlarge">⤢</button></div>`).join("")}</div>`;
+}
+function bindGrid() {
+  $("#grid").onclick = e => { const c = e.target.closest(".cell"); if (!c) return; const i = +c.dataset.i; if (selecting && !e.target.closest(".zoom")) return toggle(i, c); open(i); };
+  $("#grid").onkeydown = e => { if (e.key === "Enter") e.target.closest(".cell")?.click(); };
+}
+function openCheckout() {
+  const n = sel.size, total = openPrice(n, G.tiers);
+  $("#cobox").innerHTML = `<h2>Your photos</h2>
+    <div class="mini">${[...sel.keys()].slice(0, 12).map(k => { const f = G.files.find(x => x.n === k); return `<img src="${F("thumb", thumbName(f))}" alt="">`; }).join("")}${n > 12 ? `<span>+${n - 12}</span>` : ""}</div>
+    <div class="tot" style="font-size:1.2rem"><span>${n} photo${n > 1 ? "s" : ""}</span><span>${eur(total)}</span></div>
+    <form class="f" id="oof">
+      <label>Your name<input name="name" required autocomplete="name"></label>
+      <label>Instagram or WhatsApp<input name="contact" required placeholder="@yourname or +351…"></label>
+      <label>Note (optional)<input name="note"></label>
+      <input class="hp" name="website" tabindex="-1" autocomplete="off">
+      <p class="small">Pay with:</p>${payChips()}
+      <p class="small">After you send the order I confirm the payment and your photos unlock on this page, in full quality and without watermark.</p>
+      <div class="row"><button class="btn" type="submit">Send order</button><button class="btn o" type="button" id="coback">Back</button></div>
+      <p class="small" id="coerr" style="color:#a2361b"></p>
+    </form>`;
+  $("#coback").onclick = closeCo;
+  $("#oof").onsubmit = async e => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(e.target));
+    const r = await fetch(`/api/g/${id}/order`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...fd, photos: [...sel.keys()] }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { $("#coerr").textContent = j.error || "Something went wrong. Please try again."; return; }
+    CRED = { o: j.id, k: j.k }; try { localStorage.setItem("vm-open-" + id, JSON.stringify(CRED)); } catch {}
+    const link = `${location.origin}/g/${id}#o=${j.id}&k=${j.k}`;
+    history.replaceState(null, "", `#o=${j.id}&k=${j.k}`);
+    const wa = `https://wa.me/${G.whatsapp}?text=${encodeURIComponent(`Hi Flavio! I've ordered ${j.count} photos from ${G.client} ${G.title} (order ${j.id}, ${j.total}€).`)}`;
+    $("#cobox").innerHTML = `<h2>Order sent ✓</h2><p>Order <strong>${esc(j.id)}</strong> · ${j.count} photos · <strong>${eur(j.total)}</strong></p>
+      <p class="small">Pay with:</p>${payChips()}
+      <p>As soon as I confirm the payment, your photos unlock at this link. <strong>Save it</strong> (it works on any device):</p>
+      <input readonly value="${esc(link)}" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px">
+      <div class="row" style="margin-top:12px"><button class="btn o" id="cpl">Copy link</button><a class="btn" href="${wa}">Tell me on WhatsApp</a>${G.instagram ? `<a class="btn o" href="https://ig.me/m/${esc(G.instagram)}" target="_blank" rel="noopener">or on Instagram</a>` : ""}</div>`;
+    $("#cpl").onclick = ev => { navigator.clipboard && navigator.clipboard.writeText(link); ev.target.textContent = "Copied ✓"; };
+    selecting = false; $("#selbar").classList.remove("on");
+    const again = await (await fetch(`/api/g/${id}` + credQ())).json(); G.order = again.order;
+  };
+  $("#co").classList.add("on"); document.body.style.overflow = "hidden";
+  $("#co").onclick = ev => { if (ev.target.id === "co" && G.order) { closeCo(); renderOpen(); } };
+}
+async function zipOriginals() {
+  const b = $("#zipdl"); b.disabled = true; b.textContent = "Preparing…";
+  try {
+    const { downloadZip } = await import("/js/client-zip.js");
+    const files = G.files.filter(f => !isVid(f)).map(f => ({ name: f.n, input: fetch(F("orig", f.n)) }));
+    const blob = await downloadZip(files.map(async f => ({ name: f.name, input: await f.input }))).blob();
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `verdemare-${id.slice(0, 6)}.zip`; a.click();
+    b.textContent = "Downloaded ✓";
+  } catch { b.disabled = false; b.textContent = "Try again"; }
+}
+
 function closeCo() { $("#co").classList.remove("on"); document.body.style.overflow = ""; }
 load();
 })();

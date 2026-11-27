@@ -40,6 +40,27 @@ content:
           - { name: icon, label: Emoji, type: string }
           - { name: title, label: Titolo, type: string }
           - { name: text, label: Testo, type: string }
+      - name: open
+        label: "Open session (vendita foto della giornata, non visibile sul sito)"
+        type: object
+        fields:
+          - { name: days, label: Giorni online della gallery, type: number }
+          - { name: kept_days, label: Giorni per scaricare le foto comprate, type: number }
+          - name: tiers
+            label: "Prezzi (foto 0 = tutte le tue foto)"
+            type: object
+            list: true
+            fields:
+              - { name: photos, label: Numero di foto, type: number }
+              - { name: price, label: Prezzo €, type: number }
+      - name: payments
+        label: Metodi di pagamento
+        type: object
+        list: true
+        fields:
+          - { name: name, label: Nome, type: string }
+          - { name: url, label: "Link (es. paypal.me/…), vuoto = solo il nome", type: string }
+          - { name: note, label: Nota, type: string }
       - { name: shipping, label: Spedizione stampe € (per ordine), type: number }
       - { name: steps, label: How it works (passaggi), type: string, list: true }
   - name: home

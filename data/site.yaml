@@ -38,6 +38,18 @@ perks:        # le chicche: incluse in OGNI sessione foto, solo da Verdemare
   - icon: "📸"
     title: 4–5 portraits around the surf
     text: Paddling out, waiting for a set, laughing after a good wave. Not just action shots.
+open:          # OPEN SESSION: vendita delle foto della giornata. Link solo tuo (Instagram/WhatsApp), mai sul sito
+  days: 7         # giorni online della gallery della giornata
+  kept_days: 30   # giorni in cui chi ha pagato può ancora scaricare le sue foto
+  tiers:          # prezzi: photos 0 = tutte le tue foto
+    - { photos: 1, price: 10 }
+    - { photos: 4, price: 20 }
+    - { photos: 0, price: 30 }
+payments:       # come pagare. url vuoto = solo il nome; quando hai i link mettili qui
+  - { name: PayPal, url: "" }
+  - { name: Revolut, url: "" }
+  - { name: Wise, url: "" }
+  - { name: Cash, url: "", note: if you see me at the beach }
 shipping: 6     # spedizione stampe, per ordine (Europa e Regno Unito)
 steps:
   - Message me on WhatsApp

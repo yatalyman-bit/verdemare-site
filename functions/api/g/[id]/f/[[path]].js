@@ -1,4 +1,4 @@
-import { getGallery, json, needBindings, key, okName, KINDS, PUBLIC_KINDS } from "../../../../../lib/gallery.js";
+import { getGallery, getOrder, json, needBindings, key, okName, thumbOf, KINDS, PUBLIC_KINDS } from "../../../../../lib/gallery.js";
 
 // /api/g/<id>/f/<kind>/<name>  — anteprime sempre; versioni pulite, originali e zip solo dopo il saldo.
 export async function onRequestGet({ env, params, request }) {
@@ -8,7 +8,17 @@ export async function onRequestGet({ env, params, request }) {
   if (!KINDS.includes(kind) || !okName(name)) return json({ error: "Not found." }, 404);
   const g = await getGallery(env, params.id);
   if (!g || !g.ready || g.expired) return json({ error: "Not found." }, 404);
-  if (!PUBLIC_KINDS.includes(kind) && !g.paid) return json({ error: "Available after payment." }, 403);
+  if (g.kind === "open") {
+    // open session: anteprime per tutti finché la gallery è online; versioni pulite solo per chi ha pagato quelle foto
+    const u = new URL(request.url);
+    const needOrder = !PUBLIC_KINDS.includes(kind) || g.pruned;
+    if (kind === "zip") return json({ error: "Not found." }, 404);
+    if (needOrder) {
+      const o = await getOrder(env, params.id, u.searchParams.get("o"), u.searchParams.get("k"));
+      const mine = o && o.status === "paid" && o.photos.some(n => n === name || thumbOf(n) === name);
+      if (!mine) return json({ error: "Available after payment." }, 403);
+    }
+  } else if (!PUBLIC_KINDS.includes(kind) && !g.paid) return json({ error: "Available after payment." }, 403);
   const hasRange = request.headers.has("range");
   const obj = await env.GALLERY.get(key(params.id, kind, name), hasRange ? { range: request.headers, onlyIf: request.headers } : { onlyIf: request.headers });
   if (!obj) return json({ error: "Not found." }, 404);

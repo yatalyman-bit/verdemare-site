@@ -54,13 +54,14 @@ th{font-size:12px;color:var(--mut);background:#f7f9f8}
 .pill.y{background:#dff3e5;color:#1d6b38}.pill.n{background:#fdeadd;color:#a2361b}.pill.w{background:#eef;color:#335}
 td .row button{padding:6px 10px;font-size:12px}
 @media(max-width:760px){table,thead,tbody,tr,td{display:block}thead{display:none}tr{border-bottom:6px solid var(--bg)}td{border:0;padding:6px 12px}}
+.ophotos{display:flex;flex-wrap:wrap;gap:4px}.ophotos span{position:relative}.ophotos img{width:56px;height:56px;object-fit:cover;border-radius:6px;display:block}.ophotos button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;padding:0;border-radius:50%;font-size:11px;background:#a2361b}
 .log{font-size:12px;color:var(--mut);max-height:120px;overflow:auto;white-space:pre-wrap}
 </style></head>
 <body>
 <div class="top">
   <span class="brand">Verdemare Studio</span>
   <div class="tabs" role="tablist">
-    <button data-t="studio" class="on">Studio</button><button data-t="galleries">Gallery</button><button data-t="orders">Stampe <span id="newo"></span></button>
+    <button data-t="studio" class="on">Studio</button><button data-t="galleries">Gallery</button><button data-t="orders">Stampe <span id="newo"></span></button><button data-t="open">Open <span id="newop"></span></button>
   </div>
   <a class="tl" href="voucher.html">🎁 Buono</a><a class="tl" href="social.html">📱 Desk</a><span class="spacer"></span>
 </div>
@@ -105,13 +106,14 @@ td .row button{padding:6px 10px;font-size:12px}
     <div class="strip" id="strip"></div>
 
     <div class="card" style="display:grid;gap:10px">
-      <strong>Pubblica una gallery per il cliente</strong>
+      <strong>Pubblica una gallery</strong>
       <div class="set">
-        <label>Nome cliente<input id="g_client" placeholder="Anna & Marco"></label>
-        <label>Titolo<input id="g_title" placeholder="Supertubos · 27 Nov"></label>
-        <label>Giorni online<input id="g_days" type="number" min="7" max="365" value="90"></label>
-        <label>Già pagata?<select id="g_paid"><option value="0">No: anteprime con watermark</option><option value="1">Sì: sblocca subito</option></select></label>
-        <label class="full" style="display:flex;gap:6px;align-items:center;font-weight:400"><input id="g_zipv" type="checkbox"> Metti anche i video nello zip degli originali (zip molto più grande)</label>
+        <label class="full">Tipo<select id="g_kind"><option value="private">Cliente privato (sessione privata)</option><option value="open">Open session: i surfisti scelgono e comprano le loro foto</option></select></label>
+        <label><span id="l_client">Nome cliente</span><input id="g_client" placeholder="Anna & Marco"></label>
+        <label><span id="l_title">Titolo</span><input id="g_title" placeholder="Supertubos · 27 Nov"></label>
+        <label>Giorni online<input id="g_days" type="number" min="1" max="365" value="90"></label>
+        <label class="pv-only">Già pagata?<select id="g_paid"><option value="0">No: anteprime con watermark</option><option value="1">Sì: sblocca subito</option></select></label>
+        <label class="full pv-only" style="display:flex;gap:6px;align-items:center;font-weight:400"><input id="g_zipv" type="checkbox"> Metti anche i video nello zip degli originali (zip molto più grande)</label>
       </div>
       <button id="publish" type="button" disabled>Pubblica gallery</button>
       <div id="pubbox" hidden style="display:grid;gap:6px"><div class="prog"><i id="pbar"></i></div><span class="note" id="pstat"></span><div class="log" id="plog"></div></div>
@@ -127,6 +129,13 @@ td .row button{padding:6px 10px;font-size:12px}
   <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Gallery</h2><button class="ghost" id="grefresh" type="button">Aggiorna</button></div>
   <p class="note" style="margin-bottom:10px">Quando il cliente paga, premi <b>Segna pagata</b>: le foto si sbloccano subito sullo stesso link. Le gallery scadute si cancellano da sole.</p>
   <div id="glist"><p class="note">Caricamento…</p></div>
+</section>
+
+<!-- ============ OPEN SESSION ============ -->
+<section id="t-open">
+  <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Open session: ordini</h2><button class="ghost" id="oprefresh" type="button">Aggiorna</button></div>
+  <p class="note" style="margin-bottom:10px">Il surfista sceglie le foto e manda l'ordine. 1) Controlla che le foto siano sue (✕ toglie una foto e ricalcola il prezzo). 2) Quando ti paga → <b>Pagato</b>: le foto si sbloccano sul suo link. Le gallery delle open session restano online 7 giorni; le foto pagate restano scaricabili per 30 giorni.</p>
+  <div id="oplist"><p class="note">Caricamento…</p></div>
 </section>
 
 <!-- ============ ORDINI ============ -->
@@ -149,6 +158,7 @@ document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === "t-" + b.dataset.t));
   if (b.dataset.t === "galleries") loadGalleries();
   if (b.dataset.t === "orders") loadOrders();
+  if (b.dataset.t === "open") loadOpen();
 });
 
 /* ---------- impostazioni (stessi valori di fotowm) ---------- */
@@ -370,21 +380,33 @@ async function uploadZip(id, files, onBytes) {
 
 /* ---------- pubblica ---------- */
 const galleryURL = id => `${location.origin}/g/${id}`;
+let OPEN_DAYS = 7;
+fetch("/site.json").then(r => r.json()).then(j => { if (j.open && j.open.days) OPEN_DAYS = j.open.days; if ($("#g_kind").value === "open") $("#g_days").value = OPEN_DAYS; }).catch(() => {});
+$("#g_kind").onchange = () => {
+  const open = $("#g_kind").value === "open";
+  document.querySelectorAll(".pv-only").forEach(e => e.hidden = open);
+  $("#l_client").textContent = open ? "Spot" : "Nome cliente"; $("#g_client").placeholder = open ? "Supertubos" : "Anna & Marco";
+  $("#l_title").textContent = open ? "Giorno e ora" : "Titolo"; $("#g_title").placeholder = open ? "27 Nov · morning" : "Supertubos · 27 Nov";
+  $("#g_days").value = open ? OPEN_DAYS : 90;
+  $("#publish").textContent = open ? "Pubblica la open session" : "Pubblica gallery";
+};
+const openText = (spot, title, url) => `🌊 Photos from today at ${spot}${title ? " (" + title + ")" : ""} are online!\nFind yourself and pick yours: ${url}\nOnline for ${OPEN_DAYS} days.`;
 const waText = (client, url) => `Hi ${client}! Your surf session is ready 🌊\n${url}\n\nOpen the link to see your photos. Thanks for surfing with Verdemare!`;
 $("#publish").onclick = async () => {
-  const client = $("#g_client").value.trim(); if (!client) { $("#g_client").focus(); return alert("Scrivi il nome del cliente."); }
+  const isOpen = $("#g_kind").value === "open";
+  const client = $("#g_client").value.trim(); if (!client) { $("#g_client").focus(); return alert(isOpen ? "Scrivi lo spot." : "Scrivi il nome del cliente."); }
   if (!items.length) return;
   const btn = $("#publish"); btn.disabled = true; $("#pubbox").hidden = false; $("#outbox").hidden = true;
   const log = m => { $("#plog").textContent += m + "\n"; $("#plog").scrollTop = 1e9; };
   const stat = m => $("#pstat").textContent = m;
   const zipVideos = $("#g_zipv").checked;
-  const zipItems = items.filter(i => i.kind === "p" || zipVideos);
+  const zipItems = isOpen ? [] : items.filter(i => i.kind === "p" || zipVideos);   // open session: niente zip (ognuno compra le sue)
   const totalBytes = items.reduce((a, i) => a + i.file.size, 0) * 1.1 + zipItems.reduce((a, i) => a + i.file.size, 0);
   let sent = 0; const bar = () => $("#pbar").style.width = Math.min(100, sent / totalBytes * 100).toFixed(1) + "%";
   addEventListener("beforeunload", warn);
   try {
     stat("Creo la gallery…");
-    const { id } = await api("galleries/", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ client, title: $("#g_title").value.trim(), days: +$("#g_days").value || 90 }) });
+    const { id } = await api("galleries/", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ client, title: $("#g_title").value.trim(), days: +$("#g_days").value || (isOpen ? OPEN_DAYS : 90), kind: isOpen ? "open" : "private" }) });
     const files = new Array(items.length);
     let next = 0, done = 0;
     const worker = async () => {
@@ -407,25 +429,30 @@ $("#publish").onclick = async () => {
       }
     };
     await Promise.all([worker(), worker(), worker()]);
-    stat("Preparo lo zip degli originali…");
-    const before = sent;
-    const zsize = await uploadZip(id, zipItems, b => { sent = before + b; bar(); stat(`Zip degli originali: ${(b / 1e6).toFixed(0)} MB`); });
-    await api(`galleries/${id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ files, zip_size: zsize, ready: 1, paid: $("#g_paid").value === "1" }) });
+    let zsize = 0;
+    if (!isOpen) {
+      stat("Preparo lo zip degli originali…");
+      const before = sent;
+      zsize = await uploadZip(id, zipItems, b => { sent = before + b; bar(); stat(`Zip degli originali: ${(b / 1e6).toFixed(0)} MB`); });
+    }
+    await api(`galleries/${id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ files, zip_size: zsize, ready: 1, paid: !isOpen && $("#g_paid").value === "1" }) });
     sent = totalBytes; bar(); stat("Pubblicata ✓");
-    showLink(id, client);
+    showLink(id, client, isOpen ? $("#g_title").value.trim() : null);
   } catch (e) { stat("Errore: " + e.message + " — controlla la connessione e riprova (la gallery incompleta si può eliminare dalla scheda Gallery)."); }
   removeEventListener("beforeunload", warn);
   btn.disabled = false;
 };
 function warn(e) { e.preventDefault(); e.returnValue = ""; }
-function showLink(id, client) {
-  const url = galleryURL(id), o = $("#outbox");
+function showLink(id, client, openTitle) {
+  const url = galleryURL(id), o = $("#outbox"), isOpen = openTitle !== null && openTitle !== undefined;
+  const txt = isOpen ? openText(client, openTitle, url) : waText(client, url);
   o.hidden = false;
-  o.innerHTML = `<strong>Link per ${esc(client)}</strong><input readonly value="${esc(url)}"><div class="row">
-    <button type="button" id="cpy">Copia link</button>
-    <a href="https://wa.me/?text=${encodeURIComponent(waText(client, url))}" target="_blank" rel="noopener"><button type="button" class="ghost">Invia su WhatsApp</button></a>
+  o.innerHTML = `<strong>${isOpen ? "Link della open session (mandalo a chi ti scrive, mettilo nelle storie)" : "Link per " + esc(client)}</strong><input readonly value="${esc(url)}"><div class="row">
+    <button type="button" id="cpy">Copia link</button>${isOpen ? `<button type="button" class="ghost" id="cpt">Copia messaggio</button>` : ""}
+    <a href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener"><button type="button" class="ghost">Invia su WhatsApp</button></a>
     <a href="${esc(url)}" target="_blank" rel="noopener"><button type="button" class="ghost">Apri come cliente</button></a></div>`;
   o.querySelector("#cpy").onclick = e => { navigator.clipboard.writeText(url); e.target.textContent = "Copiato ✓"; };
+  const ct = o.querySelector("#cpt"); if (ct) ct.onclick = e => { navigator.clipboard.writeText(txt); e.target.textContent = "Copiato ✓"; };
 }
 
 /* ---------- gestione gallery ---------- */
@@ -438,10 +465,10 @@ async function loadGalleries() {
     if (!list.length) { box.innerHTML = `<p class="note">Nessuna gallery. Creane una dalla scheda Studio.</p>`; return; }
     box.innerHTML = `<table><thead><tr><th>Cliente</th><th>Stato</th><th>File</th><th>Scade</th><th></th></tr></thead><tbody>${list.map(g => `
       <tr data-id="${g.id}"><td><strong>${esc(g.client)}</strong><br><span class="note">${esc(g.title)} · ${d(g.created)}</span></td>
-      <td>${!g.ready ? '<span class="pill w">Incompleta</span>' : g.paid ? '<span class="pill y">Pagata</span>' : '<span class="pill n">Da pagare</span>'}</td>
+      <td>${!g.ready ? '<span class="pill w">Incompleta</span>' : g.kind === "open" ? `<span class="pill w">Open session</span><br><span class="note">${g.orders} ordini${g.pruned ? " · solo foto pagate" : ""}</span>` : g.paid ? '<span class="pill y">Pagata</span>' : '<span class="pill n">Da pagare</span>'}</td>
       <td>${g.count}${g.zip_size ? " · zip " + mb(g.zip_size) : ""}</td><td>${d(g.expires)}</td>
       <td><div class="row">
-        <button data-a="paid" ${g.paid ? 'class="ghost"' : ""}>${g.paid ? "Segna non pagata" : "Segna pagata"}</button>
+        ${g.kind === "open" ? "" : `<button data-a="paid" ${g.paid ? 'class="ghost"' : ""}>${g.paid ? "Segna non pagata" : "Segna pagata"}</button>`}
         <button data-a="copy" class="ghost">Copia link</button>
         <button data-a="wa" class="ghost">WhatsApp</button>
         <button data-a="ext" class="ghost">+30 giorni</button>
@@ -450,6 +477,7 @@ async function loadGalleries() {
       const tr = b.closest("tr"), id = tr.dataset.id, g = list.find(x => x.id === id);
       const a = b.dataset.a;
       if (a === "copy") { await navigator.clipboard.writeText(galleryURL(id)); b.textContent = "Copiato ✓"; return; }
+      if (a === "wa" && g.kind === "open") { open("https://wa.me/?text=" + encodeURIComponent(openText(g.client, g.title, galleryURL(id))), "_blank"); return; }
       if (a === "wa") { const msg = g.paid ? `Hi ${g.client}! Payment received, thank you 🙏 Your photos are now unlocked in full quality:\n${galleryURL(id)}` : waText(g.client, galleryURL(id)); open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank"); return; }
       if (a === "del" && !confirm(`Eliminare per sempre la gallery di ${g.client} e tutti i suoi file? Non si può annullare.`)) return;
       b.disabled = true;
@@ -463,6 +491,32 @@ async function loadGalleries() {
   } catch (e) { box.innerHTML = `<p class="note">${esc(e.message)}</p>`; }
 }
 $("#grefresh").onclick = loadGalleries;
+
+/* ---------- ordini delle open session ---------- */
+const OST = { new: "Da pagare", paid: "Pagato", cancelled: "Annullato" };
+async function loadOpen() {
+  const box = $("#oplist");
+  try {
+    const list = await api("open-orders/");
+    const nw = list.filter(o => o.status === "new").length; $("#newop").textContent = nw ? `(${nw})` : "";
+    if (!list.length) { box.innerHTML = `<p class="note">Nessun ordine per ora. Pubblica una open session dalla scheda Studio (Tipo: Open session).</p>`; return; }
+    box.innerHTML = `<table><thead><tr><th>Ordine</th><th>Foto scelte</th><th>Chi</th><th>Stato</th></tr></thead><tbody>${list.map(o => `
+      <tr data-id="${esc(o.id)}"><td><strong>${esc(o.id)}</strong><br><span class="note">${d(o.created)} · ${esc(o.gclient || "gallery eliminata")} ${esc(o.gtitle || "")}</span><br><strong>${o.photos.length} foto · ${o.total}€</strong></td>
+      <td><div class="ophotos">${o.photos.map(n => `<span><img loading="lazy" src="/api/g/${esc(o.gallery)}/f/thumb/${encodeURIComponent(n.replace(/\.[^.]+$/, "") + ".jpg")}" alt="${esc(n)}" title="${esc(n)}">${o.status === "new" ? `<button type="button" data-rm="${esc(n)}" title="Togli questa foto">✕</button>` : ""}</span>`).join("")}</div></td>
+      <td>${esc(o.name)}<br><span class="note">${esc(o.contact)}</span>${o.note ? `<br><em>${esc(o.note)}</em>` : ""}</td>
+      <td><select data-os>${Object.entries(OST).map(([k, v]) => `<option value="${k}"${k === o.status ? " selected" : ""}>${v}</option>`).join("")}</select>${o.paid ? `<br><span class="note">pagato ${d(o.paid)}</span>` : ""}</td></tr>`).join("")}</tbody></table>`;
+    box.querySelectorAll("select[data-os]").forEach(s => s.onchange = async () => {
+      try { await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: s.closest("tr").dataset.id, status: s.value }) }); } catch (e) { alert(e.message); }
+      loadOpen();
+    });
+    box.querySelectorAll("button[data-rm]").forEach(b => b.onclick = async () => {
+      try { await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: b.closest("tr").dataset.id, remove: [b.dataset.rm] }) }); } catch (e) { alert(e.message); }
+      loadOpen();
+    });
+  } catch (e) { box.innerHTML = `<p class="note">${esc(e.message)}</p>`; }
+}
+$("#oprefresh").onclick = loadOpen;
+api("open-orders/").then(l => { const n = l.filter(o => o.status === "new").length; $("#newop").textContent = n ? `(${n})` : ""; }).catch(() => {});
 
 /* ---------- ordini ---------- */
 const ST = { new: "Nuovo", ordered: "Ordinato", shipped: "Spedito", cancelled: "Annullato" };

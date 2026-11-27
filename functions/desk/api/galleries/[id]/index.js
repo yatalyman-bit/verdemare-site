@@ -34,5 +34,6 @@ export async function onRequestDelete({ env, params }) {
   if (!g) return json({ error: "Non trovata." }, 404);
   await deletePrefix(env.GALLERY, `g/${params.id}/`);
   await env.DB.prepare("DELETE FROM galleries WHERE id = ?").bind(params.id).run();
+  await env.DB.prepare("DELETE FROM open_orders WHERE gallery = ?").bind(params.id).run();
   return json({ ok: true });
 }
