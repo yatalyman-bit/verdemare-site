@@ -7,4 +7,5 @@ place: "[place]"
 date: ""
 format: video session
 cover: 01.jpg
+draft: true   # segnaposto: si pubblica quando ci sono le foto vere
 ---
