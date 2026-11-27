@@ -8,10 +8,12 @@
       {{ else }}<a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}
     {{ end }}
   </nav>
+  <a class="fyp" href="/photos/"{{ if eq .RelPermalink "/photos/" }} aria-current="page"{{ end }} title="Surfed with me in an open session? Find your photos here"><span aria-hidden="true">📸</span><span class="t">Find your photos</span><i class="live" hidden></i></a>
   <a class="btn btn-s" href="{{ partial "wa.html" "" }}">Book</a>
   <details class="burger">
     <summary aria-label="Menu"><span></span><span></span><span></span></summary>
     <nav aria-label="Mobile">
+    <a class="m-fyp" href="/photos/"><span aria-hidden="true">📸</span> Find your photos <small>surfed with me this week?</small><i class="live" hidden></i></a>
     {{ range site.Menus.main }}
       {{ if .HasChildren }}<span class="m-head">{{ .Name }}</span>{{ range .Children }}<a class="m-sub" href="{{ .URL }}">{{ .Name }}</a>{{ end }}
       {{ else }}<a href="{{ .URL }}">{{ .Name }}</a>{{ end }}

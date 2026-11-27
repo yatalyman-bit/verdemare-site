@@ -150,3 +150,11 @@ p{margin:0 0 1em;max-width:62ch}
 .jg{display:flex;flex-wrap:wrap;gap:8px}.jg-i{width:calc(50% - 4px);aspect-ratio:4/3;overflow:hidden;background:var(--light)}
 .jg-row{display:flex;gap:8px;justify-content:center;width:100%}.jg-row .jg-i{flex:0 0 auto;aspect-ratio:auto}
 .jg-i img{width:100%;height:100%;object-fit:cover;display:block}.jg .rs-more{display:none}.jg.rs-open .rs-more{display:block}
+/* Find your photos: separato dal menu, con icona e pallino verde quando ci sono sessioni online */
+.fyp{display:none;align-items:center;gap:6px;margin-left:4px;padding:7px 12px;border:1.5px dashed var(--line);border-radius:99px;font-weight:600;font-size:.88rem;text-decoration:none;color:var(--ink);white-space:nowrap;position:relative}
+.fyp:hover,.fyp[aria-current]{border-color:var(--orange);color:var(--orange)}
+.live{width:8px;height:8px;border-radius:50%;background:#2fb35a;box-shadow:0 0 0 3px rgba(47,179,90,.2);display:inline-block}
+.live[hidden]{display:none}
+@media (min-width:760px){.fyp{display:inline-flex}}@media (max-width:1099px){.fyp .t{display:none}.fyp .live{position:absolute;top:2px;right:2px}}
+.burger nav a.m-fyp{background:var(--dark);color:#fff;border-radius:10px;padding:12px 14px;margin:4px 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:0}
+.m-fyp small{font-weight:400;color:#cfd6d6;font-size:.8rem}.m-fyp .live{margin-left:auto}

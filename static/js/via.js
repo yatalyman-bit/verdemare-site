@@ -14,3 +14,9 @@
   const run = () => document.querySelectorAll('a[href^="https://wa.me/"]').forEach(fix);
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", run) : run();
 })();
+
+// Pallino verde su "Find your photos" quando ci sono open session online
+(() => {
+  const go = () => fetch("/api/open").then(r => r.ok ? r.json() : []).then(l => { if (l.length) document.querySelectorAll(".fyp .live,.m-fyp .live").forEach(e => e.hidden = false); }).catch(() => {});
+  document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", go) : go();
+})();
