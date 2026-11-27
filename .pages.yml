@@ -22,6 +22,15 @@ content:
           - { name: extra_hour, label: Ora extra per gruppo, type: number }
           - { name: travel, label: Supplemento Ericeira/Nazaré, type: number }
           - { name: commission, label: Commissione hotel, type: string }
+      - name: prints
+        label: Stampe (formati e prezzi)
+        type: object
+        list: true
+        fields:
+          - { name: id, label: "Codice (non cambiare, es. 20x30)", type: string }
+          - { name: label, label: Nome visibile, type: string }
+          - { name: price, label: Prezzo €, type: number }
+      - { name: shipping, label: Spedizione stampe € (per ordine), type: number }
       - { name: steps, label: How it works (passaggi), type: string, list: true }
   - name: home
     label: Home

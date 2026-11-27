@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<title>Your session · Verdemare</title>
+<link rel="icon" href="/logo-240.png">
+<style>
+@font-face{font-family:Norwester;src:url(/fonts/norwester.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Montserrat;src:url(/fonts/montserrat-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Montserrat;src:url(/fonts/montserrat-700.woff2) format("woff2");font-weight:700;font-display:swap}
+:root{--o:#e6782a;--g:#2f7d4a;--ink:#1f1f1f;--muted:#6b6b6b;--light:#f4f2ee;--dark:#1d2a2e;--line:#d9d6cf}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font:400 16px/1.55 Montserrat,system-ui,sans-serif;color:var(--ink);background:#fff}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+header.top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+header.top img{width:40px;height:40px}header.top b{font-family:Norwester,sans-serif;color:var(--g);font-size:1.3rem;letter-spacing:.03em}
+h1{font-family:Norwester,sans-serif;font-weight:400;color:var(--o);font-size:clamp(2rem,7vw,3.4rem);line-height:1.05;margin:26px 0 4px}
+.sub{color:var(--muted);margin:0 0 18px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--o);color:#fff;border:2px solid var(--o);font-weight:700;font-size:.95rem;padding:.75em 1.3em;border-radius:99px;cursor:pointer;text-decoration:none}
+.btn.o{background:#fff;color:var(--o)}.btn:disabled{opacity:.5;cursor:default}
+.panel{background:var(--light);border-radius:14px;padding:16px 18px;margin:0 0 20px;display:grid;gap:12px}
+.panel p{margin:0}.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.small{font-size:.85rem;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-bottom:120px}
+@media (max-width:600px){.grid{grid-template-columns:repeat(3,1fr);gap:3px}}
+.cell{position:relative;aspect-ratio:1;background:#e9e6df;border:0;padding:0;cursor:pointer;overflow:hidden;border-radius:4px}
+.cell img{width:100%;height:100%;object-fit:cover;display:block}
+.cell .play{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:2rem;text-shadow:0 2px 8px rgba(0,0,0,.5);pointer-events:none}
+.cell .chk{display:none;position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.25);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.cell .zoom{display:none;position:absolute;bottom:6px;right:6px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:15px}
+.sel .cell .chk,.sel .cell .zoom{display:block}
+.sel .cell.on{outline:4px solid var(--o);outline-offset:-4px}.sel .cell.on .chk{background:var(--o);border-color:var(--o)}
+.sel .cell.on .chk::after{content:"✓";color:#fff;font-weight:700;display:grid;place-items:center;height:100%;font-size:14px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:none;gap:10px;align-items:center;justify-content:space-between;z-index:5}
+.bar.on{display:flex}
+/* lightbox */
+#lb{position:fixed;inset:0;background:#0d1314;display:none;z-index:20;flex-direction:column}
+#lb.on{display:flex}
+#lb .stage{flex:1;display:grid;place-items:center;min-height:0;position:relative;touch-action:pan-y}
+#lb img,#lb video{max-width:100%;max-height:100%;object-fit:contain}
+#lb .nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:0;color:#fff;width:46px;height:46px;border-radius:50%;font-size:22px;cursor:pointer}
+#lb .prev{left:10px}#lb .next{right:10px}
+#lb .tools{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px calc(10px + env(safe-area-inset-bottom));color:#cfd6d6;font-size:.85rem}
+#lb .x{background:none;border:0;color:#fff;font-size:28px;position:absolute;top:8px;right:12px;z-index:2;cursor:pointer}
+/* checkout */
+#co{position:fixed;inset:0;background:rgba(10,14,15,.55);display:none;z-index:15;overflow:auto}
+#co.on{display:block}
+#co .box{background:#fff;max-width:640px;margin:24px auto;border-radius:16px;padding:20px}
+#co h2{font-family:Norwester,sans-serif;font-weight:400;color:var(--o);margin:0 0 10px;font-size:1.8rem}
+.item{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.item img{width:64px;height:64px;object-fit:cover;border-radius:6px}
+.item select,.item input{padding:6px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.item input{width:56px}.item .rm{background:none;border:0;color:var(--muted);font-size:1.2rem;cursor:pointer}
+form.f{display:grid;gap:10px;margin-top:14px}form.f label{display:grid;gap:4px;font-size:.85rem;font-weight:700}
+form.f input,form.f select,form.f textarea{padding:10px;border:1px solid var(--line);border-radius:10px;font-weight:400;background:#fff}
+.tot{display:flex;justify-content:space-between;font-weight:700;padding:10px 0}
+.hp{position:absolute;left:-9999px}
+.msg{padding:20px;text-align:center}
+footer{padding:30px 16px;color:var(--muted);font-size:.8rem;text-align:center}
+.prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--o);transition:width .2s}
+</style></head>
+<body>
+<header class="top"><img src="/logo-240.png" alt=""><b>VERDEMARE</b></header>
+<main class="wrap" id="app"><p class="msg">Loading your session…</p></main>
+
+<div class="bar" id="selbar"><span id="selcount">0 selected</span><span class="row" style="flex-wrap:nowrap"><button class="btn o" id="selcancel">Cancel</button><button class="btn" id="selgo" disabled>Continue</button></span></div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="x" id="lbx" aria-label="Close">×</button>
+  <div class="stage" id="lbstage"><button class="nav prev" id="lbp" aria-label="Previous">‹</button><button class="nav next" id="lbn" aria-label="Next">›</button></div>
+  <div class="tools"><span id="lbinfo"></span><span class="row" id="lbact"></span></div>
+</div>
+
+<div id="co" role="dialog" aria-modal="true" aria-label="Order prints"><div class="box" id="cobox"></div></div>
+<footer>Verdemare · In-water surf photo &amp; video · Peniche, Portugal<br>Photos © Verdemare. Personal use and social media with tag @verdemare.photo.</footer>
+
+<script>
+(() => {
+const id = (location.pathname.match(/\/g\/([A-Za-z0-9]+)/) || [])[1];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const F = (kind, n) => `/api/g/${id}/f/${kind}/${encodeURIComponent(n)}`;
+const isVid = f => f.t === "v";
+const thumbName = f => isVid(f) ? f.n.replace(/\.[^.]+$/, "") + ".jpg" : f.n.replace(/\.[^.]+$/, "") + ".jpg";
+let G = null, idx = 0, selecting = false;
+const sel = new Map(); // n -> {size, qty}
+
+const canShareFiles = (() => { try { return !!(navigator.canShare && navigator.canShare({ files: [new File(["x"], "x.jpg", { type: "image/jpeg" })] })); } catch { return false; } })();
+const fmtDate = s => new Date(s).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+const fmtSize = b => b > 1e9 ? (b / 1e9).toFixed(1) + " GB" : Math.max(1, Math.round(b / 1e6)) + " MB";
+const eur = n => n + "€";
+
+async function load() {
+  if (!id) return fail("This link is not complete.");
+  const r = await fetch(`/api/g/${id}`);
+  if (r.status === 410) return fail("This gallery has expired. Message me on WhatsApp if you still need your photos.");
+  if (!r.ok) return fail("Gallery not found. Check the link, or message me on WhatsApp.");
+  G = await r.json();
+  document.title = `${G.client} · Verdemare`;
+  render();
+}
+function fail(m) { $("#app").innerHTML = `<p class="msg">${esc(m)}</p>`; }
+
+function render() {
+  const photos = G.files.filter(f => !isVid(f)).length, vids = G.files.length - photos;
+  const count = [photos && `${photos} photo${photos > 1 ? "s" : ""}`, vids && `${vids} video${vids > 1 ? "s" : ""}`].filter(Boolean).join(" · ");
+  let top = `<h1>Hi ${esc(G.client)}</h1><p class="sub">${esc(G.title)}${G.title ? " · " : ""}${count} · available until ${fmtDate(G.expires)}</p>`;
+  if (!G.paid) {
+    top += `<div class="panel"><p><strong>These are previews.</strong> As soon as the balance is paid, your photos unlock here in full quality, ready to save.</p>
+      <div class="row"><a class="btn" href="https://wa.me/${esc(G.whatsapp)}?text=${encodeURIComponent("Hi Flavio! I've seen my gallery (" + G.client + "). How do I pay the balance?")}">Pay the balance</a></div></div>`;
+  } else {
+    top += `<div class="panel">
+      ${canShareFiles ? `<div class="row"><button class="btn" id="saveall">Save all photos to my phone</button></div><div id="savebox" class="row"></div>` : ""}
+      <div class="row"><a class="btn ${canShareFiles ? "o" : ""}" href="${F("zip", "originals.zip")}?dl=1">Download originals (.zip, ${fmtSize(G.zip)})</a></div>
+      <p class="small">${canShareFiles ? "The phone version is high quality and ready for Instagram. The zip has the full-size originals, best on a computer." : "The zip has all the full-size originals. On a phone, open a photo and use Save."}</p></div>`;
+  }
+  if (G.prints && G.prints.length) top += `<div class="row" style="margin:0 0 14px"><button class="btn o" id="printbtn">Order prints, delivered to your door</button><span class="small">from ${eur(Math.min(...G.prints.map(p => p.price)))}</span></div>`;
+  $("#app").innerHTML = top + `<div class="grid" id="grid">${G.files.map((f, i) => `
+    <div class="cell" data-i="${i}" role="button" tabindex="0" aria-label="${esc(f.n)}"><img loading="lazy" src="${F("thumb", thumbName(f))}" alt="">${isVid(f) ? '<span class="play">▶</span>' : ""}<span class="chk"></span><button class="zoom" aria-label="Enlarge">⤢</button></div>`).join("")}</div>`;
+  $("#grid").onclick = e => {
+    const c = e.target.closest(".cell"); if (!c) return; const i = +c.dataset.i;
+    if (selecting && !e.target.closest(".zoom")) return toggle(i, c);
+    open(i);
+  };
+  $("#grid").onkeydown = e => { if (e.key === "Enter") e.target.closest(".cell")?.click(); };
+  const pb = $("#printbtn"); if (pb) pb.onclick = startSelect;
+  const sa = $("#saveall"); if (sa) sa.onclick = prepareBatches;
+}
+
+/* ---------- save to phone, in batches ---------- */
+const BATCH = 20;
+function prepareBatches() {
+  const photos = G.files.filter(f => !isVid(f));
+  const box = $("#savebox"); box.innerHTML = "";
+  for (let s = 0; s < photos.length; s += BATCH) {
+    const part = photos.slice(s, s + BATCH);
+    const b = document.createElement("button");
+    b.className = "btn o"; b.textContent = photos.length > BATCH ? `Prepare ${s + 1}–${s + part.length}` : "Prepare photos";
+    b.onclick = async () => {
+      b.disabled = true; b.textContent = "Loading…";
+      try {
+        const files = await Promise.all(part.map(async f => new File([await (await fetch(F("web", f.n))).blob()], f.n, { type: "image/jpeg" })));
+        b.disabled = false; b.className = "btn"; b.textContent = `Save ${files.length} photos`;
+        b.onclick = async () => { try { await navigator.share({ files }); b.textContent = "Saved ✓"; b.className = "btn o"; } catch (e) { if (e.name !== "AbortError") alertMsg(b, "Couldn't open sharing. Try fewer photos or use the zip."); } };
+      } catch { b.disabled = false; b.textContent = "Try again"; }
+    };
+    box.appendChild(b);
+  }
+  const vids = G.files.filter(isVid).length;
+  if (vids) { const p = document.createElement("p"); p.className = "small"; p.textContent = `Videos: open each one and tap Save.`; box.appendChild(p); }
+  $("#saveall").remove();
+}
+function alertMsg(el, m) { const p = document.createElement("p"); p.className = "small"; p.textContent = m; el.after(p); }
+
+/* ---------- lightbox ---------- */
+function open(i) { idx = i; $("#lb").classList.add("on"); show(); document.body.style.overflow = "hidden"; }
+function close() { $("#lb").classList.remove("on"); $("#lbstage").querySelectorAll("img,video").forEach(x => x.remove()); document.body.style.overflow = ""; }
+function show() {
+  const f = G.files[idx], st = $("#lbstage");
+  st.querySelectorAll("img,video").forEach(x => x.remove());
+  let m;
+  if (isVid(f) && G.paid) { m = document.createElement("video"); m.src = F("orig", f.n); m.controls = true; m.playsInline = true; }
+  else { m = document.createElement("img"); m.alt = f.n; m.src = G.paid ? F("web", f.n) : F("prev", thumbName(f)); }
+  st.prepend(m);
+  $("#lbinfo").textContent = `${idx + 1} / ${G.files.length}`;
+  const a = $("#lbact"); a.innerHTML = "";
+  if (selecting && !isVid(f)) {
+    const b = document.createElement("button"); b.className = "btn" + (sel.has(f.n) ? "" : " o");
+    b.textContent = sel.has(f.n) ? "Selected ✓" : "Select for print";
+    b.onclick = () => { toggle(idx, document.querySelector(`.cell[data-i="${idx}"]`)); show(); }; a.appendChild(b);
+  } else if (G.paid) {
+    const b = document.createElement("button"); b.className = "btn"; b.textContent = "Save";
+    b.onclick = () => saveOne(f, b); a.appendChild(b);
+  }
+}
+async function saveOne(f, b) {
+  const kind = isVid(f) ? "orig" : "web";
+  if (canShareFiles) {
+    b.disabled = true; b.textContent = "Loading…";
+    try {
+      const file = new File([await (await fetch(F(kind, f.n))).blob()], f.n, { type: isVid(f) ? "video/mp4" : "image/jpeg" });
+      b.disabled = false; b.textContent = "Save now";
+      b.onclick = async () => { try { await navigator.share({ files: [file] }); b.textContent = "Saved ✓"; } catch {} };
+    } catch { b.disabled = false; b.textContent = "Try again"; }
+  } else location.href = F(isVid(f) ? "orig" : "orig", f.n) + "?dl=1";
+}
+const step = d => { idx = (idx + d + G.files.length) % G.files.length; show(); };
+$("#lbp").onclick = () => step(-1); $("#lbn").onclick = () => step(1); $("#lbx").onclick = close;
+addEventListener("keydown", e => { if (!$("#lb").classList.contains("on")) return; if (e.key === "ArrowLeft") step(-1); if (e.key === "ArrowRight") step(1); if (e.key === "Escape") close(); });
+let tx = null; $("#lbstage").addEventListener("touchstart", e => tx = e.touches[0].clientX, { passive: true });
+$("#lbstage").addEventListener("touchend", e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1); tx = null; });
+
+/* ---------- prints ---------- */
+function startSelect() { selecting = true; document.body.classList.add("sel"); $("#selbar").classList.add("on"); count(); window.scrollTo({ top: $("#grid").offsetTop - 70, behavior: "smooth" }); }
+function stopSelect() { selecting = false; document.body.classList.remove("sel"); $("#selbar").classList.remove("on"); }
+function toggle(i, c) {
+  const f = G.files[i]; if (isVid(f)) return;
+  if (sel.has(f.n)) { sel.delete(f.n); c && c.classList.remove("on"); } else { sel.set(f.n, { size: G.prints[0].id, qty: 1 }); c && c.classList.add("on"); }
+  count();
+}
+function count() { $("#selcount").innerHTML = `<b>${sel.size} selected</b><br><span class="small">⤢ to enlarge</span>`; $("#selgo").disabled = !sel.size; }
+$("#selcancel").onclick = stopSelect;
+$("#selgo").onclick = checkout;
+
+async function checkout() {
+  const countries = (await (await fetch(`/api/g/${id}/print`)).json()).countries;
+  const price = s => (G.prints.find(p => p.id === s) || {}).price || 0;
+  const draw = () => {
+    const items = [...sel.entries()];
+    const sub = items.reduce((a, [, v]) => a + price(v.size) * v.qty, 0);
+    $("#cobox").innerHTML = `<h2>Your prints</h2>
+      ${items.map(([n, v]) => { const f = G.files.find(x => x.n === n); return `<div class="item" data-n="${esc(n)}"><img src="${F("thumb", thumbName(f))}" alt="">
+        <div class="row"><select class="sz">${G.prints.map(p => `<option value="${esc(p.id)}"${p.id === v.size ? " selected" : ""}>${esc(p.label)} · ${eur(p.price)}</option>`).join("")}</select>
+        <label class="small">Qty <input class="qt" type="number" min="1" max="20" value="${v.qty}"></label></div><button class="rm" aria-label="Remove">✕</button></div>`; }).join("")}
+      <div class="tot"><span>Prints</span><span>${eur(sub)}</span></div>
+      <div class="tot" style="font-weight:400"><span>Shipping (Europe & UK)</span><span>${eur(G.shipping)}</span></div>
+      <div class="tot" style="font-size:1.2rem"><span>Total</span><span>${eur(sub + G.shipping)}</span></div>
+      <p class="small">Professional lab prints on Fujifilm photo paper, shipped to your door in about a week. Outside Europe? Message me on WhatsApp.</p>
+      <form class="f" id="cof">
+        <label>Full name<input name="name" required autocomplete="name"></label>
+        <label>Email<input name="email" type="email" autocomplete="email"></label>
+        <label>Phone / WhatsApp<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>Address<textarea name="address" rows="3" required autocomplete="street-address" placeholder="Street, number, postcode, city"></textarea></label>
+        <label>Country<select name="country" required><option value="">Choose…</option>${countries.map(c => `<option>${c}</option>`).join("")}</select></label>
+        <label>Note (optional)<input name="note"></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off">
+        <p class="small">Email or phone is needed so I can send you payment details. Your address is only used for this shipment and deleted afterwards.</p>
+        <div class="row"><button class="btn" type="submit">Send order</button><button class="btn o" type="button" id="coback">Back</button></div>
+        <p class="small" id="coerr" style="color:#a2361b"></p>
+      </form>`;
+    $("#cobox").querySelectorAll(".item").forEach(el => {
+      const n = el.dataset.n, v = sel.get(n);
+      el.querySelector(".sz").onchange = e => { v.size = e.target.value; draw(); };
+      el.querySelector(".qt").onchange = e => { v.qty = Math.max(1, Math.min(20, +e.target.value || 1)); draw(); };
+      el.querySelector(".rm").onclick = () => { sel.delete(n); document.querySelectorAll(".cell").forEach(c => { if (G.files[+c.dataset.i].n === n) c.classList.remove("on"); }); count(); if (!sel.size) return closeCo(); draw(); };
+    });
+    $("#coback").onclick = closeCo;
+    $("#cof").onsubmit = async e => {
+      e.preventDefault();
+      const fd = Object.fromEntries(new FormData(e.target));
+      if (!fd.email && !fd.phone) { $("#coerr").textContent = "Please add an email or a phone number."; return; }
+      const r = await fetch(`/api/g/${id}/print`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...fd, items: [...sel.entries()].map(([photo, v]) => ({ photo, size: v.size, qty: v.qty })) }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) { $("#coerr").textContent = j.error || "Something went wrong. Please try again."; return; }
+      const lines = j.items.map(i => `${i.qty}× ${i.label} – ${i.photo}`).join("\n");
+      const wa = `https://wa.me/${G.whatsapp}?text=${encodeURIComponent(`Hi Flavio! I've just ordered prints (order ${j.id}):\n${lines}\nTotal ${j.total}€`)}`;
+      $("#cobox").innerHTML = `<h2>Order sent ✓</h2><p>Order <strong>${esc(j.id)}</strong> · total <strong>${eur(j.total)}</strong>.</p><p>I'll send you the payment details, then your prints go to the lab and ship to your door.</p><div class="row"><a class="btn" href="${wa}">Let me know on WhatsApp</a><button class="btn o" id="codone">Back to the photos</button></div>`;
+      sel.clear(); stopSelect(); document.querySelectorAll(".cell.on").forEach(c => c.classList.remove("on"));
+      $("#codone").onclick = closeCo;
+    };
+  };
+  draw(); $("#co").classList.add("on"); document.body.style.overflow = "hidden";
+}
+function closeCo() { $("#co").classList.remove("on"); document.body.style.overflow = ""; }
+load();
+})();
+</script>
+</body></html>

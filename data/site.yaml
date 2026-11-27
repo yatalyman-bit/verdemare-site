@@ -22,6 +22,14 @@ prices:
   extra_hour: 50
   travel: 25
   commission: 15%
+prints:        # stampe consegnate a casa (laboratorio: Saal Digital)
+  - id: 20x30
+    label: "20 × 30 cm"
+    price: 19
+  - id: 30x45
+    label: "30 × 45 cm"
+    price: 29
+shipping: 6     # spedizione stampe, per ordine (Europa e Regno Unito)
 steps:
   - Message me on WhatsApp
   - We pick the best day from the forecast
