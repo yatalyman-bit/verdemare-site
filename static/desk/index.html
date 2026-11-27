@@ -134,7 +134,7 @@ td .row button{padding:6px 10px;font-size:12px}
 <!-- ============ OPEN SESSION ============ -->
 <section id="t-open">
   <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Open session: ordini</h2><button class="ghost" id="oprefresh" type="button">Aggiorna</button></div>
-  <p class="note" style="margin-bottom:10px">Il surfista sceglie le foto e manda l'ordine. 1) Controlla che le foto siano sue (✕ toglie una foto e ricalcola il prezzo). 2) Quando ti paga → <b>Pagato</b>: le foto si sbloccano sul suo link. Le gallery delle open session restano online 7 giorni; le foto pagate restano scaricabili per 30 giorni.</p>
+  <p class="note" style="margin-bottom:10px">Online ci sono solo anteprime con watermark. Il surfista sceglie le foto e manda l'ordine. 1) Controlla che le foto siano sue (✕ toglie una foto e ricalcola il prezzo). 2) Quando ti paga → <b>📤 Carica le foto e sblocca</b>: scegli dal computer le sue foto (o tutta la cartella della giornata, prende solo quelle giuste) e si sbloccano sul suo link. Le gallery delle open session restano online 7 giorni; le foto pagate restano scaricabili per 30 giorni.</p>
   <div id="oplist"><p class="note">Caricamento…</p></div>
 </section>
 
@@ -396,22 +396,25 @@ $("#publish").onclick = async () => {
   const isOpen = $("#g_kind").value === "open";
   const client = $("#g_client").value.trim(); if (!client) { $("#g_client").focus(); return alert(isOpen ? "Scrivi lo spot." : "Scrivi il nome del cliente."); }
   if (!items.length) return;
+  const list = isOpen ? items.filter(i => i.kind === "p") : items;   // open session: solo foto
+  if (isOpen && list.length < items.length && !confirm(`Le open session sono solo foto: ${items.length - list.length} video verranno saltati. Continuo?`)) return;
+  if (!list.length) return alert("Nessuna foto da pubblicare.");
   const btn = $("#publish"); btn.disabled = true; $("#pubbox").hidden = false; $("#outbox").hidden = true;
   const log = m => { $("#plog").textContent += m + "\n"; $("#plog").scrollTop = 1e9; };
   const stat = m => $("#pstat").textContent = m;
   const zipVideos = $("#g_zipv").checked;
   const zipItems = isOpen ? [] : items.filter(i => i.kind === "p" || zipVideos);   // open session: niente zip (ognuno compra le sue)
-  const totalBytes = items.reduce((a, i) => a + i.file.size, 0) * 1.1 + zipItems.reduce((a, i) => a + i.file.size, 0);
+  const totalBytes = isOpen ? list.length : list.reduce((a, i) => a + i.file.size, 0) * 1.1 + zipItems.reduce((a, i) => a + i.file.size, 0);
   let sent = 0; const bar = () => $("#pbar").style.width = Math.min(100, sent / totalBytes * 100).toFixed(1) + "%";
   addEventListener("beforeunload", warn);
   try {
     stat("Creo la gallery…");
     const { id } = await api("galleries/", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ client, title: $("#g_title").value.trim(), days: +$("#g_days").value || (isOpen ? OPEN_DAYS : 90), kind: isOpen ? "open" : "private" }) });
-    const files = new Array(items.length);
+    const files = new Array(list.length);
     let next = 0, done = 0;
     const worker = async () => {
-      while (next < items.length) {
-        const i = next++, it = items[i], tn = base(it.name) + ".jpg";
+      while (next < list.length) {
+        const i = next++, it = list[i], tn = base(it.name) + ".jpg";
         const src = await sourceOf(it);
         const [tw, th] = fit(src.w, src.h, 360, 360);   // miniature piccole: inutili se rubate
         await upload(id, "thumb", tn, await jpg(canvasOf(src.bmp, tw, th), .72));
@@ -419,12 +422,13 @@ $("#publish").onclick = async () => {
         await upload(id, "prev", tn, await jpg(watermark(canvasOf(src.bmp, pw, ph)), Math.min(S.q, 82) / 100));   // anteprima: ridotta alla misura del watermark (1200×600) + watermark
         // versione per lo zoom col pizzico: 1600 px, watermark più fitto, qualità bassa → si vedono i dettagli ma non è usabile
         if (it.kind === "p") { const [zw, zh] = fit(src.w, src.h, 1600, 1600); const k = zw / pw; await upload(id, "zoom", tn, await jpg(watermark(canvasOf(src.bmp, zw, zh), { ...S, size: S.size * k * .8, sx: S.sx * k * .8, sy: S.sy * k * .8, alpha: Math.max(S.alpha, 28) }), .7)); }
-        if (it.kind === "p") { const [ww, wh] = fit(src.w, src.h, 2560, 2560); await upload(id, "web", it.name, await jpg(canvasOf(src.bmp, ww, wh), .9)); }
+        // open session: qui si ferma (solo anteprime con watermark). Le versioni pulite si caricano dopo il pagamento, solo per chi compra.
+        if (!isOpen && it.kind === "p") { const [ww, wh] = fit(src.w, src.h, 2560, 2560); await upload(id, "web", it.name, await jpg(canvasOf(src.bmp, ww, wh), .9)); }
         if (src.bmp.close) src.bmp.close();
-        await upload(id, "orig", it.name, it.file);
-        sent += it.file.size * 1.1; bar();
+        if (!isOpen) await upload(id, "orig", it.name, it.file);
+        sent += isOpen ? 1 : it.file.size * 1.1; bar();
         files[i] = { n: it.name, t: it.kind, w: src.w, h: src.h, s: it.file.size, z: it.kind === "p" ? 1 : 0 };
-        stat(`Caricati ${++done}/${items.length}`);
+        stat(`Caricati ${++done}/${list.length}`);
         if (src.ph) log(`${it.name}: anteprima del video non leggibile in questo browser, uso un'icona.`);
       }
     };
@@ -502,12 +506,41 @@ async function loadOpen() {
     if (!list.length) { box.innerHTML = `<p class="note">Nessun ordine per ora. Pubblica una open session dalla scheda Studio (Tipo: Open session).</p>`; return; }
     box.innerHTML = `<table><thead><tr><th>Ordine</th><th>Foto scelte</th><th>Chi</th><th>Stato</th></tr></thead><tbody>${list.map(o => `
       <tr data-id="${esc(o.id)}"><td><strong>${esc(o.id)}</strong><br><span class="note">${d(o.created)} · ${esc(o.gclient || "gallery eliminata")} ${esc(o.gtitle || "")}</span><br><strong>${o.photos.length} foto · ${o.total}€</strong></td>
-      <td><div class="ophotos">${o.photos.map(n => `<span><img loading="lazy" src="/api/g/${esc(o.gallery)}/f/thumb/${encodeURIComponent(n.replace(/\.[^.]+$/, "") + ".jpg")}" alt="${esc(n)}" title="${esc(n)}">${o.status === "new" ? `<button type="button" data-rm="${esc(n)}" title="Togli questa foto">✕</button>` : ""}</span>`).join("")}</div></td>
+      <td><div class="ophotos">${o.photos.map(n => `<span><img loading="lazy" src="/api/g/${esc(o.gallery)}/f/thumb/${encodeURIComponent(n.replace(/\.[^.]+$/, "") + ".jpg")}" alt="${esc(n)}" title="${esc(n)}" onerror="this.outerHTML='<span class=note style=display:block;width:56px;font-size:10px;word-break:break-all>'+this.alt+'</span>'">${o.status === "new" ? `<button type="button" data-rm="${esc(n)}" title="Togli questa foto">✕</button>` : ""}</span>`).join("")}</div></td>
       <td>${esc(o.name)}<br><span class="note">${esc(o.contact)}</span>${o.note ? `<br><em>${esc(o.note)}</em>` : ""}</td>
-      <td><select data-os>${Object.entries(OST).map(([k, v]) => `<option value="${k}"${k === o.status ? " selected" : ""}>${v}</option>`).join("")}</select>${o.paid ? `<br><span class="note">pagato ${d(o.paid)}</span>` : ""}</td></tr>`).join("")}</tbody></table>`;
-    box.querySelectorAll("select[data-os]").forEach(s => s.onchange = async () => {
-      try { await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: s.closest("tr").dataset.id, status: s.value }) }); } catch (e) { alert(e.message); }
+      <td>${o.status === "new" ? `<button type="button" data-up>📤 Carica le foto e sblocca</button><br><button type="button" class="ghost" data-st="cancelled" style="margin-top:6px">Annulla</button>`
+          : o.status === "paid" ? `<span class="pill y">Pagato</span><br><span class="note">${d(o.paid)}</span><br><button type="button" class="ghost" data-up style="margin-top:6px">Ricarica le foto</button>`
+          : `<span class="pill n">Annullato</span><br><button type="button" class="ghost" data-st="new" style="margin-top:6px">Riapri</button>`}<div class="note" data-msg></div></td></tr>`).join("")}</tbody></table>
+      <input type="file" id="opfiles" multiple accept="image/jpeg,image/png,.jpg,.jpeg,.png" hidden>`;
+    box.querySelectorAll("button[data-st]").forEach(b => b.onclick = async () => {
+      if (b.dataset.st === "cancelled" && !confirm("Annullare questo ordine?")) return;
+      try { await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: b.closest("tr").dataset.id, status: b.dataset.st }) }); } catch (e) { alert(e.message); }
       loadOpen();
+    });
+    // Pagato: scegli dal computer le foto dell'ordine (anche tutta la cartella della giornata: prende solo quelle giuste),
+    // carica versione alta qualità + originale solo di quelle, poi segna pagato.
+    box.querySelectorAll("button[data-up]").forEach(b => b.onclick = () => {
+      const tr = b.closest("tr"), o = list.find(x => x.id === tr.dataset.id), msg = tr.querySelector("[data-msg]"), fin = $("#opfiles");
+      fin.value = ""; fin.onchange = async () => {
+        const byName = new Map([...fin.files].map(f => [safe(f.name).toLowerCase(), f]));
+        const found = o.photos.map(n => [n, byName.get(n.toLowerCase())]), missing = found.filter(([, f]) => !f).map(([n]) => n);
+        if (missing.length && !confirm(`Non trovo ${missing.length} foto: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? "…" : ""}\nCarico le altre ${found.length - missing.length} e segno pagato lo stesso?`)) return;
+        tr.querySelectorAll("button").forEach(x => x.disabled = true);
+        try {
+          let k = 0;
+          for (const [n, f] of found) {
+            if (!f) continue;
+            msg.textContent = `Carico ${++k}/${found.length - missing.length}…`;
+            const bm = await bitmap(f), [ww, wh] = fit(bm.width, bm.height, 2560, 2560);
+            await upload(o.gallery, "web", n, await jpg(canvasOf(bm, ww, wh), .9)); bm.close();
+            await upload(o.gallery, "orig", n, f);
+          }
+          if (o.status !== "paid") await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: o.id, status: "paid" }) });
+          msg.textContent = "Sbloccate ✓";
+        } catch (e) { msg.textContent = "Errore: " + e.message; }
+        setTimeout(loadOpen, 900);
+      };
+      fin.click();
     });
     box.querySelectorAll("button[data-rm]").forEach(b => b.onclick = async () => {
       try { await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: b.closest("tr").dataset.id, remove: [b.dataset.rm] }) }); } catch (e) { alert(e.message); }
