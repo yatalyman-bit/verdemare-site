@@ -153,7 +153,24 @@ const LANG = {en:"English", pt:"Português", fr:"Français", es:"Español", it:"
 const PTYPES = {hotel:"Hotel boutique", surfhouse:"Surf house", resort:"Surf resort", retreat:"Retreat", operatore:"Surf trip / operatore", coach:"Coach", villa:"Villa / host", marketplace:"Marketplace"};
 const PHASES = {dacontattare:"Da contattare", contattato:"Contattato", incontro:"Incontro", attivo:"Attivo", ricorrente:"Ricorrente", no:"No"};
 const PRIO = {alta:"Alta", media:"Media", bassa:"Bassa"};
-const PACKAGES = {f1:["Foto · 1 persona · 1 h",60], f2:["Foto · 2 persone · 1 h",90], f3:["Foto · 3 persone · 1 h",120], f4:["Foto · 4 persone · 1 h",150], v1:["Video + reel · 1 persona · 1 h",100], v2:["Video + reel · 2 persone · 1 h",140], v3:["Video + reel · 3 persone · 1 h",180], v4:["Video + reel · 4 persone · 1 h",220], c1:["Solo clip · 1 persona · 1 h",70], c2:["Solo clip · 2 persone · 1 h",100], c3:["Solo clip · 3 persone · 1 h",130], c4:["Solo clip · 4 persone · 1 h",160], altro:["Altro",0]};
+// Prezzi: arrivano dal sito (data/site.yaml → /site.json). Mai scritti qui, così sono sempre uguali al sito.
+const PRICE_FALLBACK = {photo:[60,90,120,150], video:[100,140,180,220], clips:[70,100,130,160], commission:"15%"};
+let PRICES = (()=>{ try{ return JSON.parse(localStorage.getItem("vd-prices"))||PRICE_FALLBACK }catch{ return PRICE_FALLBACK } })();
+const eachP = (t,n)=>{ const e=t/n; return Number.isInteger(e)? e+"€" : Number.isInteger(e*2)? e.toFixed(2).replace(".",",")+"€" : "≈"+Math.round(e)+"€" };
+function buildPackages(pr){
+  const P={}; const L={f:["photo","Foto"], v:["video","Video + reel"], c:["clips","Solo clip"]};
+  for(const [k,[key,lab]] of Object.entries(L)) (pr[key]||[]).forEach((t,i)=>{ const n=i+1; P[k+n]=[`${lab} · ${n} ${n>1?"persone":"persona"} · 1 h · ${t}€${n>1?` (${eachP(t,n)} a testa)`:""}`, t] });
+  P.altro=["Altro",0]; return P;
+}
+const PACKAGES = buildPackages(PRICES);
+const DEFAULT_PCT = ()=> parseFloat(String(PRICES.commission||"15"))||15;
+fetch("/site.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
+  if(!j||!j.prices) return;
+  const changed = JSON.stringify(j.prices)!==JSON.stringify(PRICES);
+  PRICES=j.prices; try{ localStorage.setItem("vd-prices",JSON.stringify(PRICES)) }catch{}
+  for(const k of Object.keys(PACKAGES)) delete PACKAGES[k]; Object.assign(PACKAGES, buildPackages(PRICES));
+  if(changed && typeof route==="function") route();
+}).catch(()=>{});
 const KEY = "verdemare-desk-v1";
 const COLS = ["targets","hashtags","log","posts","people","partners","bookings"];
 
@@ -374,7 +391,7 @@ function msgTemplate(t,inp){
   return `Hey ${t.name} team!\n\n${why}I'm an Italian in-water surf photographer based in ${base}. ${inp.spot?`I've just shot a series at ${inp.spot}`:"I've just shot a new series"} that I think fits what you publish${ex?". It hasn't been published anywhere, so you'd be the first to see it":""}.\n\nMy work: ${h}\n\nHappy to send a small low-res selection if you're interested.\n\nCheers,\n${sign}`;
 }
 function partnerMsg(p){
-  const pr=S.profile||{}; const sign=pr.brand||"Verdemare"; const h=pr.handle||"@verdemare.photo"; const pct=p.pct||15;
+  const pr=S.profile||{}; const sign=pr.brand||"Verdemare"; const h=pr.handle||"@verdemare.photo"; const pct=p.pct||DEFAULT_PCT();
   if(["retreat","operatore"].includes(p.type)) return `Subject: In-water surf sessions for your groups, with commission\n\nHi ${p.person||p.name+" team"},\n\nI'm an in-water surf photographer based in Peniche. I shoot private surf sessions from inside the water, for surfers of any level, with photos delivered within 48 hours and optional reels.\n\nYou can offer it to your groups as an add-on: you earn ${pct}% of every session, paid monthly. Three sample shots attached, more on ${h}.\n\nCould we have a quick call this week?\n\n${sign}`;
   return `Hi, I'm [nome], an in-water surf photographer based in Peniche. I shoot private surf sessions from inside the water, for any level. Your guests book through the QR on this flyer with the code ${p.code||"[codice]"}, and you get ${pct}% of every booking, paid monthly. Nothing to manage on your side. Can I leave it at reception?`;
 }
@@ -570,7 +587,7 @@ function vPartner(){
    <div class="row"><label>Arriva da<select id="k-p"><option value="">Diretto (nessun partner)</option>${ps.filter(p=>p.phase!=="no").map(p=>`<option value="${p.id}">${esc(p.name)} · ${p.pct||0}%</option>`).join("")}</select></label>
     <label>Data<input type="date" id="k-d" value="${today()}"></label></div>
    <div class="row"><label>Pacchetto<select id="k-pk">${opts(PACKAGES,"f1")}</select></label>
-    <label>Prezzo pacchetto (€)<input type="number" id="k-a" min="0" step="1" value="60" inputmode="decimal"></label>
+    <label>Prezzo pacchetto (€)<input type="number" id="k-a" min="0" step="1" value="${PACKAGES.f1?.[1]||0}" inputmode="decimal"></label>
     <label>Extra venduti (€)<input type="number" id="k-x" min="0" step="1" value="0" inputmode="decimal"></label></div>
    <label>Cliente<input id="k-c" placeholder="Nome o nota, facoltativo"></label>
    <p class="muted" id="k-hint" style="margin:0;font-size:13px"></p>
@@ -593,7 +610,7 @@ function vPartner(){
    <div class="row"><label>Tipo<select id="pt-type">${opts(PTYPES,e.type||"hotel")}</select></label><label>Priorità<select id="pt-prio">${opts(PRIO,e.prio||"media")}</select></label><label>Fase<select id="pt-phase">${opts(PHASES,e.phase||"dacontattare")}</select></label></div>
    <label>Perché è un buon target<input id="pt-why" value="${esc(e.why||"")}"></label>
    <div class="row"><label>Persona di riferimento<input id="pt-person" value="${esc(e.person||"")}"></label><label>Email<input id="pt-email" type="email" value="${esc(e.email||"")}"></label><label>Telefono<input id="pt-phone" type="tel" value="${esc(e.phone||"")}"></label></div>
-   <div class="row"><label>Sito<input id="pt-url" value="${esc(e.url||"")}"></label><label>Codice partner<input id="pt-code" value="${esc(e.code||"")}" placeholder="RIDE"></label><label>Commissione %<input id="pt-pct" type="number" min="0" max="50" value="${esc(e.pct??15)}"></label></div>
+   <div class="row"><label>Sito<input id="pt-url" value="${esc(e.url||"")}"></label><label>Codice partner<input id="pt-code" value="${esc(e.code||"")}" placeholder="RIDE"></label><label>Commissione %<input id="pt-pct" type="number" min="0" max="50" value="${esc(e.pct??DEFAULT_PCT())}"></label></div>
    <label>Note<textarea id="pt-notes">${esc(e.notes||"")}</textarea></label>
    <div class="row"><button class="primary" type="submit">${editP?"Salva modifiche":"Aggiungi"}</button>${editP?'<button type="button" id="pt-cancel">Annulla</button><button type="button" class="danger" id="pt-del">Elimina</button>':""}</div></form>
   ${bk.length?`<details class="panel"><summary>Tutte le sessioni registrate (${bk.length})</summary><div class="table-wrap"><table><thead><tr><th>Data</th><th>Da</th><th>Pacchetto</th><th class="num">Pacchetto</th><th class="num">Extra</th><th class="num">Comm.</th><th></th></tr></thead><tbody>

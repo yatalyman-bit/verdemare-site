@@ -1,0 +1,5 @@
+{{- /* Prezzo a persona: totale / persone. 45€, 37.50€, ≈43€ */ -}}
+{{- $e := div (float .t) .n -}}
+{{- $s := printf "≈%.0f€" $e -}}
+{{- if eq $e (math.Floor $e) }}{{ $s = printf "%.0f€" $e }}{{ else if eq (mul $e 2) (math.Floor (mul $e 2)) }}{{ $s = printf "%.2f€" $e }}{{ end -}}
+{{- return $s -}}

@@ -14,7 +14,7 @@
 <section class="sec"><div class="wrap">
   <h2>Choose the session</h2>
   <div class="grid3">{{ range (site.GetPage "/prices").Params.types }}{{ $n := index .surfers 0 }}{{ $from := cond (gt (len .surfers) 1) "from " "" }}
-    <a class="card type" href="/{{ .anchor }}/"><h3>{{ .title }} <span class="arrow">→</span></h3><p>{{ .text }}</p><p class="muted small">Photo {{ $from }}{{ index $p.photo (sub $n 1) }}€ · Video {{ $from }}{{ index $p.video (sub $n 1) }}€</p></a>
+    <a class="card type" href="/{{ .anchor }}/"><h3>{{ .title }} <span class="arrow">→</span></h3><p>{{ .text }}</p><p class="muted small">Photo {{ partial "price.html" (dict "list" $p.photo "surfers" .surfers "mode" "short") }} · Video {{ partial "price.html" (dict "list" $p.video "surfers" .surfers "mode" "short") }}</p></a>
   {{ end }}</div>
 </div></section>
 <section class="sec light"><div class="wrap"><h2>Good to know</h2><ul class="list">{{ range .Params.terms }}<li>{{ . }}</li>{{ end }}</ul></div></section>

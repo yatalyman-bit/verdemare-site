@@ -1,2 +1,2 @@
 {{- $d := site.Data.site -}}
-{{- dict "whatsapp" (string $d.whatsapp) "booking_message" $d.booking_message "prints" $d.prints "shipping" $d.shipping | jsonify -}}
+{{- dict "whatsapp" (string $d.whatsapp) "booking_message" $d.booking_message "prints" $d.prints "shipping" $d.shipping "prices" $d.prices | jsonify -}}

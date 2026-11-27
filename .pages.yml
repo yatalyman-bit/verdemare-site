@@ -58,6 +58,7 @@ content:
       - { name: video_text, type: text }
   - name: prices
     label: Prices (prezzi, tipi, regole, FAQ)
+    description: "I prezzi NON si scrivono nei testi: si cambiano solo in 'Contatti e prezzi'. Se vuoi citarli in una FAQ scrivi {photo:2} (=90€), {photo:2:each} (=45€ a testa), {video:1}, {clips:3}, {extra_hour}, {travel}."
     type: file
     path: content/prices/index.md
     fields:

@@ -106,3 +106,5 @@ p{margin:0 0 1em;max-width:62ch}
 .voucher-mock .v-k{font-family:Norwester,sans-serif;color:var(--orange);font-size:1.6rem;letter-spacing:.03em}.voucher-mock strong{font-size:1.2rem}.v-c{font-family:monospace;color:#cfd6d6;margin-top:8px}
 @media (min-width:760px){.steps4{grid-template-columns:repeat(4,1fr)}}
 .gift-line{margin-top:6px}
+
+.each{font-size:.78em;font-weight:400;color:var(--muted);white-space:nowrap}.prices dd{text-align:right;line-height:1.5}.pv-price{line-height:1.35}

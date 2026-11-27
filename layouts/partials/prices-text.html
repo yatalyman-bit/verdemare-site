@@ -1,0 +1,15 @@
+{{- /* Sostituisce i segnaposto nei testi con i prezzi di data/site.yaml.
+  {photo:2} → 90€   {photo:2:each} → 45€   {video:1} {clips:3} …   {extra_hour} {travel} {commission} */ -}}
+{{- $s := . -}}
+{{- range $k, $v := site.Data.site.prices -}}
+  {{- if reflect.IsSlice $v -}}
+    {{- range $i, $x := $v -}}
+      {{- $n := add $i 1 -}}
+      {{- $s = replace $s (printf "{%s:%d:each}" $k $n) (partial "pp.html" (dict "t" $x "n" $n)) -}}
+      {{- $s = replace $s (printf "{%s:%d}" $k $n) (printf "%v€" $x) -}}
+    {{- end -}}
+  {{- else -}}
+    {{- $s = replace $s (printf "{%s}" $k) (printf "%v" $v) -}}
+  {{- end -}}
+{{- end -}}
+{{- return $s -}}

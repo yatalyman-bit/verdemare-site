@@ -10,31 +10,31 @@
       <h3>{{ .title }}</h3>
       <p>{{ .text }}</p>
       <dl class="prices">
-        <div><dt>Photo · 1 hour</dt><dd>{{ $from }}{{ index $p.photo (sub $n 1) }}€</dd></div>
-        <div><dt>Video + reel · 1 hour</dt><dd>{{ $from }}{{ index $p.video (sub $n 1) }}€</dd></div>
-        <div class="muted"><dt>Video, clips only</dt><dd>{{ $from }}{{ index $p.clips (sub $n 1) }}€</dd></div>
+        <div><dt>Photo · 1 hour</dt><dd>{{ partial "price.html" (dict "list" $p.photo "surfers" .surfers "mode" "big") }}</dd></div>
+        <div><dt>Video + reel · 1 hour</dt><dd>{{ partial "price.html" (dict "list" $p.video "surfers" .surfers "mode" "big") }}</dd></div>
+        <div class="muted"><dt>Video, clips only</dt><dd>{{ partial "price.html" (dict "list" $p.clips "surfers" .surfers "mode" "big") }}</dd></div>
       </dl>
       {{ with .note }}<p class="muted small">{{ . }}</p>{{ end }}
       <a class="btn btn-o" href="/{{ .anchor }}/">See {{ lower .title }} sessions</a>
     </article>
   {{ end }}
   </div>
-  <p class="muted">Photo sessions include 1–2 bonus video clips. Extra time +{{ $p.extra_hour }}€/h per group · Ericeira or Nazaré +{{ $p.travel }}€ · Video analysis from the beach on request.</p>
+  <p class="muted">Prices are per group: the more you are, the less you pay each. Photo sessions include 1–2 bonus video clips. Extra time +{{ $p.extra_hour }}€/h per group · Ericeira or Nazaré +{{ $p.travel }}€ · Video analysis from the beach on request.</p>
   <a class="btn" href="{{ partial "wa.html" "" }}">Book on WhatsApp</a> <a class="btn btn-o" href="/gift/">Is it a gift?</a>
 </div></section>
 
-<section class="sec light"><div class="wrap"><h2>What you get</h2><ul class="wyg">{{ range .Params.what_you_get }}<li><strong>{{ .title }}</strong>{{ .text }}</li>{{ end }}</ul></div></section>
+<section class="sec light"><div class="wrap"><h2>What you get</h2><ul class="wyg">{{ range .Params.what_you_get }}<li><strong>{{ .title }}</strong>{{ partial "prices-text.html" .text }}</li>{{ end }}</ul></div></section>
 
 <section class="sec"><div class="wrap"><h2>How it works</h2>{{ partial "steps.html" . }}</div></section>
 
 <section class="sec light"><div class="wrap">
   <h2>Good to know</h2>
-  <ul class="list">{{ range .Params.good_to_know }}<li>{{ . }}</li>{{ end }}</ul>
+  <ul class="list">{{ range .Params.good_to_know }}<li>{{ partial "prices-text.html" . }}</li>{{ end }}</ul>
 </div></section>
 
 <section class="sec"><div class="wrap">
   <h2>FAQ</h2>
-  {{ range .Params.faq }}<details class="faq"><summary>{{ .q }}</summary><p>{{ .a }}</p></details>{{ end }}
+  {{ range .Params.faq }}<details class="faq"><summary>{{ .q }}</summary><p>{{ partial "prices-text.html" .a }}</p></details>{{ end }}
 </div></section>
 
 {{ partial "cta.html" (dict "title" "Ready?" "text" "Message me with your dates and how many surfers.") }}

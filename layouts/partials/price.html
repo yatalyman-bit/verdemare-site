@@ -1,0 +1,24 @@
+{{- /* Prezzi presi SOLO da data/site.yaml.
+  .list = lista prezzi (photo/video/clips), .surfers = [2] o [3,4], .mode = "big" | "short", .suffix = testo dopo la prima riga */ -}}
+{{- $out := "" -}}
+{{- if eq .mode "short" -}}
+  {{- $a := index .surfers 0 -}}{{- $b := index .surfers (sub (len .surfers) 1) -}}
+  {{- $ta := index .list (sub $a 1) -}}{{- $tb := index .list (sub $b 1) -}}
+  {{- if eq $a $b -}}
+    {{- $out = printf "%v€" $ta -}}
+    {{- if gt $a 1 }}{{ $out = printf "%s <span class=\"each\">(%s each)</span>" $out (partial "pp.html" (dict "t" $ta "n" $a)) }}{{ end -}}
+  {{- else -}}
+    {{- $out = printf "%v–%v€ <span class=\"each\">(from %s each)</span>" $ta $tb (partial "pp.html" (dict "t" $tb "n" $b)) -}}
+  {{- end -}}
+{{- else -}}
+  {{- $lines := slice -}}
+  {{- range $i, $n := .surfers -}}
+    {{- $t := index $.list (sub $n 1) -}}
+    {{- $l := printf "%v€" $t -}}
+    {{- if gt $n 1 }}{{ $l = printf "%s <span class=\"each\">for %d · %s each</span>" $l $n (partial "pp.html" (dict "t" $t "n" $n)) }}{{ end -}}
+    {{- if and (eq $i 0) $.suffix }}{{ $l = printf "%s %s" $l $.suffix }}{{ end -}}
+    {{- $lines = $lines | append $l -}}
+  {{- end -}}
+  {{- $out = delimit $lines "<br>" -}}
+{{- end -}}
+{{- return ($out | safeHTML) -}}

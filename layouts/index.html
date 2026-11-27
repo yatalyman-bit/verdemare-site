@@ -14,10 +14,11 @@
   <h2>Choose your session</h2>
   <div class="grid3">
   {{ range $i, $t := .Params.types }}
+    {{ $pt := dict }}{{ range (site.GetPage "/prices").Params.types }}{{ if eq .title $t.title }}{{ $pt = . }}{{ end }}{{ end }}
     <a class="card" href="/{{ $t.anchor | default (lower $t.title) }}/">
       {{ partial "art-img.html" (dict "res" ($.Resources.GetMatch $t.image) "rd" "3x2" "rm" "4x5" "alt" $t.title "sizes_d" "33vw" "focus_m" $t.focus_mobile "focus_d" $t.focus_desktop "focus_dy" $t.focus_desktop_y "zoom_d" $t.zoom_desktop "focus_my" $t.focus_mobile_y "zoom_m" $t.zoom_mobile) }}
       <h3>{{ $t.title }} <span class="arrow">→</span></h3>
-      <p>{{ $t.text }} From&nbsp;{{ index $p.photo $i }}€</p>
+      <p>{{ $t.text }}</p><p class="small"><strong>Photo {{ partial "price.html" (dict "list" $p.photo "surfers" ($pt.surfers | default (slice (add $i 1))) "mode" "short") }}</strong></p>
     </a>
   {{ end }}
   </div>

@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {{- $title := cond .IsHome (.Params.seo_title | default site.Title) (printf "%s · Verdemare" (.Params.seo_title | default .Title)) -}}
-{{- $desc := .Description | default (printf "In-water surf photographer in Peniche, Portugal. Private photo and video sessions from %d€." (index site.Data.site.prices.photo 0)) -}}
+{{- $desc := .Description | default "In-water surf photographer in Peniche, Portugal. Private photo and video sessions from {photo:1}." -}}
+{{- if findRE `\d\s?€|€\s?\d` $desc }}{{ warnf "PREZZO SCRITTO A MANO in %s: usa {photo:1}, {photo:2}, {photo:2:each}… così si aggiorna da solo." .File.Path }}{{ end -}}
+{{- $desc = partial "prices-text.html" $desc -}}
 {{- $og := "" -}}{{- with .Resources.GetMatch (.Params.hero_image | default .Params.image | default .Params.cover | default "*.jpg") }}{{ $og = .Fill "1200x630 smart jpg q80" }}{{ end -}}
 {{- $preview := strings.Contains site.BaseURL "pages.dev" -}}
 <title>{{ $title }}</title>
