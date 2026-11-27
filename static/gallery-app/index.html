@@ -39,6 +39,8 @@ h1{font-family:Norwester,sans-serif;font-weight:400;color:var(--o);font-size:cla
 #lb.on{display:flex}
 #lb .stage{flex:1;display:grid;place-items:center;min-height:0;position:relative;touch-action:pan-y}
 #lb img,#lb video{max-width:100%;max-height:100%;object-fit:contain}
+#lb img{transform-origin:0 0;will-change:transform;touch-action:none}#lb .stage{overflow:hidden}
+#lb .zhint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:.8rem;padding:6px 12px;border-radius:99px;pointer-events:none;transition:opacity .4s;white-space:nowrap}
 #lb .nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:0;color:#fff;width:46px;height:46px;border-radius:50%;font-size:22px;cursor:pointer}
 #lb .prev{left:10px}#lb .next{right:10px}
 #lb .tools{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px calc(10px + env(safe-area-inset-bottom));color:#cfd6d6;font-size:.85rem}
@@ -109,7 +111,7 @@ function render() {
   const count = [photos && `${photos} photo${photos > 1 ? "s" : ""}`, vids && `${vids} video${vids > 1 ? "s" : ""}`].filter(Boolean).join(" · ");
   let top = `<h1>Hi ${esc(G.client)}</h1><p class="sub">${esc(G.title)}${G.title ? " · " : ""}${count} · available until ${fmtDate(G.expires)}</p>`;
   if (!G.paid) {
-    top += `<div class="panel"><p><strong>These are previews.</strong> As soon as the balance is paid, your photos unlock here in full quality, ready to save.</p>
+    top += `<div class="panel"><p><strong>These are watermarked previews.</strong> Open a photo and pinch (or double-tap) to zoom in and check the details. No need to save the previews: as soon as the balance is paid, your photos unlock here in full quality, ready to save.</p>
       <div class="row"><a class="btn" href="https://wa.me/${esc(G.whatsapp)}?text=${encodeURIComponent("Hi Flavio! I've seen my gallery (" + G.client + "). How do I pay the balance?")}">Pay the balance</a></div></div>`;
   } else {
     top += `<div class="panel">
@@ -164,7 +166,8 @@ function show() {
   let m;
   if (isVid(f) && G.paid) { m = document.createElement("video"); m.src = F("orig", f.n); m.controls = true; m.playsInline = true; }
   else { m = document.createElement("img"); m.alt = f.n; m.src = G.paid ? F("web", f.n) : F("prev", thumbName(f)); }
-  st.prepend(m);
+  st.prepend(m); resetZ();
+  if (!isVid(f) && !show.hinted) { show.hinted = true; const h = document.createElement("div"); h.className = "zhint"; h.textContent = "Pinch or double-tap to zoom"; st.appendChild(h); setTimeout(() => h.style.opacity = 0, 2200); setTimeout(() => h.remove(), 2800); }
   $("#lbinfo").textContent = `${idx + 1} / ${G.files.length}`;
   const a = $("#lbact"); a.innerHTML = "";
   if (selecting && !isVid(f)) {
@@ -190,8 +193,53 @@ async function saveOne(f, b) {
 const step = d => { idx = (idx + d + G.files.length) % G.files.length; show(); };
 $("#lbp").onclick = () => step(-1); $("#lbn").onclick = () => step(1); $("#lbx").onclick = close;
 addEventListener("keydown", e => { if (!$("#lb").classList.contains("on")) return; if (e.key === "ArrowLeft") step(-1); if (e.key === "ArrowRight") step(1); if (e.key === "Escape") close(); });
-let tx = null; $("#lbstage").addEventListener("touchstart", e => tx = e.touches[0].clientX, { passive: true });
-$("#lbstage").addEventListener("touchend", e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1); tx = null; });
+/* ---------- zoom: pizzico, doppio tocco, rotella ---------- */
+let lastTouch = 0, Z = { s: 1, x: 0, y: 0 }, pinch = null, pan = null, tx = null, lastTap = 0, hiDone = false;
+const img = () => $("#lbstage img");
+function applyZ() { const m = img(); if (!m) return; m.style.transform = `translate(${Z.x}px,${Z.y}px) scale(${Z.s})`; }
+function resetZ() { Z = { s: 1, x: 0, y: 0 }; hiDone = false; applyZ(); }
+function hiRes() {   // al primo zoom carica la versione più grande (con watermark se non pagata)
+  if (hiDone) return; hiDone = true;
+  const f = G.files[idx], m = img(); if (!m || isVid(f)) return;
+  if (!G.paid && !f.z) return;
+  const url = G.paid ? F("web", f.n) : F("zoom", thumbName(f));
+  if (m.src.endsWith(url)) return;
+  const hi = new Image(); hi.onload = () => { if (img() === m) m.src = url; }; hi.src = url;
+}
+function zoomAt(cx, cy, ns) {   // cx,cy: punto dello schermo che resta fermo
+  const m = img(); if (!m) return; const r = m.getBoundingClientRect();
+  ns = Math.max(1, Math.min(6, ns));
+  const px = (cx - r.left) / Z.s, py = (cy - r.top) / Z.s;   // punto nell'immagine
+  Z.x += (cx - r.left) - px * ns; Z.y += (cy - r.top) - py * ns;
+  Z.s = ns; if (ns === 1) { Z.x = 0; Z.y = 0; } else hiRes();
+  applyZ();
+}
+const stage = $("#lbstage");
+stage.addEventListener("touchstart", e => {
+  lastTouch = Date.now();
+  if (e.touches.length === 2) { const [a, b] = e.touches; pinch = { d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), s: Z.s }; tx = null; pan = null; }
+  else if (e.touches.length === 1) {
+    const t = e.touches[0], now = Date.now();
+    if (now - lastTap < 300) { zoomAt(t.clientX, t.clientY, Z.s > 1 ? 1 : 2.5); lastTap = 0; tx = null; return; }
+    lastTap = now;
+    if (Z.s > 1) pan = { x: t.clientX - Z.x, y: t.clientY - Z.y }; else tx = t.clientX;
+  }
+}, { passive: true });
+stage.addEventListener("touchmove", e => {
+  if (pinch && e.touches.length === 2) { e.preventDefault(); const [a, b] = e.touches; const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); zoomAt((a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2, pinch.s * d / pinch.d); }
+  else if (pan && e.touches.length === 1) { e.preventDefault(); Z.x = e.touches[0].clientX - pan.x; Z.y = e.touches[0].clientY - pan.y; applyZ(); }
+}, { passive: false });
+stage.addEventListener("touchend", e => {
+  if (e.touches.length < 2) pinch = null; if (!e.touches.length) pan = null;
+  if (tx !== null && Z.s === 1) { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1); }
+  tx = null;
+});
+stage.addEventListener("wheel", e => { if (!img()) return; e.preventDefault(); zoomAt(e.clientX, e.clientY, Z.s * (e.deltaY < 0 ? 1.25 : 0.8)); }, { passive: false });
+stage.addEventListener("dblclick", e => { if (Date.now() - lastTouch < 800) return; if (e.target.tagName === "IMG") zoomAt(e.clientX, e.clientY, Z.s > 1 ? 1 : 2.5); });
+let mpan = null;
+stage.addEventListener("mousedown", e => { if (Z.s > 1 && e.target.tagName === "IMG") { e.preventDefault(); mpan = { x: e.clientX - Z.x, y: e.clientY - Z.y }; } });
+addEventListener("mousemove", e => { if (mpan) { Z.x = e.clientX - mpan.x; Z.y = e.clientY - mpan.y; applyZ(); } });
+addEventListener("mouseup", () => mpan = null);
 
 /* ---------- prints ---------- */
 function startSelect() { selecting = true; document.body.classList.add("sel"); $("#selbar").classList.add("on"); count(); window.scrollTo({ top: $("#grid").offsetTop - 70, behavior: "smooth" }); }

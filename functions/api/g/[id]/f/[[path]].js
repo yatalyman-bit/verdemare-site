@@ -1,11 +1,11 @@
-import { getGallery, json, needBindings, key, okName, PUBLIC_KINDS } from "../../../../../lib/gallery.js";
+import { getGallery, json, needBindings, key, okName, KINDS, PUBLIC_KINDS } from "../../../../../lib/gallery.js";
 
 // /api/g/<id>/f/<kind>/<name>  — anteprime sempre; versioni pulite, originali e zip solo dopo il saldo.
 export async function onRequestGet({ env, params, request }) {
   const miss = needBindings(env); if (miss) return miss;
   const [kind, ...rest] = params.path || [];
   const name = decodeURIComponent(rest.join("/"));
-  if (!["thumb", "prev", "web", "orig", "zip"].includes(kind) || !okName(name)) return json({ error: "Not found." }, 404);
+  if (!KINDS.includes(kind) || !okName(name)) return json({ error: "Not found." }, 404);
   const g = await getGallery(env, params.id);
   if (!g || !g.ready || g.expired) return json({ error: "Not found." }, 404);
   if (!PUBLIC_KINDS.includes(kind) && !g.paid) return json({ error: "Available after payment." }, 403);

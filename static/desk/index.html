@@ -395,11 +395,13 @@ $("#publish").onclick = async () => {
         await upload(id, "thumb", tn, await jpg(canvasOf(src.bmp, tw, th), .72));
         const [pw, ph] = fit(src.w, src.h, S.w, S.h);
         await upload(id, "prev", tn, await jpg(watermark(canvasOf(src.bmp, pw, ph)), Math.min(S.q, 82) / 100));   // anteprima: ridotta alla misura del watermark (1200×600) + watermark
+        // versione per lo zoom col pizzico: 1600 px, watermark più fitto, qualità bassa → si vedono i dettagli ma non è usabile
+        if (it.kind === "p") { const [zw, zh] = fit(src.w, src.h, 1600, 1600); const k = zw / pw; await upload(id, "zoom", tn, await jpg(watermark(canvasOf(src.bmp, zw, zh), { ...S, size: S.size * k * .8, sx: S.sx * k * .8, sy: S.sy * k * .8, alpha: Math.max(S.alpha, 28) }), .7)); }
         if (it.kind === "p") { const [ww, wh] = fit(src.w, src.h, 2560, 2560); await upload(id, "web", it.name, await jpg(canvasOf(src.bmp, ww, wh), .9)); }
         if (src.bmp.close) src.bmp.close();
         await upload(id, "orig", it.name, it.file);
         sent += it.file.size * 1.1; bar();
-        files[i] = { n: it.name, t: it.kind, w: src.w, h: src.h, s: it.file.size };
+        files[i] = { n: it.name, t: it.kind, w: src.w, h: src.h, s: it.file.size, z: it.kind === "p" ? 1 : 0 };
         stat(`Caricati ${++done}/${items.length}`);
         if (src.ph) log(`${it.name}: anteprima del video non leggibile in questo browser, uso un'icona.`);
       }
