@@ -45,10 +45,14 @@ enableRobotsTXT = true
     pageRef = "/prices"
     weight = 2
   [[menus.main]]
+    name = "Gift"
+    pageRef = "/gift"
+    weight = 3
+  [[menus.main]]
     name = "Work"
     pageRef = "/work"
-    weight = 3
+    weight = 4
   [[menus.main]]
     name = "About"
     pageRef = "/about"
-    weight = 4
+    weight = 5

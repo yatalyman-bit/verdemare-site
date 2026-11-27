@@ -1,0 +1,22 @@
+{{ define "main" }}
+{{ $p := site.Data.site.prices }}
+{{ $buy := partial "wa.html" "Hi Flavio! I'd like to buy a gift voucher for a surf session." }}
+<section class="sec"><div class="wrap grid2">
+  <div>
+    <h1>{{ .Title }}</h1>
+    <p>{{ .Params.intro }}</p>
+    <p><strong>Photo from {{ index $p.photo 0 }}€ · Video from {{ index $p.video 0 }}€</strong></p>
+    <a class="btn" href="{{ $buy }}">Buy a gift voucher</a>
+  </div>
+  {{ with (resources.Get "logo.png") }}<div class="voucher-mock"><img src="{{ (.Resize "200x webp").RelPermalink }}" width="100" height="100" alt=""><span class="v-k">Gift voucher</span><strong>Private surf session</strong><span>Couple · Video · 1 hour</span><span class="v-c">VM-7K2Q · valid 12 months</span></div>{{ end }}
+</div></section>
+<section class="sec light"><div class="wrap"><h2>How it works</h2><ol class="steps steps4">{{ range .Params.steps }}<li>{{ . }}</li>{{ end }}</ol></div></section>
+<section class="sec"><div class="wrap">
+  <h2>Choose the session</h2>
+  <div class="grid3">{{ range (site.GetPage "/prices").Params.types }}{{ $n := index .surfers 0 }}{{ $from := cond (gt (len .surfers) 1) "from " "" }}
+    <a class="card type" href="/{{ .anchor }}/"><h3>{{ .title }} <span class="arrow">→</span></h3><p>{{ .text }}</p><p class="muted small">Photo {{ $from }}{{ index $p.photo (sub $n 1) }}€ · Video {{ $from }}{{ index $p.video (sub $n 1) }}€</p></a>
+  {{ end }}</div>
+</div></section>
+<section class="sec light"><div class="wrap"><h2>Good to know</h2><ul class="list">{{ range .Params.terms }}<li>{{ . }}</li>{{ end }}</ul></div></section>
+{{ partial "cta.html" (dict "title" "Ready to make someone's day?" "text" "Message me with the session and the name of the lucky one." "button" "Buy a gift voucher" "msg" "Hi Flavio! I'd like to buy a gift voucher for a surf session.") }}
+{{ end }}

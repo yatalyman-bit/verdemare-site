@@ -14,6 +14,7 @@
     <p><strong>Photo from {{ index $p.photo (sub $n 1) }}€ · Video from {{ index $p.video (sub $n 1) }}€</strong></p>
     {{ with $t.note }}<p class="muted small">{{ . }}</p>{{ end }}
     <a class="btn btn-o" href="#choose">Photo or video?</a>
+    <p class="gift-line small"><a href="/gift/">🎁 Is it a gift? Get a voucher</a></p>
   </div>
   {{ partial "art-img.html" (dict "res" (.Resources.GetMatch .Params.image) "rd" "4x5" "rm" "4x5" "alt" (printf "%s surf session" $group) "sizes_d" "50vw" "focus_d" .Params.focus "zoom_d" 100 "focus_m" .Params.focus "eager" true) }}
 </div></section>

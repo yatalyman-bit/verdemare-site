@@ -102,3 +102,7 @@ p{margin:0 0 1em;max-width:62ch}
 .video-sec .reel{margin:0 auto}
 .prices div.muted{font-size:.9rem}
 @media (max-width:759px){.pv-video{order:-1;margin-top:8px}}
+.voucher-mock{background:var(--dark);color:#fff;border-radius:14px;padding:28px;display:grid;gap:6px;justify-items:start;max-width:380px;box-shadow:0 10px 30px rgba(0,0,0,.15);border:2px dashed var(--orange)}
+.voucher-mock .v-k{font-family:Norwester,sans-serif;color:var(--orange);font-size:1.6rem;letter-spacing:.03em}.voucher-mock strong{font-size:1.2rem}.v-c{font-family:monospace;color:#cfd6d6;margin-top:8px}
+@media (min-width:760px){.steps4{grid-template-columns:repeat(4,1fr)}}
+.gift-line{margin-top:6px}

@@ -142,3 +142,12 @@ content:
           - { name: dir, label: Cartella delle foto, type: string }
           - { name: cols, label: "Colonne su computer (1-3)", type: number }
           - { name: text, type: text }
+  - name: gift
+    label: Gift (buono regalo)
+    type: file
+    path: content/gift/index.md
+    fields:
+      - { name: title, type: string }
+      - { name: intro, type: text }
+      - { name: steps, label: Come funziona, type: string, list: true }
+      - { name: terms, label: Condizioni, type: string, list: true }

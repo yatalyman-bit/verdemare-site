@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Buono regalo · Verdemare Desk</title>
+<style>
+@font-face{font-family:Norwester;src:url(/fonts/norwester.woff2) format("woff2")}
+@font-face{font-family:Montserrat;src:url(/fonts/montserrat-400.woff2) format("woff2");font-weight:400}
+@font-face{font-family:Montserrat;src:url(/fonts/montserrat-700.woff2) format("woff2");font-weight:700}
+:root{--o:#e6782a;--d:#1d2a2e;--g:#2f7d4a}
+*{box-sizing:border-box}body{margin:0;font-family:Montserrat,system-ui,sans-serif;background:#edf1f0;color:#16302f}
+.wrap{display:grid;grid-template-columns:320px 1fr;gap:24px;padding:20px;max-width:1300px;margin:0 auto}
+form{background:#fff;border-radius:12px;padding:18px;display:grid;gap:10px;align-content:start}
+label{display:grid;gap:4px;font-size:13px;font-weight:700}input,select,textarea{font:inherit;font-weight:400;padding:9px;border:1px solid #c9d3d1;border-radius:8px}
+button{font:inherit;font-weight:700;padding:12px;border:0;border-radius:10px;background:var(--o);color:#fff;cursor:pointer}
+.note{font-size:12px;color:#5a6a6a;margin:0}a.back{font-size:13px;color:#0d6a70}
+.sheet{background:#fff;aspect-ratio:297/210;width:100%;max-width:900px;box-shadow:0 6px 24px rgba(0,0,0,.12);display:grid;grid-template-columns:1fr 1.25fr;overflow:hidden}
+.left{background:var(--d);color:#fff;padding:7% 6%;display:flex;flex-direction:column;justify-content:space-between}
+.left img{width:42%;max-width:150px}.brand{font-family:Norwester,sans-serif;color:var(--g);font-size:2.2vw;letter-spacing:.04em;filter:brightness(1.6)}
+.left small{color:#cfd6d6;font-size:.95vw;line-height:1.5}
+.right{padding:7% 7%;display:flex;flex-direction:column;gap:2.2%;border-left:3px dashed var(--o)}
+.k{font-family:Norwester,sans-serif;color:var(--o);font-size:3.4vw;line-height:1;letter-spacing:.02em}
+.for{font-size:1.3vw}.for b{font-size:2vw;display:block;margin-top:.3em}
+.svc{font-size:1.6vw;font-weight:700;margin-top:2%}.msg{font-size:1.15vw;font-style:italic;color:#38494a;min-height:2em}
+.meta{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:4% ;font-size:1vw}.meta b{display:block;font-size:1.3vw;font-family:monospace}
+.terms{font-size:.8vw;color:#5a6a6a;line-height:1.45;margin-top:3%}
+@media (max-width:800px){.wrap{grid-template-columns:1fr}}
+@page{size:A4 landscape;margin:0}
+@media print{body{background:#fff}form,.no-print{display:none!important}.wrap{display:block;padding:0}
+ .sheet{box-shadow:none;max-width:none;width:297mm;height:210mm;aspect-ratio:auto}
+ .brand{font-size:20pt}.left small{font-size:8.5pt}.k{font-size:34pt}.for{font-size:12pt}.for b{font-size:20pt}.svc{font-size:15pt}.msg{font-size:11pt}.meta{font-size:9pt}.meta b{font-size:12pt}.terms{font-size:7.5pt}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="wrap">
+<form id="f" onsubmit="return false">
+  <a class="back no-print" href="/desk/#partner">← Desk</a>
+  <strong>Buono regalo</strong>
+  <label>Per (chi lo riceve)<input id="to" value="Maria"></label>
+  <label>Da (chi lo regala)<input id="from" value="Luca"></label>
+  <label>Tipo<select id="type"><option>Solo</option><option selected>Couple</option><option>Friends</option></select></label>
+  <label>Servizio<select id="svc"><option>Photo session · 1 hour</option><option selected>Video session + reel · 1 hour</option><option>Video session, clips only · 1 hour</option></select></label>
+  <label>Messaggio (facoltativo)<textarea id="msg" rows="2">Happy birthday! Go catch some waves.</textarea></label>
+  <label>Data di emissione<input id="date" type="date"></label>
+  <label>Codice<input id="code" readonly></label>
+  <button type="button" id="new" style="background:#394043">Nuovo codice</button>
+  <button type="button" onclick="window.print()">Salva come PDF</button>
+  <p class="note">Si apre la stampa del browser: scegli "Salva come PDF", formato A4 orizzontale. Ricordati di registrare il buono (codice, nome, servizio, importo) in Desk → Partner → Registra una sessione, nel campo "Cliente".</p>
+</form>
+<div class="sheet" id="sheet">
+  <div class="left"><img src="logo.png" alt=""><div><div class="brand">VERDEMARE</div><small>In-water surf photo &amp; video<br>Peniche, Portugal<br>@verdemare.photo</small></div></div>
+  <div class="right">
+    <div class="k">Gift voucher</div>
+    <div class="for">For <b id="o_to"></b></div>
+    <div class="svc" id="o_svc"></div>
+    <div class="msg" id="o_msg"></div>
+    <div class="note" id="o_from" style="font-size:1vw"></div>
+    <div class="meta"><div>Code<b id="o_code"></b></div><div>Valid until<b id="o_exp"></b></div></div>
+    <div class="terms">Book on WhatsApp when you're in Peniche, quoting the code. Valid 12 months from the date of issue; extended if I'm away when you can come. Transferable. Upgrades possible by paying the difference. Not refundable, date always flexible.</div>
+  </div>
+</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+function code(){const b=new Uint8Array(4);crypto.getRandomValues(b);return "VM-"+[...b].map(x=>A[x%A.length]).join("")}
+function fmt(d){return d.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}
+function draw(){
+  $("o_to").textContent=$("to").value||"…";
+  $("o_svc").textContent=$("type").value+" · "+$("svc").value;
+  $("o_msg").textContent=$("msg").value?"“"+$("msg").value+"”":"";
+  $("o_from").textContent=$("from").value?"From "+$("from").value:"";
+  $("o_code").textContent=$("code").value;
+  const d=new Date(($("date").value||new Date().toISOString().slice(0,10))+"T12:00:00"); d.setFullYear(d.getFullYear()+1);
+  $("o_exp").textContent=fmt(d);
+  document.title="Voucher "+$("code").value+" "+($("to").value||"");
+}
+$("date").value=new Date().toISOString().slice(0,10); $("code").value=code();
+$("new").onclick=()=>{$("code").value=code();draw()};
+document.querySelectorAll("input,select,textarea").forEach(e=>e.addEventListener("input",draw)); draw();
+</script>
+</body></html>
