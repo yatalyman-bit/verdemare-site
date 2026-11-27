@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script src="/js/via.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {{- $title := cond .IsHome (.Params.seo_title | default site.Title) (printf "%s · Verdemare" (.Params.seo_title | default .Title)) -}}
 {{- $desc := .Description | default "In-water surf photographer in Peniche, Portugal. Private photo and video sessions from {photo:1}." -}}

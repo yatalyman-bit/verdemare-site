@@ -15,7 +15,8 @@
     document.getElementById("q-each").textContent = n > 1 ? `${each(tot, n)} each, split between ${n}.` : "";
     const h = f.querySelector(".hint4"); if (h) h.hidden = !(n === 4 && x === 0);
     const msg = `Hi Flavio! I'd like to book a ${D.group} session:\n` + lines.map(([a, b]) => `- ${a}: ${b}€`).join("\n") + `\nTotal ${tot}€. When are you free?`;
-    document.getElementById("q-book").href = `https://wa.me/${D.wa}?text=${encodeURIComponent(msg)}`;
+    document.getElementById("q-book").href = `https://wa.me/${D.wa}?text=${encodeURIComponent((window.vmTag || (m => m))(msg))}`;
+    document.getElementById("q-book").dataset.via = 1;
   }
   f.addEventListener("change", calc); calc();
   document.querySelectorAll(".pick").forEach(b => b.addEventListener("click", () => {

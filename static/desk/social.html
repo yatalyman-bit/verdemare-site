@@ -600,7 +600,7 @@ function vPartner(){
    ${ps.map(p=>`<tr><td><b>${esc(p.name)}</b><br><span class="muted">${esc(p.zone||"")}</span>${p.url?` · <a href="${esc(p.url)}" target="_blank" rel="noopener">sito</a>`:""}${daysAgo(p.verified)>90?' <span class="chip warn">ricontrolla</span>':""}</td>
     <td>${PTYPES[p.type]||esc(p.type)}</td><td>${PRIO[p.prio]||""}</td>
     <td><select data-ph="${p.id}" aria-label="Fase di ${esc(p.name)}">${opts(PHASES,p.phase)}</select></td>
-    <td class="mono">${esc(p.code||"")}<br><a class="muted" href="/book/${encodeURIComponent(p.id)}/" target="_blank" rel="noopener">/book/${esc(p.id)}/</a>${(S.clicks&&S.clicks[p.id])?` · ${S.clicks[p.id]} scansioni`:""}</td><td class="num">${p.pct??""}</td>
+    <td class="mono">${esc(p.code||"")}<br><a class="muted" href="/book/${encodeURIComponent(p.id)}/" target="_blank" rel="noopener">/book/${esc(p.id)}/</a> · <a href="/partners/poster/?p=${encodeURIComponent(p.id)}&n=${encodeURIComponent(p.name||"")}" target="_blank" rel="noopener">🖨 Locandina</a>${(S.clicks&&S.clicks[p.id])?` · ${S.clicks[p.id]} scansioni`:""}</td><td class="num">${p.pct??""}</td>
     <td class="muted">${[p.person,p.email,p.phone].filter(Boolean).map(esc).join("<br>")||"—"}</td>
     <td><div class="row" style="gap:6px;flex-wrap:nowrap"><button class="small" data-pmsg="${p.id}">Messaggio</button><button class="small" data-pedit="${p.id}">Modifica</button></div></td></tr>
     ${showMsg===p.id?`<tr><td colspan="8"><div class="split"><b>Messaggio per ${esc(p.name)}</b><button class="small" data-copy="pm-${p.id}">Copia</button></div><textarea class="out" id="pm-${p.id}" aria-label="Messaggio">${esc(partnerMsg(p))}</textarea></td></tr>`:""}`).join("")}

@@ -1,11 +1,9 @@
 import { ensureSchema } from "../../lib/access.js";
 
 // /book/<id-struttura>/ : conta la scansione del QR (solo un numero al giorno, nessun dato personale)
-// e apre WhatsApp con il nome della struttura già scritto.
+// e porta l'ospite sul sito: il nome della struttura viene ricordato e aggiunto ai messaggi WhatsApp.
 export async function onRequestGet({ request, env, params }) {
   const slug = String(params.slug || "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 80);
-  let site = {};
-  try { site = await (await env.ASSETS.fetch(new URL("/site.json", request.url))).json(); } catch {}
   let name = "";
   if (env.DB && slug) {
     try {
@@ -19,7 +17,7 @@ export async function onRequestGet({ request, env, params }) {
       }
     } catch {}
   }
-  const msg = name ? `Hi Flavio! I'm staying at ${name} and I'd like info on a private surf session.` : (site.booking_message || "Hi Flavio! I'd like info on a private surf session.");
-  const to = site.whatsapp ? `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(msg)}` : new URL("/", request.url).toString();
-  return new Response(null, { status: 302, headers: { Location: to, "cache-control": "no-store", "X-Robots-Tag": "noindex" } });
+  const to = new URL("/", request.url);
+  if (name) { to.searchParams.set("via", slug); to.searchParams.set("n", name); }
+  return new Response(null, { status: 302, headers: { Location: to.toString(), "cache-control": "no-store", "X-Robots-Tag": "noindex" } });
 }
