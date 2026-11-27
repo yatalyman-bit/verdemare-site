@@ -56,3 +56,7 @@ enableRobotsTXT = true
     name = "About"
     pageRef = "/about"
     weight = 5
+  [[menus.main]]
+    name = "Partners"
+    pageRef = "/partners"
+    weight = 6
