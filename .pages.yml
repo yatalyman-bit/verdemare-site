@@ -20,7 +20,7 @@ content:
           - { name: video, label: "Video con reel 1h (1, 2, 3, 4 persone)", type: number, list: true }
           - { name: clips, label: "Video solo clip 1h (1, 2, 3, 4 persone)", type: number, list: true }
           - { name: shoot, label: "Surf + lifestyle shoot: prezzo in più per gruppo €", type: number }
-          - { name: shoot_minutes, label: Surf + lifestyle shoot: minuti in più, type: number }
+          - { name: shoot_minutes, label: "Surf + lifestyle shoot: minuti in più", type: number }
           - { name: extra_hour, label: "Ora extra per gruppo (si vende a mezz'ore: metà ogni 30 min)", type: number }
           - { name: travel, label: Supplemento Ericeira/Nazaré, type: number }
           - { name: commission, label: Commissione hotel, type: string }
@@ -87,6 +87,15 @@ content:
           - { name: zoom_desktop, label: "Computer: zoom (100 = foto intera, 80 = più stretta)", type: number }
       - { name: video_title, type: string }
       - { name: video_text, type: text }
+  - name: photos
+    label: "Find your photos (open session della settimana)"
+    type: file
+    path: content/photos/index.md
+    fields:
+      - { name: title, label: Titolo, type: string }
+      - { name: intro, label: Testo, type: text }
+      - { name: note, label: Nota, type: string }
+      - { name: empty, label: Testo quando non ci sono sessioni online, type: string }
   - name: prices
     label: Prices (prezzi, tipi, regole, FAQ)
     description: "I prezzi NON si scrivono nei testi: si cambiano solo in 'Contatti e prezzi'. Se vuoi citarli in una FAQ scrivi {photo:2} (=90€), {photo:2:each} (=45€ a testa), {video:1}, {clips:3}, {extra_hour}, {travel}."

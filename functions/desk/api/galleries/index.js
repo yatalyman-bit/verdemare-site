@@ -20,7 +20,8 @@ export async function onRequestPost({ env, request }) {
   const days = Math.max(1, Math.min(365, parseInt(b.days) || (kind === "open" ? 7 : 90)));
   const id = newId(20), now = new Date();
   await ensureSchema(env.DB);
-  await env.DB.prepare("INSERT INTO galleries (id, client, title, created, expires, kind) VALUES (?,?,?,?,?,?)")
-    .bind(id, client, title, now.toISOString(), new Date(now.getTime() + days * 864e5).toISOString(), kind).run();
+  const listed = kind === "open" && b.listed !== false ? 1 : 0;   // open session: compare nella pagina "Find your photos" del sito
+  await env.DB.prepare("INSERT INTO galleries (id, client, title, created, expires, kind, listed) VALUES (?,?,?,?,?,?,?)")
+    .bind(id, client, title, now.toISOString(), new Date(now.getTime() + days * 864e5).toISOString(), kind, listed).run();
   return json({ id });
 }

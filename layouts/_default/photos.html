@@ -1,0 +1,17 @@
+{{ define "main" }}
+{{ $d := site.Data.site }}
+<section class="sec"><div class="wrap">
+  <h1>{{ .Title }}</h1>
+  <p>{{ .Params.intro }}</p>
+  <p class="muted small">{{ .Params.note }}</p>
+  {{ with $d.open.tiers }}<div class="tiers-site">{{ range . }}<span><b>{{ if .photos }}{{ .photos }} photo{{ if gt .photos 1 }}s{{ end }}{{ else }}All your photos{{ end }}</b> {{ .price }}€</span>{{ end }}</div>{{ end }}
+  <div id="days" class="days" aria-live="polite"><p class="muted">Loading…</p></div>
+  <template id="empty"><p>{{ .Params.empty }} <a href="https://instagram.com/{{ $d.instagram }}">@{{ $d.instagram }}</a></p></template>
+</div></section>
+<section class="sec light"><div class="wrap">
+  <h2>Want the camera only on you?</h2>
+  <p>In a private session I follow only you{{ if true }}, or your group{{ end }}, for a whole hour.</p>
+  <a class="btn" href="/prices/">Private sessions</a>
+</div></section>
+<script src="/js/photos.js" defer></script>
+{{ end }}

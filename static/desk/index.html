@@ -113,6 +113,7 @@ td .row button{padding:6px 10px;font-size:12px}
         <label><span id="l_title">Titolo</span><input id="g_title" placeholder="Supertubos · 27 Nov"></label>
         <label>Giorni online<input id="g_days" type="number" min="1" max="365" value="90"></label>
         <label class="pv-only">Già pagata?<select id="g_paid"><option value="0">No: anteprime con watermark</option><option value="1">Sì: sblocca subito</option></select></label>
+        <label class="full op-only" style="display:flex;gap:6px;align-items:center;font-weight:400" hidden><input id="g_listed" type="checkbox" checked> Mostrala nella pagina "Find your photos" del sito (con il conto alla rovescia)</label>
         <label class="full pv-only" style="display:flex;gap:6px;align-items:center;font-weight:400"><input id="g_zipv" type="checkbox"> Metti anche i video nello zip degli originali (zip molto più grande)</label>
       </div>
       <button id="publish" type="button" disabled>Pubblica gallery</button>
@@ -194,7 +195,7 @@ function addFiles(list) {
     let name = safe(file.name), b = base(name), ext = name.slice(b.length), i = 2;
     while (seen.has(b.toLowerCase())) { b = base(safe(file.name)) + "-" + i++; }
     seen.add(b.toLowerCase()); name = b + ext;
-    items.push({ file, kind, name });
+    items.push({ file, kind, name, src: file._path || file.webkitRelativePath || file.name });
   }
   items.sort((a, b) => natural.compare(a.name, b.name));
   refreshList();
@@ -214,9 +215,29 @@ function refreshList() {
   if (cur >= items.length) cur = 0;
   preview();
 }
-$("#clear").onclick = () => { items.forEach(i => i.url && URL.revokeObjectURL(i.url)); items = []; cur = 0; refreshList(); };
+$("#clear").onclick = () => { items.forEach(i => i.url && URL.revokeObjectURL(i.url)); items = []; cur = 0; lastDir = null; refreshList(); };
 $("#pickFiles").onclick = e => { e.stopPropagation(); $("#fin").click(); };
-$("#pickDir").onclick = e => { e.stopPropagation(); $("#din").click(); };
+
+/* Cartella ricordata: con Chrome/Edge Studio tiene il "puntatore" alla cartella della giornata,
+   così per sbloccare un ordine prende da solo gli originali. Si salva solo su questo computer. */
+let lastDir = null;
+async function walkDir(dir, prefix = "") {
+  const out = [];
+  for await (const [nm, h] of dir.entries()) {
+    if (h.kind === "file") { if (IMG.test(nm) || VID.test(nm)) { const f = await h.getFile(); f._path = prefix + nm; out.push(f); } }
+    else if (!nm.startsWith(".")) out.push(...await walkDir(h, prefix + nm + "/"));
+  }
+  return out;
+}
+const idb = () => new Promise((res, rej) => { const r = indexedDB.open("vd-studio", 1); r.onupgradeneeded = () => r.result.createObjectStore("dirs"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+async function idbSet(k, v) { const db = await idb(); return new Promise((res, rej) => { const t = db.transaction("dirs", "readwrite"); t.objectStore("dirs").put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); }); }
+async function idbGet(k) { const db = await idb(); return new Promise((res, rej) => { const q = db.transaction("dirs").objectStore("dirs").get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+$("#pickDir").onclick = async e => {
+  e.stopPropagation();
+  if (window.showDirectoryPicker) {
+    try { const d = await showDirectoryPicker({ id: "vd-day", mode: "read" }); lastDir = d; addFiles(await walkDir(d)); } catch (err) { if (err.name !== "AbortError") alert(err.message); }
+  } else $("#din").click();
+};
 $("#drop").onclick = () => $("#fin").click();
 $("#fin").onchange = e => { addFiles(e.target.files); e.target.value = ""; };
 $("#din").onchange = e => { addFiles(e.target.files); e.target.value = ""; };
@@ -225,9 +246,12 @@ dz.ondragover = e => { e.preventDefault(); dz.classList.add("over"); };
 dz.ondragleave = () => dz.classList.remove("over");
 dz.ondrop = async e => {
   e.preventDefault(); dz.classList.remove("over");
+  // Chrome/Edge: se trascini UNA cartella, Studio se la ricorda (per sbloccare gli ordini delle open session)
+  const hp = [...e.dataTransfer.items].filter(i => i.kind === "file" && i.getAsFileSystemHandle).map(i => i.getAsFileSystemHandle());
+  if (hp.length === 1) { try { const h = await hp[0]; if (h && h.kind === "directory") { lastDir = h; addFiles(await walkDir(h)); return; } } catch {} }
   const out = [];
   const walk = async entry => {
-    if (entry.isFile) out.push(await new Promise(r => entry.file(r)));
+    if (entry.isFile) { const f = await new Promise(r => entry.file(r)); f._path = entry.fullPath.replace(/^\//, ""); out.push(f); }
     else if (entry.isDirectory) { const rd = entry.createReader(); let batch; do { batch = await new Promise(r => rd.readEntries(r)); for (const en of batch) await walk(en); } while (batch.length); }
   };
   const entries = [...e.dataTransfer.items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
@@ -385,6 +409,7 @@ fetch("/site.json").then(r => r.json()).then(j => { if (j.open && j.open.days) O
 $("#g_kind").onchange = () => {
   const open = $("#g_kind").value === "open";
   document.querySelectorAll(".pv-only").forEach(e => e.hidden = open);
+  document.querySelectorAll(".op-only").forEach(e => e.hidden = !open);
   $("#l_client").textContent = open ? "Spot" : "Nome cliente"; $("#g_client").placeholder = open ? "Supertubos" : "Anna & Marco";
   $("#l_title").textContent = open ? "Giorno e ora" : "Titolo"; $("#g_title").placeholder = open ? "27 Nov · morning" : "Supertubos · 27 Nov";
   $("#g_days").value = open ? OPEN_DAYS : 90;
@@ -409,7 +434,7 @@ $("#publish").onclick = async () => {
   addEventListener("beforeunload", warn);
   try {
     stat("Creo la gallery…");
-    const { id } = await api("galleries/", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ client, title: $("#g_title").value.trim(), days: +$("#g_days").value || (isOpen ? OPEN_DAYS : 90), kind: isOpen ? "open" : "private" }) });
+    const { id } = await api("galleries/", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ client, title: $("#g_title").value.trim(), days: +$("#g_days").value || (isOpen ? OPEN_DAYS : 90), kind: isOpen ? "open" : "private", listed: $("#g_listed").checked }) });
     const files = new Array(list.length);
     let next = 0, done = 0;
     const worker = async () => {
@@ -427,7 +452,7 @@ $("#publish").onclick = async () => {
         if (src.bmp.close) src.bmp.close();
         if (!isOpen) await upload(id, "orig", it.name, it.file);
         sent += isOpen ? 1 : it.file.size * 1.1; bar();
-        files[i] = { n: it.name, t: it.kind, w: src.w, h: src.h, s: it.file.size, z: it.kind === "p" ? 1 : 0 };
+        files[i] = { n: it.name, t: it.kind, w: src.w, h: src.h, s: it.file.size, z: it.kind === "p" ? 1 : 0, o: it.src };
         stat(`Caricati ${++done}/${list.length}`);
         if (src.ph) log(`${it.name}: anteprima del video non leggibile in questo browser, uso un'icona.`);
       }
@@ -440,7 +465,8 @@ $("#publish").onclick = async () => {
       zsize = await uploadZip(id, zipItems, b => { sent = before + b; bar(); stat(`Zip degli originali: ${(b / 1e6).toFixed(0)} MB`); });
     }
     await api(`galleries/${id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ files, zip_size: zsize, ready: 1, paid: !isOpen && $("#g_paid").value === "1" }) });
-    sent = totalBytes; bar(); stat("Pubblicata ✓");
+    if (isOpen && lastDir) { try { await idbSet(id, { dir: lastDir, at: Date.now() }); } catch {} }
+    sent = totalBytes; bar(); stat("Pubblicata ✓" + (isOpen ? (lastDir ? " · cartella ricordata: per sbloccare gli ordini non dovrai cercare niente" : " · per sbloccare gli ordini ti chiederò la cartella della giornata") : ""));
     showLink(id, client, isOpen ? $("#g_title").value.trim() : null);
   } catch (e) { stat("Errore: " + e.message + " — controlla la connessione e riprova (la gallery incompleta si può eliminare dalla scheda Gallery)."); }
   removeEventListener("beforeunload", warn);
@@ -510,8 +536,8 @@ async function loadOpen() {
       <td>${esc(o.name)}<br><span class="note">${esc(o.contact)}</span>${o.note ? `<br><em>${esc(o.note)}</em>` : ""}</td>
       <td>${o.status === "new" ? `<button type="button" data-up>📤 Carica le foto e sblocca</button><br><button type="button" class="ghost" data-st="cancelled" style="margin-top:6px">Annulla</button>`
           : o.status === "paid" ? `<span class="pill y">Pagato</span><br><span class="note">${d(o.paid)}</span><br><button type="button" class="ghost" data-up style="margin-top:6px">Ricarica le foto</button>`
-          : `<span class="pill n">Annullato</span><br><button type="button" class="ghost" data-st="new" style="margin-top:6px">Riapri</button>`}<div class="note" data-msg></div></td></tr>`).join("")}</tbody></table>
-      <input type="file" id="opfiles" multiple accept="image/jpeg,image/png,.jpg,.jpeg,.png" hidden>`;
+          : `<span class="pill n">Annullato</span><br><button type="button" class="ghost" data-st="new" style="margin-top:6px">Riapri</button>`}<br><button type="button" class="ghost" data-names style="margin-top:6px;font-size:12px;padding:6px 10px">Copia i nomi dei file</button><div class="note" data-msg></div></td></tr>`).join("")}</tbody></table>
+      <input type="file" id="opdir" webkitdirectory hidden>`;
     box.querySelectorAll("button[data-st]").forEach(b => b.onclick = async () => {
       if (b.dataset.st === "cancelled" && !confirm("Annullare questo ordine?")) return;
       try { await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: b.closest("tr").dataset.id, status: b.dataset.st }) }); } catch (e) { alert(e.message); }
@@ -519,28 +545,55 @@ async function loadOpen() {
     });
     // Pagato: scegli dal computer le foto dell'ordine (anche tutta la cartella della giornata: prende solo quelle giuste),
     // carica versione alta qualità + originale solo di quelle, poi segna pagato.
-    box.querySelectorAll("button[data-up]").forEach(b => b.onclick = () => {
-      const tr = b.closest("tr"), o = list.find(x => x.id === tr.dataset.id), msg = tr.querySelector("[data-msg]"), fin = $("#opfiles");
-      fin.value = ""; fin.onchange = async () => {
-        const byName = new Map([...fin.files].map(f => [safe(f.name).toLowerCase(), f]));
-        const found = o.photos.map(n => [n, byName.get(n.toLowerCase())]), missing = found.filter(([, f]) => !f).map(([n]) => n);
-        if (missing.length && !confirm(`Non trovo ${missing.length} foto: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? "…" : ""}\nCarico le altre ${found.length - missing.length} e segno pagato lo stesso?`)) return;
-        tr.querySelectorAll("button").forEach(x => x.disabled = true);
-        try {
-          let k = 0;
-          for (const [n, f] of found) {
-            if (!f) continue;
-            msg.textContent = `Carico ${++k}/${found.length - missing.length}…`;
-            const bm = await bitmap(f), [ww, wh] = fit(bm.width, bm.height, 2560, 2560);
-            await upload(o.gallery, "web", n, await jpg(canvasOf(bm, ww, wh), .9)); bm.close();
-            await upload(o.gallery, "orig", n, f);
+    box.querySelectorAll("button[data-up]").forEach(b => b.onclick = async () => {
+      const tr = b.closest("tr"), o = list.find(x => x.id === tr.dataset.id), msg = tr.querySelector("[data-msg]");
+      const g = await api(`galleries/${o.gallery}`);
+      const orig = Object.fromEntries((g.files || []).map(f => [f.n, f.o || f.n]));
+      const bn = p => p.split("/").pop().toLowerCase();
+      const want = o.photos.map(n => ({ n, path: orig[n] || n }));
+      let pool = null;   // nome file (minuscolo) -> File
+      // 1) la cartella ricordata al momento della pubblicazione
+      try {
+        const mem = await idbGet(o.gallery);
+        if (mem && mem.dir && (await mem.dir.queryPermission({ mode: "read" }) === "granted" || await mem.dir.requestPermission({ mode: "read" }) === "granted")) {
+          pool = new Map();
+          for (const w of want) {
+            try { let h = mem.dir; const parts = w.path.split("/"); for (const seg of parts.slice(0, -1)) h = await h.getDirectoryHandle(seg); pool.set(bn(w.path), await (await h.getFileHandle(parts.at(-1))).getFile()); } catch {}
           }
-          if (o.status !== "paid") await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: o.id, status: "paid" }) });
-          msg.textContent = "Sbloccate ✓";
-        } catch (e) { msg.textContent = "Errore: " + e.message; }
-        setTimeout(loadOpen, 900);
-      };
-      fin.click();
+          if (pool.size < want.length) { const all = await walkDir(mem.dir); for (const f of all) if (!pool.has(f.name.toLowerCase())) pool.set(f.name.toLowerCase(), f); }
+        }
+      } catch {}
+      // 2) altrimenti: scegli la cartella della giornata (una volta sola, prende lui le foto giuste)
+      if (!pool || want.some(w => !pool.has(bn(w.path)))) {
+        msg.textContent = "Scegli la cartella delle foto di quella giornata…";
+        let files = [];
+        try {
+          if (window.showDirectoryPicker) { const d = await showDirectoryPicker({ id: "vd-day", mode: "read" }); files = await walkDir(d); try { await idbSet(o.gallery, { dir: d, at: Date.now() }); } catch {} }
+          else files = await new Promise(res => { const fi = $("#opdir"); fi.value = ""; fi.onchange = () => res([...fi.files]); fi.click(); });
+        } catch (err) { msg.textContent = ""; if (err.name !== "AbortError") alert(err.message); return; }
+        pool = pool || new Map(); for (const f of files) if (!pool.has(f.name.toLowerCase())) pool.set(f.name.toLowerCase(), f);
+      }
+      const found = want.map(w => [w.n, pool.get(bn(w.path)) || pool.get(w.n.toLowerCase())]), missing = found.filter(([, f]) => !f).map(([n]) => orig[n] || n);
+      if (missing.length && !confirm(`Non trovo ${missing.length} foto: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? "…" : ""}\nCarico le altre ${found.length - missing.length} e segno pagato lo stesso?`)) { msg.textContent = ""; return; }
+      tr.querySelectorAll("button").forEach(x => x.disabled = true);
+      try {
+        let k = 0;
+        for (const [n, f] of found) {
+          if (!f) continue;
+          msg.textContent = `Carico ${++k}/${found.length - missing.length}…`;
+          const bm = await bitmap(f), [ww, wh] = fit(bm.width, bm.height, 2560, 2560);
+          await upload(o.gallery, "web", n, await jpg(canvasOf(bm, ww, wh), .9)); bm.close();
+          await upload(o.gallery, "orig", n, f);
+        }
+        if (o.status !== "paid") await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: o.id, status: "paid" }) });
+        msg.textContent = "Sbloccate ✓";
+      } catch (e) { msg.textContent = "Errore: " + e.message; }
+      setTimeout(loadOpen, 900);
+    });
+    box.querySelectorAll("button[data-names]").forEach(b => b.onclick = async () => {
+      const o = list.find(x => x.id === b.closest("tr").dataset.id);
+      const g = await api(`galleries/${o.gallery}`); const orig = Object.fromEntries((g.files || []).map(f => [f.n, f.o || f.n]));
+      await navigator.clipboard.writeText(o.photos.map(n => (orig[n] || n).split("/").pop()).join(" ")); b.textContent = "Nomi copiati ✓";
     });
     box.querySelectorAll("button[data-rm]").forEach(b => b.onclick = async () => {
       try { await api("open-orders/", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: b.closest("tr").dataset.id, remove: [b.dataset.rm] }) }); } catch (e) { alert(e.message); }

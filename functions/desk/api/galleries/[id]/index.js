@@ -14,13 +14,14 @@ export async function onRequestPatch({ env, params, request }) {
   let b; try { b = await request.json(); } catch { return json({ error: "JSON non valido." }, 400); }
   const sets = [], vals = [];
   if ("paid" in b) { sets.push("paid = ?"); vals.push(b.paid ? 1 : 0); }
+  if ("listed" in b) { sets.push("listed = ?"); vals.push(b.listed ? 1 : 0); }
   if ("ready" in b) { sets.push("ready = ?"); vals.push(b.ready ? 1 : 0); }
   if ("zip_size" in b) { sets.push("zip_size = ?"); vals.push(Math.max(0, parseInt(b.zip_size) || 0)); }
   if ("client" in b) { sets.push("client = ?"); vals.push(String(b.client).slice(0, 120)); }
   if ("title" in b) { sets.push("title = ?"); vals.push(String(b.title).slice(0, 160)); }
   if ("extend_days" in b) { const d = Math.max(1, Math.min(365, parseInt(b.extend_days) || 0)); sets.push("expires = ?"); vals.push(new Date(Math.max(Date.now(), new Date(g.expires).getTime()) + d * 864e5).toISOString()); }
   if (Array.isArray(b.files)) {
-    const files = b.files.slice(0, 2000).map(f => ({ n: String(f.n).slice(0, 160), t: f.t === "v" ? "v" : "p", w: f.w | 0, h: f.h | 0, s: Math.max(0, Math.floor(+f.s || 0)), z: f.z ? 1 : 0 }));
+    const files = b.files.slice(0, 2000).map(f => ({ n: String(f.n).slice(0, 160), t: f.t === "v" ? "v" : "p", w: f.w | 0, h: f.h | 0, s: Math.max(0, Math.floor(+f.s || 0)), z: f.z ? 1 : 0, ...(f.o ? { o: String(f.o).slice(0, 300) } : {}) }));
     sets.push("files = ?"); vals.push(JSON.stringify(files));
   }
   if (!sets.length) return json({ ok: true });
