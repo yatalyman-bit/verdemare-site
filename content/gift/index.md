@@ -6,7 +6,7 @@ description: "Give a private in-water surf photo or video session as a gift. Gif
 intro: "A surf session, photographed from the water. The kind of gift people actually remember."
 steps:
   - Tell me the session and who it's for
-  - Pay in full (bank transfer, PayPal or MB Way)
+  - Pay in full (PayPal, Revolut, Wise or cash)
   - Get a personal PDF voucher to print or send
   - They book whenever they want, depending on the waves
 terms:
